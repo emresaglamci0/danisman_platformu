@@ -1,0 +1,13 @@
+# Sırlar - asla git'e gönderilmez
+.env
+.env.*
+!.env.example
+
+# Bağımlılıklar ve derleme çıktıları
+node_modules/
+dist/
+build/
+
+# Sistem ve editör dosyaları
+.DS_Store
+Thumbs.db
