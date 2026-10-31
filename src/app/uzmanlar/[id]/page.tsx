@@ -4,6 +4,7 @@ import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { ALANLAR } from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanGetir, uzmanUnvani } from "@/lib/uzmanlar";
+import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { BasvuruFormu } from "./BasvuruFormu";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -23,8 +24,13 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         <Link href="/uzmanlar" className="text-sm text-teal-800 hover:underline">
           ← Tüm uzmanlar
         </Link>
-        <h1 className="text-2xl font-bold">{uzman.display_name}</h1>
-        <p className="text-teal-800">{uzmanUnvani(uzman)}</p>
+        <div className="flex items-center gap-4">
+          <UzmanFotografi link={uzman.fotoLink} ad={uzman.display_name} boyut={96} />
+          <div>
+            <h1 className="text-2xl font-bold">{uzman.display_name}</h1>
+            <p className="text-teal-800">{uzmanUnvani(uzman)}</p>
+          </div>
+        </div>
         {uzman.kind === "student" && (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
             Bu kişi son sınıf öğrencisidir ve staj kapsamında hizmet verir.

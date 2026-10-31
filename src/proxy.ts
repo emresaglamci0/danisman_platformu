@@ -4,7 +4,7 @@ import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
 
 // Her sayfa isteginden once calisir:
 // 1) Suresi dolmak uzere olan oturumu yeniler.
-// 2) Giris yapmamis kisiyi /panel sayfasindan giris sayfasina yonlendirir.
+// 2) Giris yapmamis kisiyi /panel ve /admin sayfalarindan giris sayfasina yonlendirir.
 export async function proxy(request: NextRequest) {
   const ayarlar = supabaseAyarlari();
   if (!ayarlar) return NextResponse.next();
@@ -27,7 +27,8 @@ export async function proxy(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
 
-  if (!data?.claims && request.nextUrl.pathname.startsWith("/panel")) {
+  const korunan = ["/panel", "/admin"].some((yol) => request.nextUrl.pathname.startsWith(yol));
+  if (!data?.claims && korunan) {
     const adres = request.nextUrl.clone();
     adres.pathname = "/giris";
     adres.search = "";

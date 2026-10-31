@@ -1,3 +1,4 @@
+import { fotografLinkleri } from "./fotograf";
 import { supabaseAyarlari } from "./supabase/ayarlar";
 import { supabaseSunucu } from "./supabase/sunucu";
 import { BOLUMLER, UNVANLAR, type Alan, type Bolum, type Unvan } from "./sabitler";
@@ -10,9 +11,16 @@ export type Uzman = {
   department: Bolum | null;
   specialties: Alan[];
   bio: string | null;
+  photo_path: string | null;
+  fotoLink: string | null;
 };
 
-const ALANLAR_SORGU = "id, kind, display_name, title, department, specialties, bio";
+const ALANLAR_SORGU = "id, kind, display_name, title, department, specialties, bio, photo_path";
+
+async function fotograflariEkle(uzmanlar: Omit<Uzman, "fotoLink">[]): Promise<Uzman[]> {
+  const linkler = await fotografLinkleri(uzmanlar.map((u) => u.photo_path));
+  return uzmanlar.map((u) => ({ ...u, fotoLink: u.photo_path ? (linkler[u.photo_path] ?? null) : null }));
+}
 
 // Yalnizca onayli uzmanlar doner; bu kurali veritabani da (RLS) ayrica uygular.
 export async function onayliUzmanlar(tur?: Uzman["kind"]): Promise<Uzman[]> {
@@ -25,7 +33,7 @@ export async function onayliUzmanlar(tur?: Uzman["kind"]): Promise<Uzman[]> {
     .order("display_name");
   if (tur) sorgu = sorgu.eq("kind", tur);
   const { data } = await sorgu;
-  return (data ?? []) as Uzman[];
+  return fotograflariEkle(data ?? []);
 }
 
 export async function uzmanGetir(id: string): Promise<Uzman | null> {
@@ -37,7 +45,9 @@ export async function uzmanGetir(id: string): Promise<Uzman | null> {
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();
-  return data as Uzman | null;
+  if (!data) return null;
+  const [uzman] = await fotograflariEkle([data]);
+  return uzman;
 }
 
 export function uzmanUnvani(uzman: Pick<Uzman, "kind" | "title" | "department">) {

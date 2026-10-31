@@ -41,6 +41,8 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Mesaj koruması: **B seçeneği**. Mesajlar, yönetilen anahtar servisinden alınan anahtarla ve doğrulanmış bir kütüphaneyle uygulama katmanında şifrelenir.
 - Ödeme site üzerinden yapılacak. Uzman, sohbetin içinden mesaj olarak değil, sitenin bir eki olarak **ödeme planı** gönderir. Site her ödemeden **%5 komisyon** alır. Türkiye'de lisanslı ve alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu kullanılmalı. Kart bilgisi asla bizim sunucumuza gelmemeli.
 - Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
+- Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
+- Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.
 
 ## 7. Açıklama tarzı
 - Proje sahibi kodlamaya yeni başladı.

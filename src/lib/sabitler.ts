@@ -58,8 +58,20 @@ export const UZMAN_DURUMLARI = {
 } as const;
 export type UzmanDurumu = keyof typeof UZMAN_DURUMLARI;
 
+// Belge turleri ve hangi uzman turunun yukleyebilecegi
+export const BELGE_TURLERI = {
+  barkodlu_belge: { ad: "Barkodlu belge (e-Devlet YÖK mezun belgesi)", tur: "independent" },
+  diploma: { ad: "Üniversite diploması", tur: "independent" },
+  edevlet_ogrenci_belgesi: { ad: "e-Devlet onaylı öğrenci belgesi", tur: "student" },
+} as const;
+export type BelgeTuru = keyof typeof BELGE_TURLERI;
+
+export function belgeTurleri(tur: "independent" | "student") {
+  return (Object.keys(BELGE_TURLERI) as BelgeTuru[]).filter((k) => BELGE_TURLERI[k].tur === tur);
+}
+
 // Bir degerin verilen listede olup olmadigini kontrol eder (form dogrulamasi icin)
-export function listedeMi<T extends Record<string, string>>(
+export function listedeMi<T extends Record<string, unknown>>(
   liste: T,
   deger: unknown,
 ): deger is keyof T {

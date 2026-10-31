@@ -32,6 +32,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="ml-auto flex items-center gap-4 text-sm">
               {kullanici ? (
                 <>
+                  {kullanici.rol === "admin" && (
+                    <Link href="/admin" className="font-medium text-teal-800 hover:underline">
+                      Yönetim
+                    </Link>
+                  )}
                   <Link href="/panel" className="hover:text-teal-800">
                     Panelim
                   </Link>

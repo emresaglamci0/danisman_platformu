@@ -4,16 +4,23 @@ import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import {
   ALANLAR,
   BASVURU_DURUMLARI,
+  BELGE_TURLERI,
   ROLLER,
   UYGUN_ZAMANLAR,
   UZMAN_DURUMLARI,
+  belgeTurleri,
   tarihYaz,
   type Alan,
   type BasvuruDurumu,
+  type BelgeTuru,
   type UygunZaman,
   type UzmanDurumu,
 } from "@/lib/sabitler";
+import { fotografLinkleri } from "@/lib/fotograf";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
+import { UzmanFotografi } from "@/components/UzmanFotografi";
+import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
+import { FotografFormu } from "./FotografFormu";
 import { basvuruYanitla } from "./islemler";
 
 export const metadata = { title: "Panelim | Danışman Buluşma" };
@@ -41,7 +48,9 @@ export default async function PanelSayfasi() {
         <UzmanPaneli kullanici={kullanici} />
       )}
       {kullanici.rol === "admin" && (
-        <p className="text-sm text-slate-600">Yönetici paneli bir sonraki aşamada eklenecek.</p>
+        <Link href="/admin" className="text-teal-800 underline">
+          Yönetim paneline git
+        </Link>
       )}
     </div>
   );
@@ -78,8 +87,16 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
 
 async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const supabase = await supabaseSunucu();
-  const [{ data: profil }, { data }] = await Promise.all([
-    supabase.from("expert_profiles").select("status, verified_until").eq("id", kullanici.id).single(),
+  const [{ data: profil }, { data: belgeler }, { data }] = await Promise.all([
+    supabase
+      .from("expert_profiles")
+      .select("kind, status, verified_until, review_note, photo_path")
+      .eq("id", kullanici.id)
+      .single(),
+    supabase
+      .from("expert_documents")
+      .select("doc_type, storage_path, created_at")
+      .eq("expert_id", kullanici.id),
     supabase
       .from("applications")
       .select("id, topic, availability, status, created_at, profiles(full_name)")
@@ -87,7 +104,15 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
       .order("created_at", { ascending: false }),
   ]);
   const basvurular = (data ?? []) as unknown as (Basvuru & { profiles: { full_name: string } | null })[];
-  const durum = (profil?.status ?? "pending") as UzmanDurumu;
+
+  const bugun = new Date().toISOString().slice(0, 10);
+  let durum = (profil?.status ?? "pending") as UzmanDurumu;
+  if (durum === "approved" && profil?.verified_until && profil.verified_until < bugun) durum = "expired";
+
+  const tur: "independent" | "student" = profil?.kind ?? "independent";
+  const yuklenenler = (belgeler ?? []) as { doc_type: BelgeTuru; storage_path: string | null; created_at: string }[];
+  const fotoLinkleri = await fotografLinkleri([profil?.photo_path ?? null]);
+  const fotoLink = profil?.photo_path ? fotoLinkleri[profil.photo_path] : null;
 
   return (
     <>
@@ -96,11 +121,60 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
         {durum === "pending" && (
           <p className="mt-1 text-sm text-slate-600">
             Belgeleriniz yönetici tarafından kontrol edilene kadar uzman listesinde görünmezsiniz.
-            Belge yükleme bir sonraki aşamada eklenecek.
+          </p>
+        )}
+        {durum === "rejected" && profil?.review_note && (
+          <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">
+            <strong>Ret sebebi:</strong> {profil.review_note}
+            <br />
+            Eksikleri giderip belgelerinizi yeniden yükleyebilirsiniz.
+          </p>
+        )}
+        {durum === "expired" && (
+          <p className="mt-1 text-sm text-slate-600">
+            Onayınızın süresi doldu. Güncel öğrenci belgenizi yükleyerek yeniden onay alabilirsiniz.
           </p>
         )}
         {profil?.verified_until && (
           <p className="mt-1 text-sm text-slate-600">Onay geçerlilik tarihi: {tarihYaz(profil.verified_until)}</p>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="mb-3 font-semibold">Profil fotoğrafı</h2>
+        <div className="flex flex-wrap items-start gap-4">
+          <UzmanFotografi link={fotoLink} ad={kullanici.adSoyad} boyut={96} />
+          <div className="min-w-0 flex-1">
+            <FotografFormu fotografVar={!!profil?.photo_path} />
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="mb-3 font-semibold">Belgelerim</h2>
+        <ul className="mb-4 space-y-1 text-sm">
+          {belgeTurleri(tur).map((belgeTuru) => {
+            const belge = yuklenenler.find((b) => b.doc_type === belgeTuru);
+            return (
+              <li key={belgeTuru} className="flex flex-wrap justify-between gap-2">
+                <span>{BELGE_TURLERI[belgeTuru].ad}</span>
+                <span className="text-slate-600">
+                  {!belge
+                    ? "Yüklenmedi"
+                    : belge.storage_path
+                      ? `Yüklendi (${tarihYaz(belge.created_at)}), inceleme bekliyor`
+                      : `İncelendi (${tarihYaz(belge.created_at)})`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        {durum === "approved" ? (
+          <p className="text-sm text-slate-600">
+            Hesabınız onaylı. Gizliliğiniz için belge dosyalarınız inceleme sonrası silindi.
+          </p>
+        ) : (
+          <BelgeYuklemeFormu turler={belgeTurleri(tur)} />
         )}
       </section>
 
