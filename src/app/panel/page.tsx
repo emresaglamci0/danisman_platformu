@@ -229,7 +229,17 @@ function BasvuruSatiri({
           {basvuru.topic ? ALANLAR[basvuru.topic] : "Konu belirtilmedi"} ·{" "}
           {UYGUN_ZAMANLAR[basvuru.availability]} · {tarihYaz(basvuru.created_at)}
         </p>
-        <p className="mt-1 font-medium text-teal-800">{BASVURU_DURUMLARI[basvuru.status]}</p>
+        <p className="mt-1 font-medium text-teal-800">
+          {BASVURU_DURUMLARI[basvuru.status]}
+          {basvuru.status === "accepted" && (
+            <>
+              {" · "}
+              <Link href="/mesajlar" className="underline">
+                Mesajlara git
+              </Link>
+            </>
+          )}
+        </p>
       </div>
       {children}
     </div>

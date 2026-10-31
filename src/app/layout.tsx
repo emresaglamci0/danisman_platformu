@@ -29,6 +29,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/uzmanlar" className="text-sm hover:text-teal-800">
               Uzmanlar
             </Link>
+            {kullanici && (
+              <Link href="/mesajlar" className="text-sm hover:text-teal-800">
+                Mesajlar
+              </Link>
+            )}
+            <Link href="/kvkk" className="text-sm hover:text-teal-800">
+              KVKK
+            </Link>
             <div className="ml-auto flex items-center gap-4 text-sm">
               {kullanici ? (
                 <>

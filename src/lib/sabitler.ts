@@ -1,7 +1,32 @@
 // Veritabanindaki kodlar ile ekranda gorunen Turkce karsiliklari.
 // Buradaki anahtarlar supabase/migrations icindeki "check" listeleriyle ayni olmali.
 
-export const KVKK_SURUMU = "2026-10-taslak";
+// Metin degistiginde surum de degistirilmeli; kullanicidan yeni surum icin tekrar onay istenir.
+export const KVKK_SURUMU = "2026-10-31b-taslak";
+export const ACIK_RIZA_SURUMU = "2026-10-31b-taslak";
+
+// Kullanicinin secebilecegi sikayet sebepleri (veritabanindaki listeyle ayni)
+export const SIKAYET_KATEGORILERI = {
+  taciz: "Taciz veya hakaret",
+  uygunsuz_icerik: "Uygunsuz içerik",
+  spam: "Spam / reklam",
+  guvenlik_riski: "Güvenlik endişesi (kendine veya başkasına zarar riski)",
+  diger: "Diğer",
+} as const;
+
+export const ISARET_KAYNAKLARI = {
+  user_report: "Kullanıcı şikayeti",
+  admin_review: "Yönetici incelemesi",
+  auto_moderation: "Otomatik moderasyon",
+} as const;
+
+export const ISARET_KATEGORILERI: Record<string, string> = {
+  ...SIKAYET_KATEGORILERI,
+  admin_inceleme: "Yönetici incelemesi",
+  otomatik: "Otomatik tespit",
+};
+
+export const MESAJ_EN_FAZLA = 2000;
 
 export const ROLLER = {
   client: "Danışan",
@@ -80,4 +105,12 @@ export function listedeMi<T extends Record<string, unknown>>(
 
 export function tarihYaz(iso: string) {
   return new Date(iso).toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" });
+}
+
+export function tarihSaatYaz(iso: string) {
+  return new Date(iso).toLocaleString("tr-TR", {
+    timeZone: "Europe/Istanbul",
+    dateStyle: "short",
+    timeStyle: "short",
+  });
 }

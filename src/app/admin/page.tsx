@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { fotografLinkleri } from "@/lib/fotograf";
@@ -52,7 +53,12 @@ export default async function AdminSayfasi() {
 
   return (
     <div className="space-y-10">
-      <h1 className="text-2xl font-bold">Yönetim paneli</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">Yönetim paneli</h1>
+        <Link href="/admin/incelemeler" className="text-sm text-teal-800 underline">
+          Şikayetler ve incelemeler
+        </Link>
+      </div>
 
       <section className="space-y-4">
         <div>

@@ -1,39 +1,65 @@
-import { KVKK_SURUMU } from "@/lib/sabitler";
+import { AcikRizaMetni, AydinlatmaMetni } from "@/components/kvkk/Metinler";
+import { TaslakNotu } from "@/components/kvkk/TaslakNotu";
+import { mevcutKullanici } from "@/lib/oturum";
+import { tarihSaatYaz } from "@/lib/sabitler";
+import { supabaseSunucu } from "@/lib/supabase/sunucu";
 
-export const metadata = { title: "KVKK Aydınlatma Metni | Danışman Buluşma" };
+export const metadata = { title: "KVKK | Danışman Buluşma" };
 
-// TASLAK: Gercek yayindan once bir hukukcu tarafindan hazirlanmali/kontrol edilmeli.
-export default function KvkkSayfasi() {
+const BELGE_ADLARI: Record<string, string> = {
+  kvkk_aydinlatma: "Aydınlatma metni okundu",
+  acik_riza_mesajlasma: "Mesajlaşma açık rızası",
+};
+
+export default async function KvkkSayfasi() {
+  const kullanici = await mevcutKullanici();
+  let onaylar: { document: string; version: string; accepted_at: string }[] = [];
+  if (kullanici) {
+    const supabase = await supabaseSunucu();
+    const { data } = await supabase
+      .from("consents")
+      .select("document, version, accepted_at")
+      .eq("user_id", kullanici.id)
+      .order("accepted_at", { ascending: false });
+    onaylar = data ?? [];
+  }
+
   return (
-    <article className="mx-auto max-w-2xl space-y-4 text-slate-700">
-      <h1 className="text-2xl font-bold text-slate-900">KVKK Aydınlatma Metni</h1>
-      <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
-        Bu metin bir öğrenci projesi için hazırlanmış <strong>taslaktır</strong> (sürüm {KVKK_SURUMU}).
-        Gerçek bir hizmette kullanılmadan önce hukukçu tarafından gözden geçirilmelidir.
-      </p>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <div className="space-y-3">
+        <h1 className="text-2xl font-bold">KVKK ve Gizlilik</h1>
+        <TaslakNotu />
+      </div>
 
-      <h2 className="pt-2 text-lg font-semibold text-slate-900">Hangi verileri topluyoruz?</h2>
-      <ul className="list-disc space-y-1 pl-6">
-        <li>Hesap bilgileri: ad soyad, e-posta adresi, hesap türü.</li>
-        <li>Uzmanlar için: unvan veya bölüm bilgisi, onay durumu.</li>
-        <li>Başvurular: seçtiğiniz konu (isteğe bağlı) ve uygun zaman aralığı.</li>
-      </ul>
-      <p>Başvuru sırasında sağlık durumunuzu veya sorununuzu yazmanız istenmez.</p>
+      <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="text-lg font-semibold">Kişisel Verilerin Korunması Aydınlatma Metni</h2>
+        <AydinlatmaMetni />
+      </section>
 
-      <h2 className="pt-2 text-lg font-semibold text-slate-900">Neden topluyoruz?</h2>
-      <p>Hesabınızı oluşturmak, danışan ile uzmanı buluşturmak ve uzmanların belgelerini doğrulamak için.</p>
+      <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="text-lg font-semibold">Mesajlaşma için Açık Rıza Metni</h2>
+        <AcikRizaMetni />
+      </section>
 
-      <h2 className="pt-2 text-lg font-semibold text-slate-900">Veriler nerede saklanıyor?</h2>
-      <p>
-        Veriler, Almanya&apos;nın Frankfurt şehrindeki sunucularda saklanır. Bu, yurt dışına veri
-        aktarımı anlamına gelir.
-      </p>
-
-      <h2 className="pt-2 text-lg font-semibold text-slate-900">Haklarınız</h2>
-      <p>
-        KVKK&apos;nın 11. maddesi kapsamında verilerinize erişme, düzeltilmesini veya silinmesini
-        isteme haklarına sahipsiniz. Başvuru formu ve hesap silme özelliği sonraki aşamada eklenecek.
-      </p>
-    </article>
+      {kullanici && (
+        <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-lg font-semibold">Onay kayıtlarınız</h2>
+          {onaylar.length === 0 ? (
+            <p className="text-sm text-slate-600">Kayıt bulunamadı.</p>
+          ) : (
+            <ul className="space-y-1 text-sm">
+              {onaylar.map((o, i) => (
+                <li key={i} className="flex flex-wrap justify-between gap-2">
+                  <span>{BELGE_ADLARI[o.document] ?? o.document}</span>
+                  <span className="text-slate-600">
+                    {tarihSaatYaz(o.accepted_at)} · sürüm {o.version}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+    </div>
   );
 }

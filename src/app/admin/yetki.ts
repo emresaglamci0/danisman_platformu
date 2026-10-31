@@ -9,7 +9,7 @@ export async function adminKullanici() {
   return kullanici?.rol === "admin" ? kullanici : null;
 }
 
-type Islem = "belge_goruntule" | "uzman_onayla" | "uzman_reddet" | "foto_kaldir";
+type Islem = "belge_goruntule" | "uzman_onayla" | "uzman_reddet" | "foto_kaldir" | "mesaj_goruntule";
 
 // Admin islemlerini kaydeder: kim, ne zaman, hangi kayit uzerinde ne yapti
 export async function islemKaydet(adminId: string, islem: Islem, hedefId: string) {

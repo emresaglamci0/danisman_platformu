@@ -105,6 +105,21 @@ Admin yapmanın tek yolu, Supabase paneline erişimi olan kişinin (yani sizin) 
   Fotoğraf, uzman onaylanana kadar başkalarına gösterilmez.
 - Dosya türü, dosya adına değil dosyanın içeriğine bakılarak kontrol edilir. Örneğin adı `.pdf` olan bir HTML dosyası reddedilir.
 
+## Mesajlaşma nasıl çalışıyor?
+
+- Konuşma, sadece uzman başvuruyu **kabul ettiğinde** açılır.
+- Her iki taraf, ilk mesajdan önce KVKK aydınlatma metnini ve açık rıza metnini onaylar. Onay; kullanıcı, tarih/saat ve
+  metin sürümüyle kaydedilir. KVKK sayfasında herkes kendi onay kayıtlarını görebilir.
+- Mesajlar veritabanında **şifreli** durur. Şifreleme anahtarı Supabase Vault'ta tutulur.
+  **Vault'taki `mesaj_ana_anahtari` sırrını silmeyin**; silinirse eski mesajlar bir daha okunamaz.
+- Mesajları **varsayılan olarak sadece konuşmanın iki tarafı** okuyabilir.
+- Taraflar bir sohbeti **"Bu sohbeti şikayet et"** ile bildirebilir. Admin, **Yönetim > Şikayetler ve incelemeler**
+  sayfasında sadece şikayet edilmiş veya incelemeye alınmış sohbetleri görür. Bu sohbetleri de sebep yazarak ve
+  30 dakikalığına açabilir. Her erişim (admin, tarih/saat, sohbet, sebep) silinemeyen bir kayda yazılır.
+- Spam koruması: bir kişi dakikada en fazla 8, günde en fazla 200 mesaj gönderebilir.
+- Sohbet ekranında 112 ve kriz hatlarını gösteren, kapatılamayan bir acil durum kutusu var.
+- Yeni mesajlar, sayfa açıkken 10 saniyede bir otomatik olarak yüklenir.
+
 ## Ölçek modülünü açıp kapatma
 
 `.env.local` dosyasındaki `OLCEK_MODULU_AKTIF=true` satırı ana sayfaya pasif bir "Ölçekler" düğmesi ekler.

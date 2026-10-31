@@ -38,7 +38,15 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Veritabanı değişiklikleri `supabase/migrations/` klasöründe numaralı SQL dosyaları olarak tutulur. Her tabloda RLS (satır düzeyinde güvenlik) açık olmalı.
 - Roller: danışan (`client`), uzman (`expert`), öğrenci uzman (`student_expert`), yönetici (`admin`). Admin rolü kayıt formundan asla seçilemez.
 - Öğrenci uzmanlar yalnızca **son sınıf Psikoloji/PDR öğrencileri** olabilir ve **staj kapsamında** hizmet verir. Öğrenci belgesinin geçerlilik tarihi tutulur.
-- Mesaj koruması: **B seçeneği**. Mesajlar, yönetilen anahtar servisinden alınan anahtarla ve doğrulanmış bir kütüphaneyle uygulama katmanında şifrelenir.
+- Mesaj koruması: **B seçeneği**. Ana anahtar Supabase Vault'ta (`mesaj_ana_anahtari`) durur. Her konuşmanın kendi anahtarı vardır ve bu anahtar ana anahtarla sarılır. Mesajlar Node.js'in yerleşik AES-256-GCM yöntemiyle şifrelenir (`src/lib/sifreleme.ts`). Vault'taki sır silinirse mesajlar okunamaz.
+- Mesajları **varsayılan olarak sadece iki taraf** okuyabilir (kullanıcı kararı, 2026-10-31; 0004 migration).
+  - Admin yalnızca **işaretli** sohbetleri (`conversation_flags`: kullanıcı şikayeti, admin incelemesi, ileride otomatik bot) açabilir.
+  - Açmak için sebep yazması gerekir; erişim 30 dakika geçerlidir. Bu kuralı veritabanı `konusma_erisimi_ac` ve `admin_sohbet_okuyabilir` fonksiyonlarıyla uygular.
+  - Her erişim değiştirilemez `conversation_access_log` tablosuna yazılır.
+  - Admin'e genel okuma yetkisi geri **verilmemeli**.
+- İleride eklenecek moderasyon botu, sunucu tarafında `conversation_flags` tablosuna `source='auto_moderation'` ile kayıt ekleyecek (`detector`, `score` ve `message_id` alanları hazır).
+- Mesajlaşmadan önce güncel aydınlatma ve açık rıza sürümleri onaylanmış olmalı. Metin değişirse `src/lib/sabitler.ts` içindeki sürüm değiştirilmeli. KVKK metinleri taslaktır; `KVKK_METINLERI_ONAYLI=true` yapılana kadar "Taslaktır" notu görünür.
+- Sohbet ekranındaki acil durum numaraları (112, 183, 114) yayından önce resmi kaynaklardan yeniden doğrulanmalı.
 - Ödeme site üzerinden yapılacak. Uzman, sohbetin içinden mesaj olarak değil, sitenin bir eki olarak **ödeme planı** gönderir. Site her ödemeden **%5 komisyon** alır. Türkiye'de lisanslı ve alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu kullanılmalı. Kart bilgisi asla bizim sunucumuza gelmemeli.
 - Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
 - Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
