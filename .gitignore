@@ -2,11 +2,22 @@
 .env
 .env.*
 !.env.example
+*.pem
 
-# Bağımlılıklar ve derleme çıktıları
+# Bağımlılıklar
 node_modules/
-dist/
-build/
+
+# Next.js ve derleme çıktıları
+/.next/
+/out/
+/build/
+/coverage/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+
+# Kayıt dosyaları
+npm-debug.log*
 
 # Sistem ve editör dosyaları
 .DS_Store

@@ -31,7 +31,18 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Tüm sırlar `.env` dosyasında tutulmalı; `.env` dosyası `.gitignore` içinde olmalı.
 - Hangi değişkenlerin gerektiğini göstermek için değer içermeyen bir `.env.example` dosyası tutulabilir.
 
-## 6. Açıklama tarzı
+## 6. Proje kararları (2026-10-30)
+- Bu bir **öğrenci projesi**; gerçek yayına çıkıp çıkmayacağı belli değil. Gerçek kişi verisi yerine **uydurma test verisi** kullan (`npm run test-verisi`).
+- Teknoloji: Next.js 16 + TypeScript + Tailwind, Supabase (kimlik doğrulama, veritabanı, özel dosya depolama). Sunucu bölgesi: **Frankfurt**.
+- Next.js 16'da birçok şey değişti. Kod yazmadan önce `AGENTS.md` dosyasına ve `node_modules/next/dist/docs/` klasörüne bak (ör. `middleware` yerine `proxy.ts` kullanılıyor).
+- Veritabanı değişiklikleri `supabase/migrations/` klasöründe numaralı SQL dosyaları olarak tutulur. Her tabloda RLS (satır düzeyinde güvenlik) açık olmalı.
+- Roller: danışan (`client`), uzman (`expert`), öğrenci uzman (`student_expert`), yönetici (`admin`). Admin rolü kayıt formundan asla seçilemez.
+- Öğrenci uzmanlar yalnızca **son sınıf Psikoloji/PDR öğrencileri** olabilir ve **staj kapsamında** hizmet verir. Öğrenci belgesinin geçerlilik tarihi tutulur.
+- Mesaj koruması: **B seçeneği**. Mesajlar, yönetilen anahtar servisinden alınan anahtarla ve doğrulanmış bir kütüphaneyle uygulama katmanında şifrelenir.
+- Ödeme site üzerinden yapılacak. Uzman, sohbetin içinden mesaj olarak değil, sitenin bir eki olarak **ödeme planı** gönderir. Site her ödemeden **%5 komisyon** alır. Türkiye'de lisanslı ve alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu kullanılmalı. Kart bilgisi asla bizim sunucumuza gelmemeli.
+- Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
+
+## 7. Açıklama tarzı
 - Proje sahibi kodlamaya yeni başladı.
 - Her değişiklikten sonra **ne yapıldığını ve neden yapıldığını sade Türkçe ile** açıkla.
 - Teknik terim kullanmak gerekirse kısaca ne anlama geldiğini söyle.
