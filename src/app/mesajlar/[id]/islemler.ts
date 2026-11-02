@@ -8,6 +8,10 @@ import { mevcutKullanici } from "@/lib/oturum";
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU, MESAJ_EN_FAZLA, SIKAYET_KATEGORILERI, listedeMi } from "@/lib/sabitler";
 import { mesajSifrele } from "@/lib/sifreleme";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
+import { supabaseYonetici } from "@/lib/supabase/yonetici";
+
+// Satir sonu ve sekme disindaki gorunmez kontrol karakterleri
+const GORUNMEZ_KONTROL_KARAKTERI = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
 // Kullanici aydinlatma metnini okudugunu ve acik rizasini onaylar.
 // Kayit: kullanici, tarih/saat (veritabani yazar) ve metin surumu.
@@ -41,12 +45,17 @@ export async function mesajGonder(_onceki: FormDurumu, form: FormData): Promise<
     return { hata: "Mesaj yazmadan önce KVKK onayını vermelisiniz." };
   }
 
-  const metin = String(form.get("metin") ?? "").trim();
+  // Acik metin kurallari: veritabani mesajin acik halini hic gormedigi icin burada kontrol edilir.
+  const metin = String(form.get("metin") ?? "").replace(/\r\n?/g, "\n").trim();
   if (!metin) return { hata: "Boş mesaj gönderilemez." };
-  if (metin.length > MESAJ_EN_FAZLA) return { hata: `Mesaj en fazla ${MESAJ_EN_FAZLA} karakter olabilir.` };
+  // [...metin] harf sayisini dogru sayar (emoji gibi karakterler 1 harf sayilir)
+  if ([...metin].length > MESAJ_EN_FAZLA) return { hata: `Mesaj en fazla ${MESAJ_EN_FAZLA} karakter olabilir.` };
+  if (GORUNMEZ_KONTROL_KARAKTERI.test(metin)) return { hata: "Mesajda geçersiz karakter var." };
 
-  const supabase = await supabaseSunucu();
-  const { error } = await supabase.from("messages").insert({
+  // Kullanicilarin mesaj tablosuna dogrudan yazma izni yok (0007). Mesaji yalnizca sunucu,
+  // yukaridaki kontrollerden ve sifrelemeden sonra yazar. Veritabani da bicim, boyut,
+  // taraf, onay ve hiz kurallarini ayrica uygular.
+  const { error } = await supabaseYonetici().from("messages").insert({
     conversation_id: konusma.id,
     sender_id: kullanici.id,
     ciphertext: await mesajSifrele(konusma, metin),

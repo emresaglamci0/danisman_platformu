@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Gecici test betikleri (git'e de gonderilmez)
+    ".test-gecici/**",
   ]),
 ]);
 
