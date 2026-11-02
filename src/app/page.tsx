@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { OlcekAlani } from "@/modules/olcek";
+import { OnayGerekir } from "@/components/OnayGerekir";
 
 const ADIMLAR = [
   { baslik: "Uzmanları inceleyin", metin: "Belgeleri tek tek kontrol edilmiş uzmanların profillerine göz atın." },
@@ -13,8 +14,8 @@ export default function AnaSayfa() {
       <section className="space-y-6 text-center">
         <h1 className="text-3xl font-bold sm:text-4xl">Doğru uzmanla tanışmanın kolay yolu</h1>
         <p className="mx-auto max-w-2xl text-slate-600">
-          Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile staj yapan son sınıf
-          Psikoloji/PDR öğrencilerini tek yerde bulun.
+          Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
+          görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link

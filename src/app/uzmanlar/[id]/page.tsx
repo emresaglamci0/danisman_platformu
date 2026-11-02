@@ -4,6 +4,7 @@ import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { ALANLAR } from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanGetir, uzmanUnvani } from "@/lib/uzmanlar";
+import { OnayGerekir } from "@/components/OnayGerekir";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { BasvuruFormu } from "./BasvuruFormu";
 
@@ -33,7 +34,11 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         </div>
         {uzman.kind === "student" && (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Bu kişi son sınıf öğrencisidir ve staj kapsamında hizmet verir.
+            Bu kişi son sınıf öğrencisidir, lisanslı bir uzman değildir. Görüşmeler{" "}
+            <strong>ücretsiz, staj kapsamında</strong> yapılır. <OnayGerekir />{" "}
+            <Link href="/ogrenci-uzmanlar" className="underline">
+              Ayrıntılar
+            </Link>
           </p>
         )}
         {uzman.bio && <p className="whitespace-pre-line text-slate-700">{uzman.bio}</p>}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AcikRizaMetni, AydinlatmaMetni } from "@/components/kvkk/Metinler";
 import { TaslakNotu } from "@/components/kvkk/TaslakNotu";
 import { mevcutKullanici } from "@/lib/oturum";
@@ -29,6 +30,17 @@ export default async function KvkkSayfasi() {
       <div className="space-y-3">
         <h1 className="text-2xl font-bold">KVKK ve Gizlilik</h1>
         <TaslakNotu />
+        <p className="text-sm text-slate-600">
+          Sade bir özet için{" "}
+          <Link href="/gizlilik" className="text-teal-800 underline">
+            Gizlilik Politikası
+          </Link>
+          , çerezler için{" "}
+          <Link href="/cerezler" className="text-teal-800 underline">
+            Çerez Bildirimi
+          </Link>{" "}
+          sayfasına bakabilirsiniz.
+        </p>
       </div>
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-5">

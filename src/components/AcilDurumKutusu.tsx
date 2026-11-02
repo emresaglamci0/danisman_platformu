@@ -1,12 +1,6 @@
-// Sohbet ekraninda her zaman gorunen acil durum kutusu. Kapatilamaz.
-// UYARI: Numaralar yayindan once resmi kaynaklardan yeniden dogrulanmalidir.
-// Turkiye'de intihar icin ayri bir ulusal hat bilinmiyor; risk aninda 112 aranmalidir.
-const HATLAR = [
-  { numara: "112", ad: "Acil Çağrı Merkezi", aciklama: "Hayati tehlike, intihar riski, her türlü acil durum" },
-  { numara: "183", ad: "Sosyal Destek Hattı", aciklama: "Aile ve Sosyal Hizmetler Bakanlığı, şiddet ve kriz durumları" },
-  { numara: "114", ad: "Ulusal Zehir Danışma Merkezi", aciklama: "İlaç veya madde zehirlenmesi şüphesi" },
-];
+import { ACIL_HATLAR } from "@/lib/acil-hatlar";
 
+// Sohbet ekraninda her zaman gorunen acil durum kutusu. Kapatilamaz.
 export function AcilDurumKutusu() {
   return (
     <aside
@@ -21,7 +15,7 @@ export function AcilDurumKutusu() {
         Bu mesajlaşma acil durum hizmeti değildir; uzmanınız mesajlara hemen yanıt veremeyebilir.
       </p>
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-        {HATLAR.map((hat) => (
+        {ACIL_HATLAR.map((hat) => (
           <li key={hat.numara} title={hat.aciklama}>
             <a href={`tel:${hat.numara}`} className="font-bold underline">
               {hat.numara}

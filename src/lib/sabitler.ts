@@ -28,6 +28,12 @@ export const ISARET_KATEGORILERI: Record<string, string> = {
 
 export const MESAJ_EN_FAZLA = 2000;
 
+// ORNEK ADRES: yayindan once sirketin gercek iletisim e-postasiyla degistirilmeli
+export const ILETISIM_EPOSTASI = "iletisim@example.com";
+
+// Yasal metin sayfalarinin (kullanim kosullari, gizlilik, cerez vb.) son guncelleme tarihi
+export const YASAL_METIN_TARIHI = "02.11.2026";
+
 export const ROLLER = {
   client: "Danışan",
   expert: "Uzman",

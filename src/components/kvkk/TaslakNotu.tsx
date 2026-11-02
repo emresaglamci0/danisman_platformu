@@ -1,5 +1,6 @@
-// Metinler avukat tarafindan onaylanana kadar gosterilir.
-// Onaydan sonra .env.local icinde KVKK_METINLERI_ONAYLI=true yapilinca gizlenir.
+// Metinler avukat tarafindan onaylanana kadar gosterilir. Tum yasal metinler (KVKK, kullanim
+// kosullari, gizlilik, cerez vb.) tek bir onaya baglidir: hepsi onaylaninca
+// .env.local icinde KVKK_METINLERI_ONAYLI=true yapilir ve not her yerde gizlenir.
 export function TaslakNotu() {
   if (process.env.KVKK_METINLERI_ONAYLI === "true") return null;
   return (

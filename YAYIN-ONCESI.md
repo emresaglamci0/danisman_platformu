@@ -18,7 +18,11 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 
 ## Hukuk / KVKK
 
-- [ ] KVKK aydınlatma ve açık rıza metinlerini avukata onaylatın, sonra `.env` içinde `KVKK_METINLERI_ONAYLI=true` yapın.
+- [ ] KVKK aydınlatma ve açık rıza metinlerini **ve** yasal sayfaları (Kullanım Koşulları, Gizlilik, Çerez, Hakkımızda, İletişim, SSS, Öğrenci Uzmanlar) avukata onaylatın, sonra `.env` içinde `KVKK_METINLERI_ONAYLI=true` yapın. Bu tek ayar hepsindeki "Taslaktır" notunu kaldırır.
+- [ ] Sitedeki bütün **[AVUKAT/KURUM ONAYI GEREKİR]** etiketlerini tek tek ele alın: metni onaylanan haliyle düzeltip etiketi kaldırın. Etiketler ayarla gizlenmez; aramak için kodda `OnayGerekir` kelimesini arayın.
+- [ ] Staj modelini (süpervizyon, üniversite/kurum onayı, resmî staj sayılması) netleştirin ve `/ogrenci-uzmanlar` sayfasını güncelleyin.
+- [ ] `src/lib/sabitler.ts` içindeki **örnek** iletişim e-postasını (`iletisim@example.com`) gerçek adresle değiştirin.
+- [ ] Hesap silme şimdilik e-postayla isteniyor; site içinden hesap silme özelliği ekleyin.
 - [ ] Metinlerdeki `[Veri sorumlusu]`, `[iletişim adresi]`, `[Saklama süreleri]` yer tutucularını doldurun.
 - [ ] Yurt dışına aktarım için standart sözleşmeyi imzalayıp KVKK Kurumu'na bildirin; VERBİS kaydını kontrol edin.
 - [ ] Sohbet ekranındaki acil durum numaralarını (112, 183, 114) resmi kaynaklardan yeniden doğrulayın.

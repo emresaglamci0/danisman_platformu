@@ -4,6 +4,28 @@ import "./globals.css";
 import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
 import { cikisYap } from "./giris/islemler";
+import { AcilDurumBandi } from "@/components/AcilDurumBandi";
+
+const ALT_MENU = [
+  {
+    baslik: "Platform",
+    baglantilar: [
+      { adres: "/hakkimizda", ad: "Hakkımızda" },
+      { adres: "/ogrenci-uzmanlar", ad: "Öğrenci Uzmanlar Hakkında" },
+      { adres: "/sss", ad: "Sık Sorulan Sorular" },
+      { adres: "/iletisim", ad: "İletişim" },
+    ],
+  },
+  {
+    baslik: "Yasal",
+    baglantilar: [
+      { adres: "/kullanim-kosullari", ad: "Kullanım Koşulları" },
+      { adres: "/gizlilik", ad: "Gizlilik Politikası" },
+      { adres: "/cerezler", ad: "Çerez Bildirimi" },
+      { adres: "/kvkk", ad: "KVKK Aydınlatma Metni" },
+    ],
+  },
+];
 
 export const metadata: Metadata = {
   title: "Danışman Buluşma",
@@ -71,12 +93,25 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">{children}</main>
 
+        <AcilDurumBandi />
+
         <footer className="border-t border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-2 px-4 py-6 text-sm text-slate-500">
+          <div className="mx-auto grid max-w-5xl gap-6 px-4 py-6 text-sm text-slate-500 sm:grid-cols-3">
             <p>Bu bir öğrenci projesidir. Gösterilen uzmanlar uydurma test verisidir.</p>
-            <Link href="/kvkk" className="hover:text-slate-800">
-              KVKK Aydınlatma Metni
-            </Link>
+            {ALT_MENU.map((grup) => (
+              <nav key={grup.baslik} aria-label={grup.baslik}>
+                <p className="mb-2 font-semibold text-slate-700">{grup.baslik}</p>
+                <ul className="space-y-1.5">
+                  {grup.baglantilar.map((b) => (
+                    <li key={b.adres}>
+                      <Link href={b.adres} className="hover:text-slate-800">
+                        {b.ad}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
           </div>
         </footer>
       </body>

@@ -69,7 +69,7 @@ const UZMANLAR: TestUzmani[] = [
     rol: "student_expert",
     bolum: "psikoloji",
     alanlar: ["genel", "ozguven"],
-    tanitim: "Uydurma test profili. Psikoloji son sınıf öğrencisi, staj kapsamında hizmet verir.",
+    tanitim: "Uydurma test profili. Psikoloji son sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
   },
   {
     eposta: "test.ogrenci2@example.com",
@@ -77,7 +77,7 @@ const UZMANLAR: TestUzmani[] = [
     rol: "student_expert",
     bolum: "pdr",
     alanlar: ["kariyer"],
-    tanitim: "Uydurma test profili. PDR son sınıf öğrencisi, staj kapsamında hizmet verir.",
+    tanitim: "Uydurma test profili. PDR son sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
   },
 ];
 

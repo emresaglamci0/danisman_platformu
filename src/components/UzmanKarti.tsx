@@ -16,7 +16,7 @@ export function UzmanKarti({ uzman }: { uzman: Uzman }) {
             <h2 className="font-semibold">{uzman.display_name}</h2>
             {uzman.kind === "student" && (
               <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
-                Stajyer
+                Stajyer · Ücretsiz
               </span>
             )}
           </div>

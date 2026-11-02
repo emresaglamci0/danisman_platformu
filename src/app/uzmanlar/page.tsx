@@ -7,7 +7,7 @@ export const metadata = { title: "Uzmanlar | Danışman Buluşma" };
 const FILTRELER: { deger?: Uzman["kind"]; ad: string }[] = [
   { ad: "Tümü" },
   { deger: "independent", ad: "Uzmanlar" },
-  { deger: "student", ad: "Stajyer öğrenciler" },
+  { deger: "student", ad: "Stajyer öğrenciler (ücretsiz)" },
 ];
 
 export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzmanlar">) {
