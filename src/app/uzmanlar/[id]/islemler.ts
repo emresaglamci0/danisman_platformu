@@ -29,6 +29,9 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
   if (error) {
     // 23505: ayni uzmana zaten bekleyen bir basvuru var
     if (error.code === "23505") return { hata: "Bu uzmana zaten yanıt bekleyen bir başvurunuz var." };
+    if (error.message.includes("HIZ_SINIRI")) {
+      return { hata: "Son 24 saatte çok fazla başvuru yaptınız. Lütfen daha sonra tekrar deneyin." };
+    }
     return { hata: "Başvuru gönderilemedi. Lütfen tekrar deneyin." };
   }
 

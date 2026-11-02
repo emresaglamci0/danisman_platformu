@@ -9,6 +9,17 @@ import { mevcutKullanici } from "@/lib/oturum";
 import { BELGE_TURLERI, listedeMi } from "@/lib/sabitler";
 import { BELGE_DEPOSU, FOTOGRAF_DEPOSU, supabaseYonetici } from "@/lib/supabase/yonetici";
 
+// Her yuklemeden once veritabanindan yukleme hakki istenir (saatte en fazla 10, 0008).
+// Ucuz kontrollerden (boyut, tur) SONRA, pahali islerden (fotograf isleme, yukleme) ONCE cagrilir.
+async function yuklemeHakkiAl(kullaniciId: string, tur: "belge" | "fotograf"): Promise<string | null> {
+  const { error } = await supabaseYonetici().rpc("yukleme_hakki_kullan", { p_kullanici: kullaniciId, p_tur: tur });
+  if (!error) return null;
+  if (error.message.includes("HIZ_SINIRI")) {
+    return "Son bir saatte çok fazla dosya yüklediniz. Lütfen biraz sonra tekrar deneyin.";
+  }
+  return "Dosya yüklenemedi. Lütfen tekrar deneyin.";
+}
+
 async function uzmanKullanici() {
   const kullanici = await mevcutKullanici();
   if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) return null;
@@ -48,6 +59,9 @@ export async function belgeYukle(_onceki: FormDurumu, form: FormData): Promise<F
   const onayGecerli =
     profil.status === "approved" && (!profil.verified_until || profil.verified_until >= bugun);
   if (onayGecerli) return { hata: "Hesabınız onaylı; şu an yeni belge yüklemenize gerek yok." };
+
+  const hakHatasi = await yuklemeHakkiAl(kullanici.id, "belge");
+  if (hakHatasi) return { hata: hakHatasi };
 
   // Dosya adi rastgele: kullanicinin verdigi dosya adi hic kullanilmaz
   const yol = `${kullanici.id}/${belgeTuru}-${randomUUID()}.${tur.uzanti}`;
@@ -108,6 +122,9 @@ export async function fotografYukle(_onceki: FormDurumu, form: FormData): Promis
   if (!dosyaTuruBul(baytlar, ["image/jpeg", "image/png", "image/webp"])) {
     return { hata: "Yalnızca JPG, PNG veya WebP fotoğraf yükleyebilirsiniz." };
   }
+
+  const hakHatasi = await yuklemeHakkiAl(kullanici.id, "fotograf");
+  if (hakHatasi) return { hata: hakHatasi };
 
   // Fotografi yeniden olustur: yon bilgisini uygula, 400x400'e kucult, WebP'ye cevir.
   // sharp, yeni dosyaya konum (GPS), cihaz modeli gibi EXIF bilgilerini KOPYALAMAZ.

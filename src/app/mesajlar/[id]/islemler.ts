@@ -95,6 +95,9 @@ export async function sikayetEt(_onceki: FormDurumu, form: FormData): Promise<Fo
   });
   if (error) {
     if (error.code === "23505") return { hata: "Bu sohbet için zaten açık bir şikayetiniz var." };
+    if (error.message.includes("HIZ_SINIRI")) {
+      return { hata: "Son 24 saatte çok fazla şikayet gönderdiniz. Lütfen daha sonra tekrar deneyin." };
+    }
     return { hata: "Şikayetiniz kaydedilemedi. Lütfen tekrar deneyin." };
   }
 
