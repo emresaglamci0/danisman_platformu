@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { fotografLinkleri } from "@/lib/fotograf";
 import { BELGE_TURLERI, UZMAN_DURUMLARI, belgeTurleri, tarihYaz, type BelgeTuru, type UzmanDurumu } from "@/lib/sabitler";
@@ -7,7 +6,7 @@ import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { fotografKaldir } from "./islemler";
 import { KararFormu } from "./KararFormu";
-import { adminKullanici } from "./yetki";
+import { adminSayfasiniKoru } from "./yetki";
 
 export const metadata = { title: "Yönetim | Danışman Buluşma" };
 
@@ -20,8 +19,8 @@ type BekleyenUzman = Pick<Uzman, "id" | "kind" | "display_name" | "title" | "dep
 const MIME_ADI: Record<string, string> = { "application/pdf": "PDF", "image/jpeg": "JPG", "image/png": "PNG" };
 
 export default async function AdminSayfasi() {
-  // Admin olmayan kisiye sayfanin varligini bile gostermiyoruz
-  if (!(await adminKullanici())) notFound();
+  // Admin olmayan kisiye sayfanin varligini bile gostermiyoruz; kod girmemis admin dogrulamaya gider
+  await adminSayfasiniKoru();
 
   const supabase = await supabaseSunucu();
   const [{ data: bekleyenler }, { data: fotografli }] = await Promise.all([

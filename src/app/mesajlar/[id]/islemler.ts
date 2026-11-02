@@ -97,7 +97,7 @@ export async function sikayetEt(_onceki: FormDurumu, form: FormData): Promise<Fo
 // Yetki, isaret ve sebep kontrolunu veritabani fonksiyonu yapar ve erisimi kaydeder.
 export async function incelemeErisimiAc(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
-  if (kullanici?.rol !== "admin") return { hata: "Bu işlem için yetkiniz yok." };
+  if (kullanici?.rol !== "admin" || kullanici.aal !== "aal2") return { hata: "Bu işlem için yetkiniz yok." };
 
   const konusmaId = String(form.get("konusmaId") ?? "");
   const sebep = String(form.get("sebep") ?? "").trim();

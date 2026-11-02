@@ -21,6 +21,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export default async function KonusmaSayfasi({ params }: PageProps<"/mesajlar/[id]">) {
   const kullanici = await mevcutKullanici();
   if (!kullanici) redirect("/giris");
+  // Admin, iki adimli dogrulama kodunu girmeden hicbir sohbete bakamaz
+  if (kullanici.rol === "admin" && kullanici.aal !== "aal2") redirect("/iki-adimli-dogrulama");
 
   const { id } = await params;
   if (!UUID.test(id)) notFound();

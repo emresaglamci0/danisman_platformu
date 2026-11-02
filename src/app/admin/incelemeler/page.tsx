@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz } from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
-import { adminKullanici } from "../yetki";
+import { adminSayfasiniKoru } from "../yetki";
 import { IncelemeyeAlFormu } from "./IncelemeyeAlFormu";
 import { isaretKapat } from "./islemler";
 
@@ -18,7 +17,7 @@ type Isaret = {
 };
 
 export default async function IncelemelerSayfasi() {
-  if (!(await adminKullanici())) notFound();
+  await adminSayfasiniKoru();
 
   const supabase = await supabaseSunucu();
   const [{ data: isaretler }, { data: konusmalar }, { data: erisimler }] = await Promise.all([

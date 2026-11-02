@@ -51,6 +51,8 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
 - Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
 - Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.
+- Admin yetkileri iki adımlı doğrulamaya (TOTP, `aal2`) bağlıdır (0006). `my_role()` kod girilmemiş admin oturumu için `null` döner. Uygulamada admin kontrolü için `adminKullanici()` / `adminSayfasiniKoru()` kullanılmalı (`src/app/admin/yetki.ts`).
+- Yayın öncesi yapılacaklar `YAYIN-ONCESI.md` dosyasında tutulur.
 
 ## 7. Açıklama tarzı
 - Proje sahibi kodlamaya yeni başladı.

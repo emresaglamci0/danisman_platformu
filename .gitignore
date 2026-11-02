@@ -16,6 +16,9 @@ next-env.d.ts
 *.tsbuildinfo
 .vercel
 
+# Geçici test betikleri (uydurma hesaplarla yapılan denemeler)
+/.test-gecici/
+
 # Kayıt dosyaları
 npm-debug.log*
 

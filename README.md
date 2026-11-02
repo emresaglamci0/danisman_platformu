@@ -89,6 +89,17 @@ Admin yapmanın tek yolu, Supabase paneline erişimi olan kişinin (yani sizin) 
    select p.role, u.email from public.profiles p join auth.users u on u.id = p.id where p.role = 'admin';
    ```
 4. Sitede çıkış yapıp tekrar giriş yapın. Üst menüde **Yönetim** bağlantısı görünecek.
+5. **İki adımlı doğrulamayı kurun.** Yönetim bağlantısına ilk tıkladığınızda kurulum sayfası açılır:
+   telefonunuza Google Authenticator veya Microsoft Authenticator gibi bir uygulama kurun, ekrandaki QR kodu
+   okutun ve uygulamadaki 6 haneli kodu girin. Bundan sonra her girişte bu kod istenir.
+   Kod girilmeden admin paneli açılmaz ve veritabanı hiçbir admin işlemine izin vermez.
+
+**Telefonu kaybederseniz (kurtarma):** SQL Editor'de aşağıdaki komutu, e-postayı kendi adresinizle değiştirerek çalıştırın.
+Sonra siteye girip doğrulama uygulamasını yeniden kurun.
+```sql
+delete from auth.mfa_factors
+where user_id = (select id from auth.users where email = 'sizin-epostaniz@ornek.com');
+```
 
 **Güvenlik önerileri:**
 - Supabase hesabınızda iki adımlı doğrulamayı (MFA) açın, çünkü admin yapma yetkisi bu hesapta.

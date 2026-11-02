@@ -3,7 +3,8 @@ import { supabaseAyarlari } from "./supabase/ayarlar";
 import { supabaseSunucu } from "./supabase/sunucu";
 import type { Rol } from "./sabitler";
 
-export type Kullanici = { id: string; rol: Rol; adSoyad: string };
+// aal: oturumun guvence seviyesi. "aal2" = iki adimli dogrulamadan (TOTP kodu) gecmis.
+export type Kullanici = { id: string; rol: Rol; adSoyad: string; aal: string };
 
 // Giris yapmis kullaniciyi ve rolunu dondurur; giris yoksa null.
 export async function mevcutKullanici(): Promise<Kullanici | null> {
@@ -23,5 +24,5 @@ export async function mevcutKullanici(): Promise<Kullanici | null> {
     .single();
   if (!profil) return null;
 
-  return { id, rol: profil.role, adSoyad: profil.full_name };
+  return { id, rol: profil.role, adSoyad: profil.full_name, aal: String(data?.claims?.aal ?? "aal1") };
 }
