@@ -22,15 +22,12 @@ async function fotograflariEkle(uzmanlar: Omit<Uzman, "fotoLink">[]): Promise<Uz
   return uzmanlar.map((u) => ({ ...u, fotoLink: u.photo_path ? (linkler[u.photo_path] ?? null) : null }));
 }
 
-// Yalnizca onayli uzmanlar doner; bu kurali veritabani da (RLS) ayrica uygular.
+// Herkese acik bilgiler "uzman_vitrini" gorunumunden okunur (0009). Gorunum yalnizca onayli
+// uzmanlari ve yalnizca gerekli sutunlari icerir; asil tabloyu yalnizca uzmanin kendisi ve admin gorur.
 export async function onayliUzmanlar(tur?: Uzman["kind"]): Promise<Uzman[]> {
   if (!supabaseAyarlari()) return [];
   const supabase = await supabaseSunucu();
-  let sorgu = supabase
-    .from("expert_profiles")
-    .select(ALANLAR_SORGU)
-    .eq("status", "approved")
-    .order("display_name");
+  let sorgu = supabase.from("uzman_vitrini").select(ALANLAR_SORGU).order("display_name");
   if (tur) sorgu = sorgu.eq("kind", tur);
   const { data } = await sorgu;
   return fotograflariEkle(data ?? []);
@@ -39,15 +36,29 @@ export async function onayliUzmanlar(tur?: Uzman["kind"]): Promise<Uzman[]> {
 export async function uzmanGetir(id: string): Promise<Uzman | null> {
   if (!supabaseAyarlari()) return null;
   const supabase = await supabaseSunucu();
-  const { data } = await supabase
-    .from("expert_profiles")
-    .select(ALANLAR_SORGU)
-    .eq("id", id)
-    .eq("status", "approved")
-    .maybeSingle();
+  const { data } = await supabase.from("uzman_vitrini").select(ALANLAR_SORGU).eq("id", id).maybeSingle();
   if (!data) return null;
   const [uzman] = await fotograflariEkle([data]);
   return uzman;
+}
+
+// Verilen uzmanlarin gorunen adlarini dondurur. Once herkese acik vitrine bakar; orada olmayan
+// (onayi kalkmis) uzmanlar icin asil tabloya bakar: bunu yalnizca uzmanin kendisi ve admin gorebilir.
+export async function uzmanAdlari(idler: string[]): Promise<Map<string, string>> {
+  const adlar = new Map<string, string>();
+  const tekil = [...new Set(idler)];
+  if (tekil.length === 0) return adlar;
+
+  const supabase = await supabaseSunucu();
+  const { data: vitrin } = await supabase.from("uzman_vitrini").select("id, display_name").in("id", tekil);
+  for (const u of vitrin ?? []) adlar.set(u.id, u.display_name);
+
+  const eksik = tekil.filter((id) => !adlar.has(id));
+  if (eksik.length > 0) {
+    const { data: ozel } = await supabase.from("expert_profiles").select("id, display_name").in("id", eksik);
+    for (const u of ozel ?? []) adlar.set(u.id, u.display_name);
+  }
+  return adlar;
 }
 
 export function uzmanUnvani(uzman: Pick<Uzman, "kind" | "title" | "department">) {

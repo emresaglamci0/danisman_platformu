@@ -1,5 +1,6 @@
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU } from "./sabitler";
 import { supabaseSunucu } from "./supabase/sunucu";
+import { uzmanAdlari } from "./uzmanlar";
 
 export type Konusma = {
   id: string;
@@ -12,32 +13,33 @@ export type Konusma = {
   uzmanAdi: string;
 };
 
-const SORGU = "id, application_id, client_id, expert_id, wrapped_key, created_at, profiles(full_name), expert_profiles(display_name)";
+// Uzman adi asil tablodan degil, herkese acik vitrinden okunur (bkz. uzmanAdlari)
+const SORGU = "id, application_id, client_id, expert_id, wrapped_key, created_at, profiles(full_name)";
 
-type Satir = Omit<Konusma, "danisanAdi" | "uzmanAdi"> & {
-  profiles: { full_name: string } | null;
-  expert_profiles: { display_name: string } | null;
-};
+type Satir = Omit<Konusma, "danisanAdi" | "uzmanAdi"> & { profiles: { full_name: string } | null };
 
-function donustur({ profiles, expert_profiles, ...k }: Satir): Konusma {
-  return {
+async function donustur(satirlar: Satir[]): Promise<Konusma[]> {
+  const adlar = await uzmanAdlari(satirlar.map((s) => s.expert_id));
+  return satirlar.map(({ profiles, ...k }) => ({
     ...k,
     danisanAdi: profiles?.full_name ?? "Danışan",
-    uzmanAdi: expert_profiles?.display_name ?? "Uzman",
-  };
+    uzmanAdi: adlar.get(k.expert_id) ?? "Uzman",
+  }));
 }
 
-// Veritabani kurallari (RLS) yalnizca iki tarafa ve admin'e satir dondurur.
+// Veritabani kurallari (RLS) yalnizca iki tarafa ve (isaretli sohbetlerde) admin'e satir dondurur.
 export async function konusmalariGetir(): Promise<Konusma[]> {
   const supabase = await supabaseSunucu();
   const { data } = await supabase.from("conversations").select(SORGU).order("created_at", { ascending: false });
-  return ((data ?? []) as unknown as Satir[]).map(donustur);
+  return donustur((data ?? []) as unknown as Satir[]);
 }
 
 export async function konusmaGetir(id: string): Promise<Konusma | null> {
   const supabase = await supabaseSunucu();
   const { data } = await supabase.from("conversations").select(SORGU).eq("id", id).maybeSingle();
-  return data ? donustur(data as unknown as Satir) : null;
+  if (!data) return null;
+  const [konusma] = await donustur([data as unknown as Satir]);
+  return konusma;
 }
 
 // Kullanici guncel aydinlatma metnini ve acik riza metnini onaylamis mi?

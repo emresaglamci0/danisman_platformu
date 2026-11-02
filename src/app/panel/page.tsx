@@ -17,6 +17,7 @@ import {
   type UzmanDurumu,
 } from "@/lib/sabitler";
 import { fotografLinkleri } from "@/lib/fotograf";
+import { uzmanAdlari } from "@/lib/uzmanlar";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
@@ -60,10 +61,11 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const supabase = await supabaseSunucu();
   const { data } = await supabase
     .from("applications")
-    .select("id, topic, availability, status, created_at, expert_profiles(display_name)")
+    .select("id, topic, availability, status, created_at, expert_id")
     .eq("client_id", kullanici.id)
     .order("created_at", { ascending: false });
-  const basvurular = (data ?? []) as unknown as (Basvuru & { expert_profiles: { display_name: string } | null })[];
+  const basvurular = (data ?? []) as (Basvuru & { expert_id: string })[];
+  const adlar = await uzmanAdlari(basvurular.map((b) => b.expert_id));
 
   return (
     <section className="space-y-3">
@@ -78,7 +80,7 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
         </p>
       ) : (
         basvurular.map((b) => (
-          <BasvuruSatiri key={b.id} basvuru={b} kisi={b.expert_profiles?.display_name ?? "Uzman artık listede değil"} />
+          <BasvuruSatiri key={b.id} basvuru={b} kisi={adlar.get(b.expert_id) ?? "Uzman artık listede değil"} />
         ))
       )}
     </section>
