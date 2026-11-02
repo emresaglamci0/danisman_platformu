@@ -42,7 +42,7 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Mesajları **varsayılan olarak sadece iki taraf** okuyabilir (kullanıcı kararı, 2026-10-31; 0004 migration).
   - Admin yalnızca **işaretli** sohbetleri (`conversation_flags`: kullanıcı şikayeti, admin incelemesi, ileride otomatik bot) açabilir.
   - Açmak için sebep yazması gerekir; erişim 30 dakika geçerlidir. Bu kuralı veritabanı `konusma_erisimi_ac` ve `admin_sohbet_okuyabilir` fonksiyonlarıyla uygular.
-  - Her erişim değiştirilemez `conversation_access_log` tablosuna yazılır.
+  - Her erişim değiştirilemez `conversation_access_log` tablosuna yazılır. Belge/onay/ret işlemlerinin kaydı `admin_audit_log` da değiştirilemez ve silinemez (0010). İki kayıt tablosunun da hesaplara bağı (foreign key) bilerek yok; hesap silinse bile kayıt kalır.
   - Admin'e genel okuma yetkisi geri **verilmemeli**.
 - İleride eklenecek moderasyon botu, sunucu tarafında `conversation_flags` tablosuna `source='auto_moderation'` ile kayıt ekleyecek (`detector`, `score` ve `message_id` alanları hazır).
 - Mesajlaşmadan önce güncel aydınlatma ve açık rıza sürümleri onaylanmış olmalı. Metin değişirse `src/lib/sabitler.ts` içindeki sürüm değiştirilmeli. KVKK metinleri taslaktır; `KVKK_METINLERI_ONAYLI=true` yapılana kadar "Taslaktır" notu görünür.
