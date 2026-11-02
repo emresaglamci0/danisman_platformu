@@ -53,6 +53,7 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.
 - Admin yetkileri iki adımlı doğrulamaya (TOTP, `aal2`) bağlıdır (0006). `my_role()` kod girilmemiş admin oturumu için `null` döner. Uygulamada admin kontrolü için `adminKullanici()` / `adminSayfasiniKoru()` kullanılmalı (`src/app/admin/yetki.ts`).
 - Yayın öncesi yapılacaklar `YAYIN-ONCESI.md` dosyasında tutulur.
+- Güvenlik başlıkları: İçerik Güvenlik Politikası (CSP, her istekte yeni nonce) `src/proxy.ts` içinde, diğer başlıklar (HSTS, Permissions-Policy vb.) `next.config.ts` içinde. Yeni bir dış kaynak eklenirken (ör. ödeme kuruluşunun ödeme sayfası/iframe'i) CSP'ye sadece o adres eklenmeli. Permissions-Policy'deki `payment=()` gerekirse açılmalı. `'unsafe-inline'` betikler için asla eklenmemeli.
 
 ## 7. Açıklama tarzı
 - Proje sahibi kodlamaya yeni başladı.
