@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { kayitOl } from "./islemler";
-import { butonSinifi, DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
+import { AlanHatasi, butonSinifi, DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
 import { BOLUMLER, UNVANLAR } from "@/lib/sabitler";
 
 const ROL_SECENEKLERI = [
@@ -52,6 +52,7 @@ export function KayitFormu() {
       <label className="block text-sm font-medium">
         Ad soyad
         <input name="adSoyad" autoComplete="name" required minLength={2} maxLength={80} className={girdiSinifi} />
+        <AlanHatasi durum={durum} alan="adSoyad" />
       </label>
 
       {rol === "expert" && (
@@ -67,6 +68,7 @@ export function KayitFormu() {
               </option>
             ))}
           </select>
+          <AlanHatasi durum={durum} alan="unvan" />
         </label>
       )}
 
@@ -84,6 +86,7 @@ export function KayitFormu() {
                 </option>
               ))}
             </select>
+            <AlanHatasi durum={durum} alan="bolum" />
           </label>
           <label className="flex gap-2 text-sm">
             <input type="checkbox" name="sonSinif" required className="mt-0.5" />
@@ -95,6 +98,7 @@ export function KayitFormu() {
               </Link>
             </span>
           </label>
+          <AlanHatasi durum={durum} alan="sonSinif" />
         </>
       )}
 
@@ -119,6 +123,7 @@ export function KayitFormu() {
           minLength={8}
           className={girdiSinifi}
         />
+        <AlanHatasi durum={durum} alan="sifre" />
       </label>
 
       <label className="flex gap-2 text-sm">
@@ -130,6 +135,7 @@ export function KayitFormu() {
           &apos;ni okudum.
         </span>
       </label>
+      <AlanHatasi durum={durum} alan="kvkk" />
 
       <button disabled={bekliyor} className={butonSinifi}>
         {bekliyor ? "Kaydediliyor..." : "Kayıt ol"}

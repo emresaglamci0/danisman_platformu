@@ -37,7 +37,7 @@ export default async function MesajlarSayfasi() {
                 <span className="font-medium">
                   {kullanici.id === k.client_id ? k.uzmanAdi : k.danisanAdi}
                   {!!okunmamis.get(k.id) && (
-                    <span className="ml-2 rounded-full bg-teal-700 px-2 py-0.5 text-xs font-semibold text-black">
+                    <span className="ml-2 rounded-full bg-teal-700 px-2 py-0.5 text-xs font-semibold text-white">
                       {okunmamis.get(k.id)} yeni
                     </span>
                   )}

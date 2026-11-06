@@ -23,11 +23,11 @@ export async function kayitOl(_onceki: FormDurumu, form: FormData): Promise<Form
     return { hata: "Lütfen bir hesap türü seçin." };
   }
   if (adSoyad.length < 2 || adSoyad.length > 80) {
-    return { hata: "Ad soyad 2 ile 80 karakter arasında olmalı." };
+    return { hata: "Ad soyad 2 ile 80 karakter arasında olmalı.", alan: "adSoyad" };
   }
-  if (sifre.length < 8) return { hata: "Şifre en az 8 karakter olmalı." };
+  if (sifre.length < 8) return { hata: "Şifre en az 8 karakter olmalı.", alan: "sifre" };
   if (form.get("kvkk") !== "on") {
-    return { hata: "Devam etmek için KVKK Aydınlatma Metni'ni okuduğunuzu onaylayın." };
+    return { hata: "Devam etmek için KVKK Aydınlatma Metni'ni okuduğunuzu onaylayın.", alan: "kvkk" };
   }
 
   const ekBilgi: Record<string, unknown> = {
@@ -37,13 +37,16 @@ export async function kayitOl(_onceki: FormDurumu, form: FormData): Promise<Form
   };
 
   if (rol === "expert") {
-    if (!listedeMi(UNVANLAR, unvan)) return { hata: "Lütfen unvanınızı seçin." };
+    if (!listedeMi(UNVANLAR, unvan)) return { hata: "Lütfen unvanınızı seçin.", alan: "unvan" };
     ekBilgi.title = unvan;
   }
   if (rol === "student_expert") {
-    if (!listedeMi(BOLUMLER, bolum)) return { hata: "Lütfen bölümünüzü seçin." };
+    if (!listedeMi(BOLUMLER, bolum)) return { hata: "Lütfen bölümünüzü seçin.", alan: "bolum" };
     if (form.get("sonSinif") !== "on") {
-      return { hata: "Öğrenci uzman olarak yalnızca son sınıf öğrencileri staj kapsamında katılabilir." };
+      return {
+        hata: "Öğrenci uzman olarak yalnızca son sınıf öğrencileri staj kapsamında katılabilir.",
+        alan: "sonSinif",
+      };
     }
     ekBilgi.department = bolum;
     ekBilgi.final_year = true;

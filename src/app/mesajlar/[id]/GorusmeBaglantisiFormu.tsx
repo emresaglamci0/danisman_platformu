@@ -33,7 +33,7 @@ export function GorusmeBaglantisiFormu({ konusmaId, baglanti }: { konusmaId: str
         </label>
         <button
           disabled={bekliyor}
-          className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800 disabled:opacity-60"
+          className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800 disabled:opacity-60"
         >
           {bekliyor ? "Kaydediliyor..." : "Kaydet"}
         </button>

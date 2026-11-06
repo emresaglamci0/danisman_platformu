@@ -16,4 +16,4 @@ export function turkceHata(kod: string | undefined) {
   return (kod && MESAJLAR[kod]) || "Bir sorun oluştu. Lütfen tekrar deneyin.";
 }
 
-export type FormDurumu = { hata?: string; basari?: string };
+export type FormDurumu = { hata?: string; basari?: string; alan?: string };

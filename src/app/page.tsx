@@ -14,44 +14,44 @@ export default async function AnaSayfa() {
   const onGorusmeUzmanlari = (await onGorusmeYapanUzmanlar()).slice(0, 3);
 
   return (
-    <div className="space-y-16">
-      <section className="space-y-6 text-center">
-        <h1 className="text-3xl font-bold sm:text-4xl">Doğru uzmanla tanışmanın kolay yolu</h1>
-        <p className="mx-auto max-w-2xl text-slate-600">
+    <div className="space-y-16 sm:space-y-20">
+      <section className="space-y-6 py-4 text-center sm:py-10">
+        <h1 className="text-balance text-4xl font-bold leading-tight sm:text-5xl">
+          Doğru uzmanla tanışmanın kolay yolu
+        </h1>
+        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600">
           Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
           görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/uzmanlar"
-            className="rounded-lg bg-teal-700 px-5 py-2.5 font-medium text-black hover:text-white hover:bg-teal-800"
+            className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
           >
             Uzmanları gör
-          </Link>
-          <Link
-            href="/kayit"
-            className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-medium hover:bg-slate-50"
-          >
-            Uzman olarak katıl
           </Link>
           <OlcekAlani />
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        {ADIMLAR.map((adim, i) => (
-          <div key={adim.baslik} className="rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-semibold text-teal-800">{i + 1}. adım</p>
-            <h2 className="mt-1 font-semibold">{adim.baslik}</h2>
-            <p className="mt-2 text-sm text-slate-600">{adim.metin}</p>
-          </div>
-        ))}
+      <section aria-label="Nasıl çalışır" className="rounded-2xl bg-teal-100 p-6 sm:p-8">
+        <ol className="grid gap-6 sm:grid-cols-3">
+          {ADIMLAR.map((adim, i) => (
+            <li key={adim.baslik}>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white font-semibold text-teal-800">
+                {i + 1}
+              </span>
+              <h2 className="mt-3 text-lg font-semibold">{adim.baslik}</h2>
+              <p className="mt-1 text-sm leading-relaxed text-slate-700">{adim.metin}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="space-y-4">
+      <section className="space-y-5">
         <div>
-          <h2 className="text-xl font-bold">Önce tanış sonra karar ver.</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-2xl font-bold">Önce tanış, sonra karar ver.</h2>
+          <p className="mt-2 max-w-2xl leading-relaxed text-slate-600">
             Bazı uzmanlar ücretsiz ön görüşme yapıyor. Çalışmaya başlamadan önce size uygun olup olmadığını
             anlayabilirsiniz.
           </p>
@@ -68,9 +68,9 @@ export default async function AnaSayfa() {
         </Link>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        <h2 className="mb-2 font-semibold text-slate-900">Gizliliğiniz</h2>
-        <p>
+      <section className="rounded-2xl bg-amber-100 p-6 sm:p-8">
+        <h2 className="text-2xl font-bold">Gizliliğiniz</h2>
+        <p className="mt-2 max-w-2xl leading-relaxed text-slate-700">
           Sizden yalnızca gerekli bilgileri istiyoruz. Başvuru formunda sorununuzu yazmanız
           istenmez. Kişisel verilerinizin nasıl işlendiğini{" "}
           <Link href="/kvkk" className="text-teal-800 underline">
@@ -79,6 +79,13 @@ export default async function AnaSayfa() {
           sayfasında okuyabilirsiniz.
         </p>
       </section>
+
+      <p className="text-center text-sm text-slate-600">
+        Danışanlarla buluşmak isteyen bir uzman mısınız?{" "}
+        <Link href="/kayit" className="text-teal-800 underline">
+          Uzman olarak katıl
+        </Link>
+      </p>
     </div>
   );
 }

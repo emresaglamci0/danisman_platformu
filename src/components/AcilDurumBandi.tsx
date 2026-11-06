@@ -1,5 +1,18 @@
 import { ACIL_HATLAR } from "@/lib/acil-hatlar";
 
+// Her sayfanin ustunde gorunen ince hatirlatma. Hat listesinin tamami alttaki bantta durur. Kapatilamaz.
+export function AcilDurumSeridi() {
+  return (
+    <p className="bg-red-50 px-4 py-1.5 text-center text-xs text-red-900">
+      Bu platform acil durum hizmeti değildir. Acil durumda{" "}
+      <a href="tel:112" className="font-bold underline">
+        112
+      </a>
+      &apos;yi arayın.
+    </p>
+  );
+}
+
 // Her sayfanin altinda (alt bilginin ustunde) gorunen sade acil durum uyarisi. Kapatilamaz.
 export function AcilDurumBandi() {
   return (

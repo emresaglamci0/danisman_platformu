@@ -7,28 +7,16 @@ export function UzmanKarti({ uzman }: { uzman: Uzman }) {
   return (
     <Link
       href={`/uzmanlar/${uzman.id}`}
-      className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 hover:border-teal-600"
+      className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-600 hover:shadow-md"
     >
       <div className="flex items-center gap-3">
         <UzmanFotografi link={uzman.fotoLink} ad={uzman.display_name} boyut={56} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <h2 className="font-semibold">{uzman.display_name}</h2>
-            {uzman.kind === "student" && (
-              <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
-                Stajyer · Ücretsiz
-              </span>
-            )}
-            {uzman.offers_free_intro && (
-              <span className="shrink-0 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900">
-                Ücretsiz ön görüşme
-              </span>
-            )}
-          </div>
+          <h2 className="font-semibold">{uzman.display_name}</h2>
           <p className="text-sm text-teal-800">{uzmanUnvani(uzman)}</p>
         </div>
       </div>
-      {uzman.bio && <p className="mt-3 line-clamp-3 text-sm text-slate-600">{uzman.bio}</p>}
+      {uzman.bio && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600">{uzman.bio}</p>}
       <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
         {uzman.specialties.map((alan) => (
           <li key={alan} className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
@@ -36,6 +24,16 @@ export function UzmanKarti({ uzman }: { uzman: Uzman }) {
           </li>
         ))}
       </ul>
+      {uzman.kind === "student" && (
+        <p className="mt-3 w-fit rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+          Stajyer · Ücretsiz
+        </p>
+      )}
+      {uzman.offers_free_intro && (
+        <p className="mt-3 w-fit rounded-full bg-teal-100 px-2.5 py-0.5 text-xs font-medium text-teal-900">
+          Ücretsiz ön görüşme
+        </p>
+      )}
     </Link>
   );
 }

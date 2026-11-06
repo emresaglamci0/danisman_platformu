@@ -142,7 +142,7 @@ export default async function AdminSayfasi() {
               <button
                 name="karar"
                 value="uygun"
-                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
+                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800"
               >
                 Uygun
               </button>

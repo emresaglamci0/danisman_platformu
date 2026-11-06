@@ -19,7 +19,7 @@ const ALAN_FILTRELERI: { deger?: Alan; ad: string }[] = [
 
 function filtreSinifi(secili: boolean) {
   return `rounded-full border px-3 py-1 ${
-    secili ? "border-teal-700 bg-teal-700 text-black" : "border-slate-300 bg-white hover:bg-slate-50"
+    secili ? "border-teal-700 bg-teal-700 text-white" : "border-slate-300 bg-white hover:bg-slate-50"
   }`;
 }
 
@@ -38,27 +38,8 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
     return parametreler.length ? `/uzmanlar?${new URLSearchParams(parametreler)}` : "/uzmanlar";
   };
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Uzmanlar</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Burada yalnızca belgeleri yönetici tarafından kontrol edilip onaylanmış kişiler listelenir.
-        </p>
-      </div>
-
-      <form action="/uzmanlar" role="search" className="flex max-w-md items-end gap-2">
-        {secili && <input type="hidden" name="tur" value={secili} />}
-        {seciliAlan && <input type="hidden" name="alan" value={seciliAlan} />}
-        <label className="block flex-1 text-sm font-medium">
-          İsimle ara
-          <input name="ara" type="search" maxLength={80} defaultValue={aranan} className={girdiSinifi} />
-        </label>
-        <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
-          Ara
-        </button>
-      </form>
-
+  const filtreler = (
+    <div className="space-y-3">
       <nav aria-label="Uzman türü" className="flex flex-wrap gap-2 text-sm">
         {FILTRELER.map((filtre) => (
           <Link key={filtre.ad} href={adres({ tur: filtre.deger })} className={filtreSinifi(secili === filtre.deger)}>
@@ -78,6 +59,39 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
           </Link>
         ))}
       </nav>
+    </div>
+  );
+  const filtreSayisi = [secili, seciliAlan].filter(Boolean).length;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Uzmanlar</h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Burada yalnızca belgeleri yönetici tarafından kontrol edilip onaylanmış kişiler listelenir.
+        </p>
+      </div>
+
+      <form action="/uzmanlar" role="search" className="flex max-w-md items-end gap-2">
+        {secili && <input type="hidden" name="tur" value={secili} />}
+        {seciliAlan && <input type="hidden" name="alan" value={seciliAlan} />}
+        <label className="block flex-1 text-sm font-medium">
+          İsimle ara
+          <input name="ara" type="search" maxLength={80} defaultValue={aranan} className={girdiSinifi} />
+        </label>
+        <button className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
+          Ara
+        </button>
+      </form>
+
+      {/* Telefonda filtreler uzun yer kapladigi icin acilir panelde durur */}
+      <details className="rounded-xl border border-slate-200 bg-white p-3 md:hidden">
+        <summary className="cursor-pointer text-sm font-medium">
+          Filtreler{filtreSayisi > 0 && ` (${filtreSayisi})`}
+        </summary>
+        <div className="mt-3">{filtreler}</div>
+      </details>
+      <div className="hidden md:block">{filtreler}</div>
 
       {uzmanlar.length === 0 ? (
         <p className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">

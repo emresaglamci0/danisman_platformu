@@ -11,7 +11,7 @@ const YENILEME_SURESI = 30_000;
 function Sayac({ adet }: { adet: number }) {
   if (adet === 0) return null;
   return (
-    <span className="ml-1 rounded-full bg-teal-700 px-1.5 py-0.5 text-xs font-semibold text-black">
+    <span className="ml-1 rounded-full bg-teal-700 px-1.5 py-0.5 text-xs font-semibold text-white">
       {adet > 99 ? "99+" : adet}
       <span className="sr-only"> yeni</span>
     </span>
@@ -44,7 +44,7 @@ export function UstMenu({ rol }: { rol: Rol | null }) {
 
   return (
     <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4">
-      <Link href="/" onClick={kapat} className="text-lg font-semibold text-teal-800">
+      <Link href="/" onClick={kapat} className="font-baslik text-xl font-semibold text-teal-800">
         Danışman Buluşma
       </Link>
 
@@ -78,9 +78,6 @@ export function UstMenu({ rol }: { rol: Rol | null }) {
             <Sayac adet={sayilar.mesaj} />
           </Link>
         )}
-        <Link href="/kvkk" onClick={kapat} className={baglanti}>
-          KVKK
-        </Link>
 
         <div className="flex flex-wrap items-center gap-4 text-sm lg:ml-auto">
           {rol ? (
@@ -106,7 +103,7 @@ export function UstMenu({ rol }: { rol: Rol | null }) {
               <Link
                 href="/kayit"
                 onClick={kapat}
-                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
+                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800"
               >
                 Kayıt ol
               </Link>

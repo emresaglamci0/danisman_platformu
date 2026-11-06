@@ -52,7 +52,7 @@ export default async function OnGorusmeSayfasi() {
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold">Önce tanış sonra karar ver.</h2>
+          <h2 className="text-xl font-bold">Önce tanış, sonra karar ver.</h2>
           <p className="mt-1 text-sm text-slate-600">
             Ücretsiz ön görüşme, bir uzmanla çalışmaya başlamadan önce onun size uygun olup olmadığını
             anlamanızı sağlar.

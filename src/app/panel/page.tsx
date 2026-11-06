@@ -180,7 +180,7 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
           </p>
           <form action={onGorusmeTercihiDegistir} className="mt-3">
             <input type="hidden" name="acik" value={profil?.offers_free_intro ? "false" : "true"} />
-            <button className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-black hover:text-white hover:bg-teal-800">
+            <button className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800">
               {profil?.offers_free_intro ? "Ön görüşmeyi kapat" : "Ön görüşmeyi aç"}
             </button>
           </form>
@@ -228,7 +228,7 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
                   <button
                     name="karar"
                     value="accepted"
-                    className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-black hover:text-white hover:bg-teal-800"
+                    className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800"
                   >
                     Kabul et
                   </button>

@@ -22,7 +22,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_320px]">
       <article className="space-y-4">
-        <Link href="/uzmanlar" className="text-sm text-teal-800 hover:underline">
+        <Link href="/uzmanlar" className="inline-block text-sm text-teal-800 hover:underline">
           ← Tüm uzmanlar
         </Link>
         <div className="flex items-center gap-4">
@@ -49,7 +49,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
             </Link>
           </p>
         )}
-        {uzman.bio && <p className="whitespace-pre-line text-slate-700">{uzman.bio}</p>}
+        {uzman.bio && <p className="whitespace-pre-line leading-relaxed text-slate-700">{uzman.bio}</p>}
         <div>
           <h2 className="mb-2 text-sm font-semibold">Çalıştığı alanlar</h2>
           <ul className="flex flex-wrap gap-1.5">
@@ -62,7 +62,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         </div>
       </article>
 
-      <aside className="h-fit rounded-xl border border-slate-200 bg-white p-5">
+      <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5 md:sticky md:top-6">
         <h2 className="mb-4 font-semibold">Başvuru yap</h2>
         <BasvuruAlani uzmanId={uzman.id} kullanici={kullanici} />
       </aside>
