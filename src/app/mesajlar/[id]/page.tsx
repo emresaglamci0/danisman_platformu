@@ -212,7 +212,7 @@ async function MesajListesi({ kullanici, konusma }: { kullanici: Kullanici; konu
             </p>
             <p
               className={`mt-0.5 whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-left text-sm ${
-                benim ? "bg-teal-700 text-white" : "bg-slate-100 text-slate-900"
+                benim ? "bg-teal-700 text-black" : "bg-slate-100 text-slate-900"
               }`}
             >
               {metinler[i] ?? <em className="opacity-70">Bu mesaj görüntülenemiyor.</em>}

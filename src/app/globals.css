@@ -1,7 +1,39 @@
 @import "tailwindcss";
 
+/* Site paleti: #000000, #14213d, #fca311, #e5e5e5, #ffffff.
+   Sinif adlari kodda oldugu gibi kalir (ör. bg-teal-700), rengi burasi belirler.
+   Turuncunun ustune beyaz yazi konmaz (kontrast 2.02); turuncu yazi da kullanilmaz.
+   Kirmizi ve yesil bilerek degismedi: acil durum, hata ve basari mesajlarinda anlam tasirlar. */
+@theme {
+  --color-teal-50: #fca311;
+  --color-teal-100: #fca311;
+  --color-teal-200: #fca311;
+  --color-teal-600: #fca311;
+  --color-teal-700: #fca311;
+  --color-teal-800: #14213d;
+  --color-teal-900: #14213d;
+  --color-teal-950: #14213d;
+
+  --color-amber-50: #fca311;
+  --color-amber-100: #fca311;
+  --color-amber-200: #fca311;
+  --color-amber-300: #fca311;
+  --color-amber-700: #14213d;
+  --color-amber-900: #14213d;
+
+  --color-slate-50: #e5e5e5;
+  --color-slate-100: #e5e5e5;
+  --color-slate-200: #e5e5e5;
+  --color-slate-300: #14213d;
+  --color-slate-500: #14213d;
+  --color-slate-600: #14213d;
+  --color-slate-700: #14213d;
+  --color-slate-800: #14213d;
+  --color-slate-900: #000000;
+}
+
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background: #e5e5e5;
+  color: #000000;
   font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
 }

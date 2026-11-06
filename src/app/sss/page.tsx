@@ -102,7 +102,7 @@ export default function SssSayfasi() {
         {SORULAR.map(({ soru, yanit }) => (
           <details key={soru} className="group py-3 first:pt-0 last:pb-0">
             <summary className="cursor-pointer list-none font-medium text-slate-900">
-              <span className="mr-2 inline-block text-teal-700 transition-transform group-open:rotate-90">›</span>
+              <span className="mr-2 inline-block text-teal-800 transition-transform group-open:rotate-90">›</span>
               {soru}
             </summary>
             <p className="mt-2 pl-5">{yanit}</p>

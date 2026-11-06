@@ -35,7 +35,7 @@ export function FotografFormu({ fotografVar }: { fotografVar: boolean }) {
         />
         <button
           disabled={bekliyor}
-          className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-60"
+          className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-black hover:text-white hover:bg-teal-800 disabled:opacity-60"
         >
           {bekliyor ? "Yükleniyor..." : fotografVar ? "Fotoğrafı değiştir" : "Fotoğraf yükle"}
         </button>

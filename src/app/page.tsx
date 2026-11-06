@@ -20,7 +20,7 @@ export default function AnaSayfa() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/uzmanlar"
-            className="rounded-lg bg-teal-700 px-5 py-2.5 font-medium text-white hover:bg-teal-800"
+            className="rounded-lg bg-teal-700 px-5 py-2.5 font-medium text-black hover:text-white hover:bg-teal-800"
           >
             Uzmanları gör
           </Link>
@@ -37,7 +37,7 @@ export default function AnaSayfa() {
       <section className="grid gap-4 sm:grid-cols-3">
         {ADIMLAR.map((adim, i) => (
           <div key={adim.baslik} className="rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-semibold text-teal-700">{i + 1}. adım</p>
+            <p className="text-sm font-semibold text-teal-800">{i + 1}. adım</p>
             <h2 className="mt-1 font-semibold">{adim.baslik}</h2>
             <p className="mt-2 text-sm text-slate-600">{adim.metin}</p>
           </div>

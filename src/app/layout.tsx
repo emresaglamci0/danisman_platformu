@@ -54,6 +54,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/on-gorusme" className="text-sm hover:text-teal-800">
               Ücretsiz Ön Görüşme
             </Link>
+            <Link href="/psikolojik-rahatsizliklar" className="text-sm hover:text-teal-800">
+              Psikolojik Rahatsızlıklar
+            </Link>
             {kullanici && (
               <Link href="/mesajlar" className="text-sm hover:text-teal-800">
                 Mesajlar
@@ -84,7 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   </Link>
                   <Link
                     href="/kayit"
-                    className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800"
+                    className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
                   >
                     Kayıt ol
                   </Link>

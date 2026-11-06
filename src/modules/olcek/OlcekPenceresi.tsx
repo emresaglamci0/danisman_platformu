@@ -25,7 +25,7 @@ export function OlcekPenceresi() {
           Bu bölüm henüz hazırlanıyor. Şu an hiçbir soru sorulmuyor ve hiçbir bilgi kaydedilmiyor.
         </p>
         <form method="dialog" className="mt-4 text-right">
-          <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800">
+          <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-black hover:text-white hover:bg-teal-800">
             Kapat
           </button>
         </form>

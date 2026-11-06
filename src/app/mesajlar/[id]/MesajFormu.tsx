@@ -33,7 +33,7 @@ export function MesajFormu({ konusmaId }: { konusmaId: string }) {
       <div className="flex justify-end">
         <button
           disabled={bekliyor}
-          className="rounded-lg bg-teal-700 px-5 py-2 font-medium text-white hover:bg-teal-800 disabled:opacity-60"
+          className="rounded-lg bg-teal-700 px-5 py-2 font-medium text-black hover:text-white hover:bg-teal-800 disabled:opacity-60"
         >
           {bekliyor ? "Gönderiliyor..." : "Gönder"}
         </button>

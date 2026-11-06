@@ -23,7 +23,7 @@ export function UzmanFotografi({
       role="img"
       aria-label={`${ad} için fotoğraf yok`}
       style={stil}
-      className="flex shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700"
+      className="flex shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-800"
     >
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-3/5 w-3/5" aria-hidden="true">
         <path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.4 0-8 2.5-8 5.5V21h16v-1.5c0-3-3.6-5.5-8-5.5Z" />

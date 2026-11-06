@@ -31,7 +31,7 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
             href={filtre.deger ? `/uzmanlar?tur=${filtre.deger}` : "/uzmanlar"}
             className={`rounded-full border px-3 py-1 ${
               secili === filtre.deger
-                ? "border-teal-700 bg-teal-700 text-white"
+                ? "border-teal-700 bg-teal-700 text-black"
                 : "border-slate-300 bg-white hover:bg-slate-50"
             }`}
           >
