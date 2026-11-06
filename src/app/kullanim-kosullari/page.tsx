@@ -100,8 +100,9 @@ export default function KullanimKosullariSayfasi() {
 
       <Bolum baslik="9. Hesabın kapatılması">
         <p>
-          Hesabınızın silinmesini <a href={`mailto:${ILETISIM_EPOSTASI}`} className="text-teal-800 underline">{ILETISIM_EPOSTASI}</a>{" "}
-          adresine yazarak isteyebilirsiniz. Bu koşulları ihlal eden hesaplar uyarı yapılarak veya
+          Hesabınızı panelinizdeki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Sorun yaşarsanız{" "}
+          <a href={`mailto:${ILETISIM_EPOSTASI}`} className="text-teal-800 underline">{ILETISIM_EPOSTASI}</a>{" "}
+          adresine yazabilirsiniz. Bu koşulları ihlal eden hesaplar uyarı yapılarak veya
           yapılmadan kapatılabilir. <OnayGerekir />
         </p>
       </Bolum>

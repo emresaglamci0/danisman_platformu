@@ -22,7 +22,9 @@ import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
 import { FotografFormu } from "./FotografFormu";
+import { HesapSilmeFormu } from "./HesapSilmeFormu";
 import { basvuruYanitla, onGorusmeTercihiDegistir } from "./islemler";
+import { ProfilFormu } from "./ProfilFormu";
 
 export const metadata = { title: "Panelim | Danışman Buluşma" };
 
@@ -53,6 +55,7 @@ export default async function PanelSayfasi() {
           Yönetim paneline git
         </Link>
       )}
+      {kullanici.rol !== "admin" && <HesapSilmeFormu />}
     </div>
   );
 }
@@ -92,7 +95,7 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const [{ data: profil }, { data: belgeler }, { data }] = await Promise.all([
     supabase
       .from("expert_profiles")
-      .select("kind, status, verified_until, review_note, photo_path, offers_free_intro")
+      .select("kind, status, verified_until, review_note, photo_path, offers_free_intro, bio, specialties")
       .eq("id", kullanici.id)
       .single(),
     supabase
@@ -150,6 +153,15 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
             <FotografFormu fotografVar={!!profil?.photo_path} />
           </div>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="font-semibold">Profil bilgilerim</h2>
+        <p className="mb-3 mt-1 text-sm text-slate-600">
+          Danışanlar bu bilgileri profilinizde görür. Sağlık bilgisi veya danışanlarınızla ilgili
+          bilgi yazmayın. Adınız ve unvanınız belgelerinizle doğrulandığı için buradan değiştirilemez.
+        </p>
+        <ProfilFormu tanitim={profil?.bio ?? ""} alanlar={(profil?.specialties ?? []) as Alan[]} />
       </section>
 
       {tur === "independent" && (

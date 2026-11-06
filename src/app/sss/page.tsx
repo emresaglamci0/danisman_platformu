@@ -73,11 +73,13 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     soru: "Hesabımı ve verilerimi nasıl silerim?",
     yanit: (
       <>
-        Şimdilik{" "}
+        Panelinizin altındaki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Sohbetler iki taraf
+        için de silinir. Açık bir şikayet veya inceleme varsa silme, işlem sonuçlanana kadar yapılamaz.
+        Sorun yaşarsanız{" "}
         <a href={`mailto:${ILETISIM_EPOSTASI}`} className={baglanti}>
           {ILETISIM_EPOSTASI}
         </a>{" "}
-        adresine yazarak isteyebilirsiniz.
+        adresine yazabilirsiniz.
       </>
     ),
   },

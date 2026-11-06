@@ -32,7 +32,7 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Hangi değişkenlerin gerektiğini göstermek için değer içermeyen bir `.env.example` dosyası tutulabilir.
 
 ## 6. Proje kararları (2026-10-30)
-- Bu bir **öğrenci projesi**; gerçek yayına çıkıp çıkmayacağı belli değil. Gerçek kişi verisi yerine **uydurma test verisi** kullan (`npm run test-verisi`).
+- Bu bir **öğrenci projesi** ve şimdilik **portfolyo düzeyinde** (kullanıcı kararı, 2026-11-06). Gerçek kişi verisi yerine **uydurma test verisi** kullan (`npm run test-verisi`).
 - Teknoloji: Next.js 16 + TypeScript + Tailwind, Supabase (kimlik doğrulama, veritabanı, özel dosya depolama). Sunucu bölgesi: **Frankfurt**.
 - Next.js 16'da birçok şey değişti. Kod yazmadan önce `AGENTS.md` dosyasına ve `node_modules/next/dist/docs/` klasörüne bak (ör. `middleware` yerine `proxy.ts` kullanılıyor).
 - Veritabanı değişiklikleri `supabase/migrations/` klasöründe numaralı SQL dosyaları olarak tutulur. Her tabloda RLS (satır düzeyinde güvenlik) açık olmalı.
@@ -54,8 +54,14 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - E-posta bildirimi şimdilik **yok** (kullanıcı kararı, 2026-11-02).
 - Ödeme yalnızca **bağımsız uzmanlar** için, site üzerinden yapılacak (henüz yapılmadı). Uzman, sohbetin içinden mesaj olarak değil, sitenin bir eki olarak **ödeme planı (teklif)** gönderir. Site her ödemeden **%5 komisyon** alır. Türkiye'de lisanslı ve alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu kullanılmalı. Kart bilgisi asla bizim sunucumuza gelmemeli.
 - Ücretsiz ön görüşme yalnızca **bağımsız uzmanların isteğe bağlı** tercihidir (`offers_free_intro`, 0011; varsayılan kapalı). Yapanlar `/on-gorusme` sayfasında listelenir. Öğrenci uzmanlarda bu tercih yoktur, çünkü tüm görüşmeleri zaten ücretsizdir. Ön görüşme şimdilik sitedeki mesajlaşma üzerinden yapılır.
+- Uzmanlar panelden yalnızca tanıtım yazısı ve çalışma alanlarını değiştirir; ad ve unvan belgelerle doğrulandığı için değiştirilemez. Kayıt sunucu üzerinden yapılır (tabloya yazma izni verilmemeli).
+- Hesap silme `src/app/panel/hesap-islemleri.ts` içindedir: şifre yeniden sorulur, ilgili sohbette açık şikayet/inceleme varsa engellenir, önce dosyalar sonra hesap silinir. Yönetici hesabı buradan silinemez. Yeni bir tablo kullanıcıya bağlanırsa silme davranışı (`on delete`) düşünülmeli.
+- Şifre sıfırlama yanıtı, e-postanın kayıtlı olup olmadığını belli etmemeli.
 - Site paleti: `#000000`, `#14213d`, `#fca311`, `#e5e5e5`, `#ffffff`. Renkler `src/app/globals.css` içinde Tailwind sınıflarına eşlenir (ör. `bg-teal-700` turuncudur). Turuncu üstüne beyaz yazı ve turuncu yazı kullanılmaz (okunmuyor). Kırmızı/yeşil yalnızca acil durum, hata ve başarı mesajlarında kalır.
-- Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
+- Sitenin kendi görüntülü görüşme sistemi olmayacak, çünkü pahalı. Uzman kendi görüşme bağlantısını paylaşacak (kullanıcı kararı, 2026-11-06; henüz yapılmadı).
+- Uzman tanıtım yazıları önceden onaylanmaz, yönetici **sonradan kontrol eder** (kullanıcı kararı, 2026-11-06; kontrol ekranı henüz yapılmadı).
+- Uzman hesabını silince danışan sohbeti kaybetmemeli (kullanıcı kararı, 2026-11-06; henüz yapılmadı, şu an sohbet iki taraf için de siliniyor).
+- Sıradaki ilk iş site içi bildirim (kullanıcı kararı, 2026-11-06).
 - Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
 - Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.
 - Admin yetkileri iki adımlı doğrulamaya (TOTP, `aal2`) bağlıdır (0006). `my_role()` kod girilmemiş admin oturumu için `null` döner. Uygulamada admin kontrolü için `adminKullanici()` / `adminSayfasiniKoru()` kullanılmalı (`src/app/admin/yetki.ts`).

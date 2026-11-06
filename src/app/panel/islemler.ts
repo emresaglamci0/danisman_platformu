@@ -1,10 +1,35 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { FormDurumu } from "@/lib/hatalar";
 import { mevcutKullanici } from "@/lib/oturum";
+import { ALANLAR, TANITIM_EN_FAZLA, listedeMi } from "@/lib/sabitler";
 import { yeniKonusmaAnahtari } from "@/lib/sifreleme";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { supabaseYonetici } from "@/lib/supabase/yonetici";
+
+// Uzman tanitim yazisini ve calisma alanlarini gunceller. Ad ve unvan belgelerle dogrulandigi icin
+// burada degistirilemez. Uzmanlarin tabloya yazma izni yok; sunucu yalnizca bu iki alani degistirir.
+export async function profilGuncelle(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) {
+    return { hata: "Bu işlem yalnızca uzman hesapları içindir." };
+  }
+
+  const tanitim = String(form.get("tanitim") ?? "").trim();
+  const alanlar = [...new Set(form.getAll("alanlar"))].filter((alan) => listedeMi(ALANLAR, alan));
+  if (tanitim.length > TANITIM_EN_FAZLA) return { hata: `Tanıtım yazısı en fazla ${TANITIM_EN_FAZLA} karakter olabilir.` };
+  if (alanlar.length === 0) return { hata: "En az bir çalışma alanı seçin." };
+
+  const { error } = await supabaseYonetici()
+    .from("expert_profiles")
+    .update({ bio: tanitim || null, specialties: alanlar })
+    .eq("id", kullanici.id);
+  if (error) return { hata: "Profiliniz kaydedilemedi. Lütfen tekrar deneyin." };
+
+  revalidatePath("/panel");
+  return { basari: "Profiliniz güncellendi." };
+}
 
 // Bagimsiz uzman ucretsiz on gorusme tercihini acar veya kapatir. Uzmanlarin profil tablosuna
 // yazma izni olmadigi icin sunucu, yalnizca bu alani ve yalnizca uzmanin kendi satirinda degistirir (0011).

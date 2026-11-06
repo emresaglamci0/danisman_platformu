@@ -85,12 +85,17 @@ export default function GizlilikSayfasi() {
 
       <Bolum baslik="Saklama ve silme">
         <p>
-          [Saklama süreleri burada netleştirilecek.] <OnayGerekir /> Hesabınızın ve verilerinizin
-          silinmesini şimdilik{" "}
+          [Saklama süreleri burada netleştirilecek.] <OnayGerekir /> Hesabınızı ve verilerinizi
+          panelinizdeki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Sorun yaşarsanız{" "}
           <a href={`mailto:${ILETISIM_EPOSTASI}`} className="text-teal-800 underline">
             {ILETISIM_EPOSTASI}
           </a>{" "}
-          adresine yazarak isteyebilirsiniz.
+          adresine yazabilirsiniz.
+        </p>
+        <p>
+          Silme işleminde sohbetler iki taraf için de silinir. Açık bir şikayet veya inceleme varsa
+          silme, işlem sonuçlanana kadar yapılamaz. Yönetici erişim ve işlem kayıtları silinmez.{" "}
+          <OnayGerekir />
         </p>
       </Bolum>
     </YasalSayfa>

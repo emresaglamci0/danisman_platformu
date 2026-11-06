@@ -12,6 +12,11 @@ export default async function GirisSayfasi() {
     <div className="mx-auto max-w-sm space-y-6">
       <h1 className="text-2xl font-bold">Giriş yap</h1>
       <GirisFormu />
+      <p className="text-sm">
+        <Link href="/sifremi-unuttum" className="text-teal-800 underline">
+          Şifremi unuttum
+        </Link>
+      </p>
       <p className="text-sm text-slate-600">
         Hesabınız yok mu?{" "}
         <Link href="/kayit" className="text-teal-800 underline">

@@ -12,7 +12,8 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 - [ ] **E-posta doğrulamasını açın** (güvenlik denetimi, Bulgu 4).
   Supabase > **Authentication** > **Sign In / Providers** > **Email** > **Confirm email** seçeneğini açın.
   Bunun için kendi e-posta gönderim servisinizi (SMTP) de bağlamanız gerekir; Supabase'in ücretsiz gönderimi saatte birkaç e-postayla sınırlı.
-  **Site URL** ve **Redirect URLs** ayarlarına gerçek alan adınızı yazın.
+  **Site URL** ve **Redirect URLs** ayarlarına gerçek alan adınızı yazın (şifre sıfırlama bağlantısı da buna bağlıdır).
+- [ ] Uzmanlar tanıtım yazılarını onaydan sonra da değiştirebiliyor ve bu yazılar kontrol edilmeden yayınlanıyor. Yayında bunun nasıl denetleneceğine karar verin.
 - [ ] Admin hesabında iki adımlı doğrulamanın kurulu olduğunu kontrol edin.
 - [ ] Supabase hesabınızda (panele giriş) iki adımlı doğrulamayı açın.
 
@@ -22,7 +23,7 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 - [ ] Sitedeki bütün **[AVUKAT/KURUM ONAYI GEREKİR]** etiketlerini tek tek ele alın: metni onaylanan haliyle düzeltip etiketi kaldırın. Etiketler ayarla gizlenmez; aramak için kodda `OnayGerekir` kelimesini arayın.
 - [ ] Staj modelini (süpervizyon, üniversite/kurum onayı, resmî staj sayılması) netleştirin ve `/ogrenci-uzmanlar` sayfasını güncelleyin.
 - [ ] `src/lib/sabitler.ts` içindeki **örnek** iletişim e-postasını (`iletisim@example.com`) gerçek adresle değiştirin.
-- [ ] Hesap silme şimdilik e-postayla isteniyor; site içinden hesap silme özelliği ekleyin.
+- [ ] Hesap silme kurallarını avukata onaylatın: açık şikayet varken silmenin engellenmesi, sohbetlerin iki taraf için silinmesi, açık rıza kayıtlarının (`consents`) hesapla birlikte silinmesi (ispat için saklanmalı mı?) ve yönetici kayıtlarının kalması.
 - [ ] Metinlerdeki `[Veri sorumlusu]`, `[iletişim adresi]`, `[Saklama süreleri]` yer tutucularını doldurun.
 - [ ] Yurt dışına aktarım için standart sözleşmeyi imzalayıp KVKK Kurumu'na bildirin; VERBİS kaydını kontrol edin.
 - [ ] Sohbet ekranındaki acil durum numaralarını (112, 183, 114) resmi kaynaklardan yeniden doğrulayın.
