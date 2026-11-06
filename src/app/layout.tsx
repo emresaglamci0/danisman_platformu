@@ -51,6 +51,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/uzmanlar" className="text-sm hover:text-teal-800">
               Uzmanlar
             </Link>
+            <Link href="/on-gorusme" className="text-sm hover:text-teal-800">
+              Ücretsiz Ön Görüşme
+            </Link>
             {kullanici && (
               <Link href="/mesajlar" className="text-sm hover:text-teal-800">
                 Mesajlar

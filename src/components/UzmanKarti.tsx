@@ -19,6 +19,11 @@ export function UzmanKarti({ uzman }: { uzman: Uzman }) {
                 Stajyer · Ücretsiz
               </span>
             )}
+            {uzman.offers_free_intro && (
+              <span className="shrink-0 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900">
+                Ücretsiz ön görüşme
+              </span>
+            )}
           </div>
           <p className="text-sm text-teal-800">{uzmanUnvani(uzman)}</p>
         </div>

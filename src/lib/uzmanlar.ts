@@ -12,10 +12,11 @@ export type Uzman = {
   specialties: Alan[];
   bio: string | null;
   photo_path: string | null;
+  offers_free_intro: boolean;
   fotoLink: string | null;
 };
 
-const ALANLAR_SORGU = "id, kind, display_name, title, department, specialties, bio, photo_path";
+const ALANLAR_SORGU = "id, kind, display_name, title, department, specialties, bio, photo_path, offers_free_intro";
 
 async function fotograflariEkle(uzmanlar: Omit<Uzman, "fotoLink">[]): Promise<Uzman[]> {
   const linkler = await fotografLinkleri(uzmanlar.map((u) => u.photo_path));
@@ -30,6 +31,17 @@ export async function onayliUzmanlar(tur?: Uzman["kind"]): Promise<Uzman[]> {
   let sorgu = supabase.from("uzman_vitrini").select(ALANLAR_SORGU).order("display_name");
   if (tur) sorgu = sorgu.eq("kind", tur);
   const { data } = await sorgu;
+  return fotograflariEkle(data ?? []);
+}
+
+export async function onGorusmeYapanUzmanlar(): Promise<Uzman[]> {
+  if (!supabaseAyarlari()) return [];
+  const supabase = await supabaseSunucu();
+  const { data } = await supabase
+    .from("uzman_vitrini")
+    .select(ALANLAR_SORGU)
+    .eq("offers_free_intro", true)
+    .order("display_name");
   return fotograflariEkle(data ?? []);
 }
 

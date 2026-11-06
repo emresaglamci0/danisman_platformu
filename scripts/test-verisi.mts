@@ -28,6 +28,7 @@ type TestUzmani = {
   bolum?: string;
   alanlar: string[];
   tanitim: string;
+  onGorusme?: boolean;
 };
 
 const UZMANLAR: TestUzmani[] = [
@@ -38,6 +39,7 @@ const UZMANLAR: TestUzmani[] = [
     unvan: "klinik_psikolog",
     alanlar: ["kaygi", "ozguven"],
     tanitim: "Uydurma test profili. Kaygı ve özgüven konularında bilişsel davranışçı yaklaşımla çalışır.",
+    onGorusme: true,
   },
   {
     eposta: "test.uzman2@example.com",
@@ -54,6 +56,7 @@ const UZMANLAR: TestUzmani[] = [
     unvan: "psikolog",
     alanlar: ["iliski", "aile"],
     tanitim: "Uydurma test profili. Çift ve aile ilişkileri üzerine çalışır.",
+    onGorusme: true,
   },
   {
     eposta: "test.uzman4@example.com",
@@ -118,6 +121,7 @@ for (const uzman of UZMANLAR) {
       status: "approved",
       specialties: uzman.alanlar,
       bio: uzman.tanitim,
+      offers_free_intro: uzman.onGorusme ?? false,
       verified_until: uzman.rol === "student_expert" ? ogrenciBelgesiGecerlilik : null,
     })
     .eq("id", id);

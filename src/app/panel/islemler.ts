@@ -6,6 +6,20 @@ import { yeniKonusmaAnahtari } from "@/lib/sifreleme";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { supabaseYonetici } from "@/lib/supabase/yonetici";
 
+// Bagimsiz uzman ucretsiz on gorusme tercihini acar veya kapatir. Uzmanlarin profil tablosuna
+// yazma izni olmadigi icin sunucu, yalnizca bu alani ve yalnizca uzmanin kendi satirinda degistirir (0011).
+export async function onGorusmeTercihiDegistir(form: FormData) {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici || kullanici.rol !== "expert") return;
+
+  await supabaseYonetici()
+    .from("expert_profiles")
+    .update({ offers_free_intro: form.get("acik") === "true" })
+    .eq("id", kullanici.id);
+
+  revalidatePath("/panel");
+}
+
 // Uzman bir basvuruyu kabul eder veya reddeder.
 // Veritabani kurallari (RLS) da yalnizca ilgili uzmanin, yalnizca bekleyen basvuruyu
 // degistirmesine izin verir. Kabul edilirse iki taraf arasinda konusma acilir.

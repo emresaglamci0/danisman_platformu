@@ -53,6 +53,7 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Her sayfada "acil durum hizmeti değildir" bandı görünür (`AcilDurumBandi`). Acil hat numaraları tek yerde: `src/lib/acil-hatlar.ts`.
 - E-posta bildirimi şimdilik **yok** (kullanıcı kararı, 2026-11-02).
 - Ödeme yalnızca **bağımsız uzmanlar** için, site üzerinden yapılacak (henüz yapılmadı). Uzman, sohbetin içinden mesaj olarak değil, sitenin bir eki olarak **ödeme planı (teklif)** gönderir. Site her ödemeden **%5 komisyon** alır. Türkiye'de lisanslı ve alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu kullanılmalı. Kart bilgisi asla bizim sunucumuza gelmemeli.
+- Ücretsiz ön görüşme yalnızca **bağımsız uzmanların isteğe bağlı** tercihidir (`offers_free_intro`, 0011; varsayılan kapalı). Yapanlar `/on-gorusme` sayfasında listelenir. Öğrenci uzmanlarda bu tercih yoktur, çünkü tüm görüşmeleri zaten ücretsizdir. Ön görüşme şimdilik sitedeki mesajlaşma üzerinden yapılır.
 - Görüntülü görüşme şimdilik yok. Trafik iyi olursa ileride eklenebilir.
 - Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
 - Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.

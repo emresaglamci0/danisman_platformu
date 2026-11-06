@@ -41,6 +41,14 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
             </Link>
           </p>
         )}
+        {uzman.offers_free_intro && (
+          <p className="rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-900">
+            Bu uzman <strong>ücretsiz ön görüşme</strong> yapıyor.{" "}
+            <Link href="/on-gorusme" className="underline">
+              Ön görüşme nedir?
+            </Link>
+          </p>
+        )}
         {uzman.bio && <p className="whitespace-pre-line text-slate-700">{uzman.bio}</p>}
         <div>
           <h2 className="mb-2 text-sm font-semibold">Çalıştığı alanlar</h2>

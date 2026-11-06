@@ -22,7 +22,7 @@ import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
 import { FotografFormu } from "./FotografFormu";
-import { basvuruYanitla } from "./islemler";
+import { basvuruYanitla, onGorusmeTercihiDegistir } from "./islemler";
 
 export const metadata = { title: "Panelim | Danışman Buluşma" };
 
@@ -92,7 +92,7 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const [{ data: profil }, { data: belgeler }, { data }] = await Promise.all([
     supabase
       .from("expert_profiles")
-      .select("kind, status, verified_until, review_note, photo_path")
+      .select("kind, status, verified_until, review_note, photo_path, offers_free_intro")
       .eq("id", kullanici.id)
       .single(),
     supabase
@@ -151,6 +151,27 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
           </div>
         </div>
       </section>
+
+      {tur === "independent" && (
+        <section className="rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="font-semibold">
+            Ücretsiz ön görüşme: {profil?.offers_free_intro ? "Açık" : "Kapalı"}
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Bu tercih isteğe bağlıdır. Açarsanız hesabınız onaylıyken{" "}
+            <Link href="/on-gorusme" className="text-teal-800 underline">
+              Ücretsiz Ön Görüşme
+            </Link>{" "}
+            sayfasında listelenirsiniz ve danışanlardan ön görüşme için ücret istememeyi kabul edersiniz.
+          </p>
+          <form action={onGorusmeTercihiDegistir} className="mt-3">
+            <input type="hidden" name="acik" value={profil?.offers_free_intro ? "false" : "true"} />
+            <button className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800">
+              {profil?.offers_free_intro ? "Ön görüşmeyi kapat" : "Ön görüşmeyi aç"}
+            </button>
+          </form>
+        </section>
+      )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-5">
         <h2 className="mb-3 font-semibold">Belgelerim</h2>
