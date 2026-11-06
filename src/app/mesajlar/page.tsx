@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { okunmamisMesajlar } from "@/lib/bildirimler";
 import { konusmalariGetir } from "@/lib/konusmalar";
 import { mevcutKullanici } from "@/lib/oturum";
 import { tarihYaz } from "@/lib/sabitler";
@@ -12,7 +13,7 @@ export default async function MesajlarSayfasi() {
   // Admin sohbetleri listeleyemez; yalnizca isaretli olanlari Incelemeler sayfasindan acabilir
   if (kullanici.rol === "admin") redirect("/admin/incelemeler");
 
-  const konusmalar = await konusmalariGetir();
+  const [konusmalar, okunmamis] = await Promise.all([konusmalariGetir(), okunmamisMesajlar()]);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -33,7 +34,14 @@ export default async function MesajlarSayfasi() {
                 href={`/mesajlar/${k.id}`}
                 className="flex justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 hover:border-teal-600"
               >
-                <span className="font-medium">{kullanici.id === k.client_id ? k.uzmanAdi : k.danisanAdi}</span>
+                <span className="font-medium">
+                  {kullanici.id === k.client_id ? k.uzmanAdi : k.danisanAdi}
+                  {!!okunmamis.get(k.id) && (
+                    <span className="ml-2 rounded-full bg-teal-700 px-2 py-0.5 text-xs font-semibold text-black">
+                      {okunmamis.get(k.id)} yeni
+                    </span>
+                  )}
+                </span>
                 <span className="text-sm text-slate-500">{tarihYaz(k.created_at)}</span>
               </Link>
             </li>

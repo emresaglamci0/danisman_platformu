@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { FormDurumu } from "@/lib/hatalar";
+import { GORUSME_BAGLANTISI_EN_FAZLA, gorusmeBaglantisiGecerli } from "@/lib/gorusme";
 import { konusmaGetir, mesajlasmaRizasiVar } from "@/lib/konusmalar";
 import { mevcutKullanici } from "@/lib/oturum";
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU, MESAJ_EN_FAZLA, SIKAYET_KATEGORILERI, listedeMi } from "@/lib/sabitler";
@@ -41,6 +42,7 @@ export async function mesajGonder(_onceki: FormDurumu, form: FormData): Promise<
   if (!konusma || (konusma.client_id !== kullanici.id && konusma.expert_id !== kullanici.id)) {
     return { hata: "Bu konuşmaya mesaj yazamazsınız." };
   }
+  if (!konusma.expert_id) return { hata: "Uzman platformdan ayrıldığı için bu sohbete mesaj yazılamaz." };
   if (!(await mesajlasmaRizasiVar(kullanici.id))) {
     return { hata: "Mesaj yazmadan önce KVKK onayını vermelisiniz." };
   }
@@ -69,6 +71,52 @@ export async function mesajGonder(_onceki: FormDurumu, form: FormData): Promise<
 
   revalidatePath(`/mesajlar/${konusma.id}`);
   return { basari: "gonderildi" };
+}
+
+// Uzman kendi gorusme baglantisini kaydeder veya kaldirir (bos gonderilirse). Yalnizca izinli
+// servislerin adresi kabul edilir. Kullanicilarin yazma izni yok; kaydi sunucu yapar (0014).
+export async function gorusmeBaglantisiKaydet(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici) return { hata: "Lütfen giriş yapın." };
+
+  const konusma = await konusmaGetir(String(form.get("konusmaId") ?? ""));
+  if (!konusma || konusma.expert_id !== kullanici.id) return { hata: "Bu işlemi yalnızca sohbetin uzmanı yapabilir." };
+
+  const baglanti = String(form.get("baglanti") ?? "").trim();
+  if (baglanti && !gorusmeBaglantisiGecerli(baglanti)) {
+    return {
+      hata: `Yalnızca Google Meet, Zoom veya Microsoft Teams bağlantısı ekleyebilirsiniz (https ile başlamalı, en fazla ${GORUSME_BAGLANTISI_EN_FAZLA} karakter).`,
+    };
+  }
+
+  const { error } = await supabaseYonetici()
+    .from("conversations")
+    .update({ meeting_url: baglanti || null })
+    .eq("id", konusma.id)
+    .eq("expert_id", kullanici.id);
+  if (error) return { hata: "Bağlantı kaydedilemedi. Lütfen tekrar deneyin." };
+
+  revalidatePath(`/mesajlar/${konusma.id}`);
+  return { basari: baglanti ? "Bağlantı danışanınızla paylaşıldı." : "Bağlantı kaldırıldı." };
+}
+
+// Danisan, uzmani ayrilmis sohbeti 6 ay dolmadan kendisi siler. Kurallari veritabani fonksiyonu uygular.
+export async function ayrilanUzmanSohbetiniSil(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici) return { hata: "Lütfen giriş yapın." };
+  if (form.get("onay") !== "on") return { hata: "Silmek için kutuyu işaretleyin." };
+
+  const supabase = await supabaseSunucu();
+  const { error } = await supabase.rpc("ayrilan_uzman_sohbetini_sil", {
+    p_konusma: String(form.get("konusmaId") ?? ""),
+  });
+  if (error) {
+    if (error.message.includes("ACIK_ISARET")) {
+      return { hata: "Bu sohbette açık bir şikayet veya inceleme var. İşlem sonuçlanınca silebilirsiniz." };
+    }
+    return { hata: "Sohbet silinemedi. Lütfen tekrar deneyin." };
+  }
+  redirect("/mesajlar");
 }
 
 // Taraflardan biri sohbeti sikayet eder. Bu, sohbeti yonetici incelemesine acar.

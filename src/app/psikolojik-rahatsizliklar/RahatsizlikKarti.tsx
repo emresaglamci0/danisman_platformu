@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { ALANLAR, type Alan } from "@/lib/sabitler";
 
-export function RahatsizlikKarti({ ad, aciklama }: { ad: string; aciklama: string }) {
+export function RahatsizlikKarti({ ad, aciklama, alan }: { ad: string; aciklama: string; alan?: Alan }) {
   const [acik, setAcik] = useState(false);
 
   return (
@@ -24,7 +26,12 @@ export function RahatsizlikKarti({ ad, aciklama }: { ad: string; aciklama: strin
         }`}
       >
         <div className="min-h-0 overflow-hidden">
-          <p className="px-4 pb-4 text-sm text-slate-600">{aciklama}</p>
+          <div className="space-y-2 px-4 pb-4 text-sm text-slate-600">
+            <p>{aciklama}</p>
+            <Link href={alan ? `/uzmanlar?alan=${alan}` : "/uzmanlar"} className="inline-block text-teal-800 underline">
+              {alan ? `"${ALANLAR[alan]}" alanında çalışan uzmanları gör` : "Uzmanlara göz at"}
+            </Link>
+          </div>
         </div>
       </div>
     </li>

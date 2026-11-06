@@ -21,9 +21,17 @@ export async function profilGuncelle(_onceki: FormDurumu, form: FormData): Promi
   if (tanitim.length > TANITIM_EN_FAZLA) return { hata: `Tanıtım yazısı en fazla ${TANITIM_EN_FAZLA} karakter olabilir.` };
   if (alanlar.length === 0) return { hata: "En az bir çalışma alanı seçin." };
 
-  const { error } = await supabaseYonetici()
+  const yonetici = supabaseYonetici();
+  const { data: eski } = await yonetici.from("expert_profiles").select("bio").eq("id", kullanici.id).single();
+  // Yazi degistiyse yayinlanir ve yoneticinin sonradan kontrol listesine duser (0015)
+  const yaziDegisti = (eski?.bio ?? "") !== tanitim;
+  const { error } = await yonetici
     .from("expert_profiles")
-    .update({ bio: tanitim || null, specialties: alanlar })
+    .update({
+      bio: tanitim || null,
+      specialties: alanlar,
+      ...(yaziDegisti && { bio_needs_review: !!tanitim, bio_updated_at: new Date().toISOString() }),
+    })
     .eq("id", kullanici.id);
   if (error) return { hata: "Profiliniz kaydedilemedi. Lütfen tekrar deneyin." };
 

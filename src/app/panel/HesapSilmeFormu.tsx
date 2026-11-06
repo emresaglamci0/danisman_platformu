@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { hesabiSil } from "./hesap-islemleri";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
 
-export function HesapSilmeFormu() {
+export function HesapSilmeFormu({ uzman }: { uzman: boolean }) {
   const [durum, gonder, bekliyor] = useActionState(hesabiSil, {});
 
   return (
@@ -17,8 +17,14 @@ export function HesapSilmeFormu() {
           <ul className="mt-1 list-disc pl-5">
             <li>Hesabınız, profiliniz, fotoğrafınız ve belgeleriniz</li>
             <li>Başvurularınız</li>
-            <li>Sohbetleriniz ve mesajlarınız (karşı taraf da bu sohbetlere erişemez)</li>
+            {!uzman && <li>Sohbetleriniz ve mesajlarınız (uzman da bu sohbetlere erişemez)</li>}
           </ul>
+          {uzman && (
+            <p className="mt-2">
+              <strong>Danışanlarınız sohbetlerini kaybetmez:</strong> adınız silinir, ama sohbetler ve
+              gönderdiğiniz mesajlar danışanda salt okunur olarak en fazla 6 ay daha kalır. Sonra otomatik silinir.
+            </p>
+          )}
         </div>
         <label className="block text-sm font-medium">
           Şifreniz

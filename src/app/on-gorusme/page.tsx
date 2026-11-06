@@ -72,7 +72,8 @@ export default async function OnGorusmeSayfasi() {
           <h3 className="mb-2 font-semibold text-slate-900">Nasıl yapılır?</h3>
           <p>
             Uzmanın profilinden başvurursunuz. Uzman başvurunuzu kabul edince ön görüşmeyi sitedeki
-            mesajlaşma üzerinden yaparsınız. Ön görüşme bir tanışma sohbetidir; tanı konulan veya tedavi
+            mesajlaşma üzerinden veya uzmanın sohbette paylaştığı görüntülü görüşme bağlantısıyla
+            yaparsınız. Ön görüşme bir tanışma sohbetidir; tanı konulan veya tedavi
             uygulanan bir seans değildir.
           </p>
           <p className="mt-2">

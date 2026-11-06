@@ -3,8 +3,8 @@ import Link from "next/link";
 import "./globals.css";
 import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
-import { cikisYap } from "./giris/islemler";
 import { AcilDurumBandi } from "@/components/AcilDurumBandi";
+import { UstMenu } from "@/components/UstMenu";
 
 const ALT_MENU = [
   {
@@ -43,58 +43,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             Veritabanı bağlantısı ayarlanmamış. <code>.env.local</code> dosyasını doldurun (README.md dosyasına bakın).
           </div>
         )}
+        <div className="bg-amber-100 px-4 py-2 text-center text-sm text-amber-900">
+          <strong>Demo:</strong> Bu site bir portfolyo projesidir. Gerçek bilgilerinizi girmeyin.
+        </div>
         <header className="border-b border-slate-200 bg-white">
-          <nav className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-4">
-            <Link href="/" className="text-lg font-semibold text-teal-800">
-              Danışman Buluşma
-            </Link>
-            <Link href="/uzmanlar" className="text-sm hover:text-teal-800">
-              Uzmanlar
-            </Link>
-            <Link href="/on-gorusme" className="text-sm hover:text-teal-800">
-              Ücretsiz Ön Görüşme
-            </Link>
-            <Link href="/psikolojik-rahatsizliklar" className="text-sm hover:text-teal-800">
-              Psikolojik Rahatsızlıklar
-            </Link>
-            {kullanici && (
-              <Link href="/mesajlar" className="text-sm hover:text-teal-800">
-                Mesajlar
-              </Link>
-            )}
-            <Link href="/kvkk" className="text-sm hover:text-teal-800">
-              KVKK
-            </Link>
-            <div className="ml-auto flex items-center gap-4 text-sm">
-              {kullanici ? (
-                <>
-                  {kullanici.rol === "admin" && (
-                    <Link href="/admin" className="font-medium text-teal-800 hover:underline">
-                      Yönetim
-                    </Link>
-                  )}
-                  <Link href="/panel" className="hover:text-teal-800">
-                    Panelim
-                  </Link>
-                  <form action={cikisYap}>
-                    <button className="text-slate-600 hover:text-slate-900">Çıkış</button>
-                  </form>
-                </>
-              ) : (
-                <>
-                  <Link href="/giris" className="hover:text-teal-800">
-                    Giriş
-                  </Link>
-                  <Link
-                    href="/kayit"
-                    className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
-                  >
-                    Kayıt ol
-                  </Link>
-                </>
-              )}
-            </div>
-          </nav>
+          <UstMenu rol={kullanici?.rol ?? null} />
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">{children}</main>

@@ -3,14 +3,35 @@
 Psikolog/psikolojik danışmanlarla danışanları buluşturan web sitesi (öğrenci projesi).
 Sitedeki tüm uzmanlar ve kullanıcılar **uydurma test verisidir**.
 
-## Bu aşamada neler var?
+> **Demo:** Bu bir portfolyo projesidir. Sitede gerçek kişi bilgisi girmeyin.
 
-- Ana sayfa
-- Kayıt ve giriş (hesap türü seçimi: Danışan, Uzman, Öğrenci Uzman)
-- Onaylı uzmanların listesi ve uzman detay sayfası
-- Uzmana başvuru; panelde başvuruları görme, uzman için kabul/ret
-- Ölçek modülü: sadece pasif bir pencere, varsayılan olarak kapalı
-- KVKK aydınlatma metni (taslak)
+![Ana sayfa](docs/ekran-goruntuleri/ana-sayfa.png)
+
+## Neler var?
+
+**Danışan**
+- Uzmanları konuya, türe ve isme göre arama; ücretsiz ön görüşme yapan uzmanları görme
+- Başvuru yapma ve kabul edilince uzmanla şifreli saklanan mesajlaşma
+- Uzmanın paylaştığı görüntülü görüşme bağlantısına katılma
+- Okunmamış mesaj ve yanıtlanan başvuru sayaçları
+- Sohbeti şikayet etme, şifre sıfırlama, hesabını silme
+- Psikolojik rahatsızlıklar hakkında temel bilgi sayfası
+
+**Uzman ve öğrenci uzman**
+- Kayıt, belge yükleme, yönetici onayından sonra listede görünme
+- Tanıtım yazısı, çalışma alanı ve fotoğraf düzenleme; isteğe bağlı ücretsiz ön görüşme (bağımsız uzmanlar)
+- Başvuruları yanıtlama, danışanla mesajlaşma, görüşme bağlantısı paylaşma
+
+**Yönetici** (iki adımlı doğrulama zorunlu)
+- Belge onayı veya reddi, tanıtım yazılarının sonradan kontrolü, uygunsuz fotoğrafı kaldırma
+- Yalnızca işaretli sohbetleri, sebep yazarak ve 30 dakikalığına açma; her erişim silinemeyen bir kayda yazılır
+
+**Teknoloji:** Next.js 16, TypeScript, Tailwind, Supabase (kimlik doğrulama, Postgres ve satır düzeyinde güvenlik, özel dosya depolama, Vault).
+
+<p>
+  <img src="docs/ekran-goruntuleri/uzmanlar.png" alt="Uzman arama" width="49%">
+  <img src="docs/ekran-goruntuleri/rahatsizliklar.png" alt="Psikolojik rahatsızlıklar" width="49%">
+</p>
 
 ## Bilgisayarınızda çalıştırma (Windows PowerShell)
 
@@ -128,8 +149,21 @@ where user_id = (select id from auth.users where email = 'sizin-epostaniz@ornek.
   sayfasında sadece şikayet edilmiş veya incelemeye alınmış sohbetleri görür. Bu sohbetleri de sebep yazarak ve
   30 dakikalığına açabilir. Her erişim (admin, tarih/saat, sohbet, sebep) silinemeyen bir kayda yazılır.
 - Spam koruması: bir kişi dakikada en fazla 8, günde en fazla 200 mesaj gönderebilir.
+- Uzman hesabını silerse sohbet danışanda, uzmanın adı olmadan, salt okunur olarak en fazla 6 ay kalır. Danışan bunu daha önce silebilir.
 - Sohbet ekranında 112 ve kriz hatlarını gösteren, kapatılamayan bir acil durum kutusu var.
 - Yeni mesajlar, sayfa açıkken 10 saniyede bir otomatik olarak yüklenir.
+
+## Canlı demo yayınlama (Vercel)
+
+1. Kodu GitHub'a gönderin. `.env.local` dosyası git'e gitmez; bunu kontrol edin.
+2. https://vercel.com adresinde hesap açın, **Add New > Project** ile depoyu seçin.
+3. **Environment Variables** bölümüne `.env.example` dosyasındaki değişkenleri ekleyin.
+   `NEXT_PUBLIC_SITE_URL` değerine Vercel'in verdiği adresi yazın. `SEED_TEST_SIFRESI` gerekmez.
+4. **Deploy** düğmesine basın.
+5. Supabase'de **Authentication > URL Configuration** bölümünde **Site URL** alanına aynı adresi yazın,
+   **Redirect URLs** listesine `adresiniz/**` ekleyin.
+
+Demo hesaplarının şifresini herkese açık bir yere yazmayın. Paylaşacağınız kişiye ayrıca iletin.
 
 ## Ölçek modülünü açıp kapatma
 

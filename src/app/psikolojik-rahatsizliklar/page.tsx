@@ -1,3 +1,4 @@
+import type { Alan } from "@/lib/sabitler";
 import { RahatsizlikKarti } from "./RahatsizlikKarti";
 
 export const metadata = { title: "Psikolojik Rahatsızlıklar | Danışman Buluşma" };
@@ -5,6 +6,7 @@ export const metadata = { title: "Psikolojik Rahatsızlıklar | Danışman Bulu�
 const RAHATSIZLIKLAR = [
   {
     ad: "Anksiyete",
+    alan: "kaygi" as const,
     aciklama:
       "Günlük olaylar karşısında uzun süren, kontrol etmesi zor, yoğun kaygı ve endişe halidir. Huzursuzluk, kas gerginliği, uyku ve odaklanma güçlüğü eşlik edebilir.",
   },
@@ -50,6 +52,7 @@ const RAHATSIZLIKLAR = [
   },
   {
     ad: "Hastalık Kaygısı",
+    alan: "kaygi" as const,
     aciklama:
       "Belirgin bir bedensel belirti olmasa veya belirti hafif olsa da ciddi bir hastalığı olduğu ya da olacağı düşüncesiyle yoğun biçimde uğraşmaktır. Güven verici tetkik sonuçlarına rağmen endişe sürebilir.",
   },
@@ -70,6 +73,7 @@ const RAHATSIZLIKLAR = [
   },
   {
     ad: "Obsesif Kompulsif Bozukluk",
+    alan: "kaygi" as const,
     aciklama:
       "İstenmeden akla gelen, sıkıntı veren tekrarlayıcı düşünceler (obsesyon) ve bu sıkıntıyı azaltmak için yapılan tekrarlayıcı davranış veya zihinsel eylemlerle (kompulsiyon) kendini gösterir.",
   },
@@ -80,11 +84,13 @@ const RAHATSIZLIKLAR = [
   },
   {
     ad: "Özgül Fobi",
+    alan: "kaygi" as const,
     aciklama:
       "Yükseklik, iğne veya belirli bir hayvan gibi tek bir nesne ya da durum karşısında, gerçek tehlikeyle orantısız yoğun korku duymaktır. Kişi çoğunlukla bu durumdan kaçınır.",
   },
   {
     ad: "Panik Bozukluk",
+    alan: "kaygi" as const,
     aciklama:
       "Aniden başlayıp dakikalar içinde doruğa ulaşan yoğun korku nöbetleriyle giden bir bozukluktur. Çarpıntı, nefes darlığı ve titreme görülebilir; kişi yeni bir nöbet geçirmekten korkar.",
   },
@@ -98,7 +104,7 @@ const RAHATSIZLIKLAR = [
     aciklama:
       "Çok sarsıcı bir olayı yaşama veya bu olaya tanık olma sonrasında ortaya çıkabilir. Olayı tekrar tekrar yaşama, hatırlatıcılardan kaçınma, olumsuz duygular ve sürekli tetikte olma görülebilir.",
   },
-].sort((a, b) => a.ad.localeCompare(b.ad, "tr"));
+].sort((a, b) => a.ad.localeCompare(b.ad, "tr")) as { ad: string; aciklama: string; alan?: Alan }[];
 
 export default function PsikolojikRahatsizliklarSayfasi() {
   return (
@@ -114,7 +120,7 @@ export default function PsikolojikRahatsizliklarSayfasi() {
 
       <ul className="grid items-start gap-3 sm:grid-cols-2">
         {RAHATSIZLIKLAR.map((r) => (
-          <RahatsizlikKarti key={r.ad} ad={r.ad} aciklama={r.aciklama} />
+          <RahatsizlikKarti key={r.ad} ad={r.ad} aciklama={r.aciklama} alan={r.alan} />
         ))}
       </ul>
     </div>

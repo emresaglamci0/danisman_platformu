@@ -10,8 +10,9 @@ import { BELGE_DEPOSU, FOTOGRAF_DEPOSU, supabaseYonetici } from "@/lib/supabase/
 
 const GENEL_HATA = "Hesabınız silinemedi. Lütfen tekrar deneyin.";
 
-// Hesabi ve bagli verileri (profil, basvurular, sohbetler, mesajlar, onaylar) kalici olarak siler.
-// Veritabani baglari bunlari kendiliginden siler; degistirilemez erisim ve islem kayitlari kalir.
+// Hesabi ve bagli verileri (profil, basvurular, onaylar) kalici olarak siler; bunu veritabani baglari yapar.
+// Danisan silinirse sohbetleri de silinir. Uzman silinirse sohbet danisanda 6 ay salt okunur kalir (0013).
+// Degistirilemez erisim ve islem kayitlari kalir.
 export async function hesabiSil(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
   const ayarlar = supabaseAyarlari();
@@ -26,7 +27,7 @@ export async function hesabiSil(_onceki: FormDurumu, form: FormData): Promise<Fo
 
   const yonetici = supabaseYonetici();
 
-  // Sohbet silinince sikayet kaydi da silinir: hesap silerek kanit yok edilemesin.
+  // Hesap silerek kanit yok edilemesin: danisanda sikayet kaydi silinir, uzmanda kimlik bilgisi silinir.
   const { data: sohbetler, error: sohbetHatasi } = await yonetici
     .from("conversations")
     .select("id")

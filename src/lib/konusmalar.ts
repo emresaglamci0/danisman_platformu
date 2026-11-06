@@ -6,7 +6,9 @@ export type Konusma = {
   id: string;
   application_id: string;
   client_id: string;
-  expert_id: string;
+  expert_id: string | null; // uzman hesabini silmisse bos (0013)
+  expert_left_at: string | null;
+  meeting_url: string | null;
   wrapped_key: string;
   created_at: string;
   danisanAdi: string;
@@ -14,17 +16,25 @@ export type Konusma = {
 };
 
 // Uzman adi asil tablodan degil, herkese acik vitrinden okunur (bkz. uzmanAdlari)
-const SORGU = "id, application_id, client_id, expert_id, wrapped_key, created_at, profiles(full_name)";
+const SORGU =
+  "id, application_id, client_id, expert_id, expert_left_at, meeting_url, wrapped_key, created_at, profiles(full_name)";
 
 type Satir = Omit<Konusma, "danisanAdi" | "uzmanAdi"> & { profiles: { full_name: string } | null };
 
 async function donustur(satirlar: Satir[]): Promise<Konusma[]> {
-  const adlar = await uzmanAdlari(satirlar.map((s) => s.expert_id));
+  const adlar = await uzmanAdlari(satirlar.flatMap((s) => s.expert_id ?? []));
   return satirlar.map(({ profiles, ...k }) => ({
     ...k,
     danisanAdi: profiles?.full_name ?? "Danışan",
-    uzmanAdi: adlar.get(k.expert_id) ?? "Uzman",
+    uzmanAdi: k.expert_id ? (adlar.get(k.expert_id) ?? "Uzman") : "Ayrılan uzman",
   }));
+}
+
+// Uzman ayrildiktan sonra sohbetin otomatik silinecegi tarih (veritabanindaki 6 ay kuraliyla ayni, 0013)
+export function sohbetSilinmeTarihi(uzmanAyrilma: string) {
+  const tarih = new Date(uzmanAyrilma);
+  tarih.setMonth(tarih.getMonth() + 6);
+  return tarih.toISOString();
 }
 
 // Veritabani kurallari (RLS) yalnizca iki tarafa ve (isaretli sohbetlerde) admin'e satir dondurur.

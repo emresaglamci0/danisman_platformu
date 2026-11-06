@@ -55,13 +55,15 @@ export default async function PanelSayfasi() {
           Yönetim paneline git
         </Link>
       )}
-      {kullanici.rol !== "admin" && <HesapSilmeFormu />}
+      {kullanici.rol !== "admin" && <HesapSilmeFormu uzman={kullanici.rol !== "client"} />}
     </div>
   );
 }
 
 async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const supabase = await supabaseSunucu();
+  // Panel acilinca yanitlanan basvurular goruldu sayilir; ust menudeki sayac sifirlanir
+  await supabase.rpc("basvurular_goruldu");
   const { data } = await supabase
     .from("applications")
     .select("id, topic, availability, status, created_at, expert_id")

@@ -3,16 +3,18 @@ import { notFound, redirect } from "next/navigation";
 import { AcilDurumKutusu } from "@/components/AcilDurumKutusu";
 import { AcikRizaMetni, AydinlatmaMetni } from "@/components/kvkk/Metinler";
 import { TaslakNotu } from "@/components/kvkk/TaslakNotu";
-import { konusmaGetir, mesajlasmaRizasiVar, type Konusma } from "@/lib/konusmalar";
+import { konusmaGetir, mesajlasmaRizasiVar, sohbetSilinmeTarihi, type Konusma } from "@/lib/konusmalar";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
-import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz } from "@/lib/sabitler";
+import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz, tarihYaz } from "@/lib/sabitler";
 import { mesajlariCoz } from "@/lib/sifreleme";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { ErisimFormu } from "./ErisimFormu";
+import { GorusmeBaglantisiFormu } from "./GorusmeBaglantisiFormu";
 import { MesajFormu } from "./MesajFormu";
 import { OtomatikYenile } from "./OtomatikYenile";
 import { RizaFormu } from "./RizaFormu";
 import { SikayetFormu } from "./SikayetFormu";
+import { SohbetSilmeFormu } from "./SohbetSilmeFormu";
 
 export const metadata = { title: "Konuşma | Danışman Buluşma" };
 
@@ -40,8 +42,10 @@ export default async function KonusmaSayfasi({ params }: PageProps<"/mesajlar/[i
 // Konusmanin taraflari (danisan veya uzman)
 // ---------------------------------------------------------------------
 async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; konusma: Konusma }) {
-  // Ilk mesajlasmadan once KVKK onay ekrani
-  if (!(await mesajlasmaRizasiVar(kullanici.id))) {
+  // Ilk mesajlasmadan once KVKK onay ekrani. Uzman ayrildiysa sohbet salt okunurdur; danisan
+  // yeni bir metni onaylamadan da eski mesajlarini okuyabilir ve silebilir.
+  const uzmanAyrildi = !konusma.expert_id;
+  if (!uzmanAyrildi && !(await mesajlasmaRizasiVar(kullanici.id))) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
         <h1 className="text-2xl font-bold">Mesajlaşmadan önce onayınız gerekiyor</h1>
@@ -70,22 +74,56 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
   }
 
   const supabase = await supabaseSunucu();
-  const { data: sikayet } = await supabase
-    .from("conversation_flags")
-    .select("id")
-    .eq("conversation_id", konusma.id)
-    .eq("reported_by", kullanici.id)
-    .eq("status", "open")
-    .maybeSingle();
+  // Mesajlar okunmadan ONCE isaretlenir: bu sirada gelen mesaj okunmamis kalir, kaybolmaz.
+  const [{ data: sikayet }] = await Promise.all([
+    supabase
+      .from("conversation_flags")
+      .select("id")
+      .eq("conversation_id", konusma.id)
+      .eq("reported_by", kullanici.id)
+      .eq("status", "open")
+      .maybeSingle(),
+    supabase.rpc("konusma_okundu", { p_konusma: konusma.id }),
+  ]);
 
-  const karsiTaraf = kullanici.id === konusma.client_id ? konusma.uzmanAdi : konusma.danisanAdi;
+  const uzmanMi = kullanici.id === konusma.expert_id;
+  const karsiTaraf = uzmanMi ? konusma.danisanAdi : konusma.uzmanAdi;
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <AcilDurumKutusu />
       <Baslik baslik={karsiTaraf} />
+      {uzmanMi && <GorusmeBaglantisiFormu konusmaId={konusma.id} baglanti={konusma.meeting_url ?? ""} />}
+      {!uzmanMi && konusma.meeting_url && (
+        <section className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
+          <h2 className="font-semibold">Görüntülü görüşme</h2>
+          <p className="mt-1 text-slate-600">
+            Uzmanınız bir görüşme bağlantısı paylaştı. Görüşme bu sitenin dışında, bağlantının ait olduğu
+            serviste yapılır ve o servisin kuralları geçerlidir.
+          </p>
+          <a
+            href={konusma.meeting_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
+          >
+            Görüşmeye katıl
+          </a>
+        </section>
+      )}
       <MesajListesi kullanici={kullanici} konusma={konusma} />
-      <MesajFormu konusmaId={konusma.id} />
+      {uzmanAyrildi ? (
+        <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 text-sm">
+          <p>
+            <strong>Uzman platformdan ayrıldı.</strong> Bu sohbete artık mesaj yazılamaz.
+            {konusma.expert_left_at &&
+              ` Sohbet ${tarihYaz(sohbetSilinmeTarihi(konusma.expert_left_at))} tarihinde otomatik olarak silinecek.`}
+          </p>
+          <SohbetSilmeFormu konusmaId={konusma.id} />
+        </section>
+      ) : (
+        <MesajFormu konusmaId={konusma.id} />
+      )}
       {sikayet ? (
         <p className="rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-700">
           Bu sohbeti şikayet ettiniz. Yetkili yönetici sohbeti inceleyebilir.
@@ -93,7 +131,7 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
       ) : (
         <SikayetFormu konusmaId={konusma.id} />
       )}
-      <OtomatikYenile />
+      {!uzmanAyrildi && <OtomatikYenile />}
     </div>
   );
 }
@@ -192,7 +230,8 @@ async function MesajListesi({ kullanici, konusma }: { kullanici: Kullanici; konu
   const satirlar = data ?? [];
   const metinler = await mesajlariCoz(konusma, satirlar.map((m) => m.ciphertext));
 
-  const gonderenAdi = (gonderenId: string) => {
+  // Gonderen bossa mesaj, hesabini silen uzmana aittir; "uzmanAdi" bu durumda "Ayrilan uzman" olur
+  const gonderenAdi = (gonderenId: string | null) => {
     if (gonderenId === kullanici.id) return "Siz";
     return gonderenId === konusma.client_id ? konusma.danisanAdi : konusma.uzmanAdi;
   };

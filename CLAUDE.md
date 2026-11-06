@@ -58,10 +58,11 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Hesap silme `src/app/panel/hesap-islemleri.ts` içindedir: şifre yeniden sorulur, ilgili sohbette açık şikayet/inceleme varsa engellenir, önce dosyalar sonra hesap silinir. Yönetici hesabı buradan silinemez. Yeni bir tablo kullanıcıya bağlanırsa silme davranışı (`on delete`) düşünülmeli.
 - Şifre sıfırlama yanıtı, e-postanın kayıtlı olup olmadığını belli etmemeli.
 - Site paleti: `#000000`, `#14213d`, `#fca311`, `#e5e5e5`, `#ffffff`. Renkler `src/app/globals.css` içinde Tailwind sınıflarına eşlenir (ör. `bg-teal-700` turuncudur). Turuncu üstüne beyaz yazı ve turuncu yazı kullanılmaz (okunmuyor). Kırmızı/yeşil yalnızca acil durum, hata ve başarı mesajlarında kalır.
-- Sitenin kendi görüntülü görüşme sistemi olmayacak, çünkü pahalı. Uzman kendi görüşme bağlantısını paylaşacak (kullanıcı kararı, 2026-11-06; henüz yapılmadı).
-- Uzman tanıtım yazıları önceden onaylanmaz, yönetici **sonradan kontrol eder** (kullanıcı kararı, 2026-11-06; kontrol ekranı henüz yapılmadı).
-- Uzman hesabını silince danışan sohbeti kaybetmemeli (kullanıcı kararı, 2026-11-06; henüz yapılmadı, şu an sohbet iki taraf için de siliniyor).
-- Sıradaki ilk iş site içi bildirim (kullanıcı kararı, 2026-11-06).
+- Sitenin kendi görüntülü görüşme sistemi olmayacak, çünkü pahalı (kullanıcı kararı, 2026-11-06). Uzman sohbette kendi bağlantısını paylaşır (0014). İzinli servisler `src/lib/gorusme.ts` içindedir; bağlantı herkese açık profilde gösterilmemeli.
+- Uzman tanıtım yazıları önceden onaylanmaz, yönetici **sonradan kontrol eder** (kullanıcı kararı, 2026-11-06; 0015). Kararlar `admin_audit_log` kaydına yazılır.
+- Uzman hesabını silince danışan sohbeti kaybetmez (kullanıcı kararı, 2026-11-06; 0013). Sohbet salt okunur kalır, uzmanın adı silinir, 6 ay sonra otomatik silinir, danışan daha önce silebilir. `application_id` **boşaltılmamalı**: sohbet anahtarı bu numarayla şifrelidir, kaybolursa mesajlar okunamaz. Danışan hesabını silerse sohbet tamamen silinir.
+- Site içi bildirimler yalnızca **sayı** gösterir, mesaj içeriği veya konu göstermez (0012). Sayaçlar `/bildirimler` adresinden okunur, üst menü `src/components/UstMenu.tsx` içindedir.
+- Her sayfada "Demo: gerçek bilgilerinizi girmeyin" uyarısı vardır (`src/app/layout.tsx`).
 - Dosyalar: belgeler `uzman-belgeleri`, fotoğraflar `profil-fotograflari` özel deposunda. Yükleme/silme yalnızca sunucuda, içerik imzası kontrol edildikten sonra gizli anahtarlı istemciyle (`src/lib/supabase/yonetici.ts`) yapılır. Belge dosyaları admin kararından sonra silinir. Fotoğraflar `sharp` ile küçültülür ve EXIF bilgisi temizlenir.
 - Admin yetkisi yalnızca Supabase SQL Editor'den verilir (README'de anlatılıyor). Uygulama içinden admin atama özelliği eklenmemeli.
 - Admin yetkileri iki adımlı doğrulamaya (TOTP, `aal2`) bağlıdır (0006). `my_role()` kod girilmemiş admin oturumu için `null` döner. Uygulamada admin kontrolü için `adminKullanici()` / `adminSayfasiniKoru()` kullanılmalı (`src/app/admin/yetki.ts`).

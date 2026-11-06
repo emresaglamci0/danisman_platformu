@@ -56,6 +56,11 @@ export function AydinlatmaMetni() {
         tarih/saat, sohbet ve sebep bilgisiyle değiştirilemeyen bir kayda yazılır.
       </p>
       <p>Uzman belgelerini yalnızca site yöneticisi görür.</p>
+      <p>
+        Uzmanın paylaştığı görüntülü görüşme bağlantısını kullanırsanız görüşme, bağlantının ait olduğu
+        üçüncü taraf serviste (Google Meet, Zoom veya Microsoft Teams) yapılır. Bu görüşme sitemizde
+        kaydedilmez ve o servisin gizlilik kuralları geçerlidir.
+      </p>
 
       <h3 className={baslik}>5. Veriler nerede saklanıyor? (Yurt dışına aktarım)</h3>
       <p>
@@ -68,6 +73,12 @@ export function AydinlatmaMetni() {
       <p>
         [Saklama süreleri burada netleştirilecek.] Uzman belgeleri, yönetici kararından sonra
         silinir. Hesabınızı sildiğinizde verileriniz, kanunen saklanması gerekenler dışında silinir.
+      </p>
+      <p>
+        Bir uzman hesabını silerse uzmanın adı ve kimliği silinir. Sohbet ve uzmanın mesajları, danışan
+        erişebilsin diye salt okunur olarak en fazla 6 ay saklanır; sonra otomatik silinir. Danışan bu
+        sohbeti daha önce silebilir. Açık bir şikayet veya inceleme varsa sohbet işlem sonuçlanana kadar
+        silinmez.
       </p>
 
       <h3 className={baslik}>7. Haklarınız (KVKK m. 11)</h3>
@@ -95,7 +106,11 @@ export function AcikRizaMetni() {
         <li>
           güvenlik ve kötüye kullanımın önlenmesi amacıyla, sohbetin şikâyet edilmesi veya riskli
           görülmesi durumunda yetkili yönetici tarafından sebep belirtilerek ve erişim kaydı
-          tutularak incelenebilmesine
+          tutularak incelenebilmesine,
+        </li>
+        <li>
+          uzmanın hesabını silmesi durumunda sohbetin, uzmanın adı olmadan danışanda salt okunur olarak en
+          fazla 6 ay daha saklanmasına
         </li>
       </ul>
       <p>açık rıza veriyorum.</p>

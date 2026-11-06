@@ -93,9 +93,16 @@ export default function GizlilikSayfasi() {
           adresine yazabilirsiniz.
         </p>
         <p>
-          Silme işleminde sohbetler iki taraf için de silinir. Açık bir şikayet veya inceleme varsa
-          silme, işlem sonuçlanana kadar yapılamaz. Yönetici erişim ve işlem kayıtları silinmez.{" "}
+          Danışan hesabı silinince sohbetleri de silinir. Uzman hesabı silinince uzmanın adı ve kimliği
+          silinir; sohbetler ve uzmanın mesajları danışanda salt okunur olarak en fazla 6 ay kalır, sonra
+          otomatik silinir. Danışan bu sohbetleri daha önce silebilir. Açık bir şikayet veya inceleme
+          varsa silme, işlem sonuçlanana kadar yapılamaz. Yönetici erişim ve işlem kayıtları silinmez.{" "}
           <OnayGerekir />
+        </p>
+        <p>
+          Uzmanın sohbette paylaştığı görüntülü görüşme bağlantısı Google, Zoom veya Microsoft gibi
+          üçüncü taraf bir servise gider. Bu görüşmeler sitemizde kaydedilmez; ilgili servisin gizlilik
+          kuralları geçerlidir. <OnayGerekir />
         </p>
       </Bolum>
     </YasalSayfa>

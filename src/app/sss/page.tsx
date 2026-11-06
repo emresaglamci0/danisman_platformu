@@ -54,7 +54,8 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
   },
   {
     soru: "Görüntülü görüşme var mı?",
-    yanit: "Şimdilik hayır. Uzmanla site içindeki yazılı mesajlaşma üzerinden iletişim kurarsınız.",
+    yanit:
+      "Sitenin kendi görüntülü görüşme sistemi yok. Uzmanınız sohbette bir Google Meet, Zoom veya Microsoft Teams bağlantısı paylaşabilir. Bu görüşme site dışında, ilgili serviste yapılır.",
   },
   {
     soru: "Uzman başvuruma yanıt vermezse ne olur?",
@@ -73,8 +74,10 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     soru: "Hesabımı ve verilerimi nasıl silerim?",
     yanit: (
       <>
-        Panelinizin altındaki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Sohbetler iki taraf
-        için de silinir. Açık bir şikayet veya inceleme varsa silme, işlem sonuçlanana kadar yapılamaz.
+        Panelinizin altındaki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Danışan hesabı silinince
+        sohbetleri de silinir. Uzman hesabı silinince sohbetler danışanda, uzmanın adı olmadan, salt
+        okunur olarak en fazla 6 ay kalır; danışan bunları daha önce silebilir. Açık bir şikayet veya
+        inceleme varsa silme, işlem sonuçlanana kadar yapılamaz.
         Sorun yaşarsanız{" "}
         <a href={`mailto:${ILETISIM_EPOSTASI}`} className={baglanti}>
           {ILETISIM_EPOSTASI}

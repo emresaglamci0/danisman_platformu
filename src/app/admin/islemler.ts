@@ -83,6 +83,26 @@ export async function fotografKaldir(form: FormData) {
   revalidatePath("/admin");
 }
 
+// Uzmanin tanitim yazisini sonradan kontrol eder. Yonetici sayfayi actiktan sonra uzman yaziyi
+// degistirdiyse karar uygulanmaz: gorulmemis bir metin "uygun" sayilmasin diye zaman da eslesmeli.
+export async function tanitimKarari(form: FormData) {
+  const admin = await adminKullanici();
+  if (!admin) return;
+
+  const uzmanId = String(form.get("uzmanId") ?? "");
+  const kaldir = form.get("karar") === "kaldir";
+  const supabase = await supabaseSunucu();
+  const { data } = await supabase
+    .from("expert_profiles")
+    .update(kaldir ? { bio: null, bio_needs_review: false } : { bio_needs_review: false })
+    .eq("id", uzmanId)
+    .eq("bio_needs_review", true)
+    .eq("bio_updated_at", String(form.get("degisiklik") ?? ""))
+    .select("id");
+  if (data?.length) await islemKaydet(admin.id, kaldir ? "tanitim_kaldir" : "tanitim_uygun", uzmanId);
+  revalidatePath("/admin");
+}
+
 // Karar verildikten sonra belge dosyalari silinir; sadece "hangi belge, ne zaman" kaydi kalir.
 async function belgeDosyalariniSil(uzmanId: string) {
   const yonetici = supabaseYonetici();

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { OlcekAlani } from "@/modules/olcek";
 import { OnayGerekir } from "@/components/OnayGerekir";
+import { UzmanKarti } from "@/components/UzmanKarti";
+import { onGorusmeYapanUzmanlar } from "@/lib/uzmanlar";
 
 const ADIMLAR = [
   { baslik: "Uzmanları inceleyin", metin: "Belgeleri tek tek kontrol edilmiş uzmanların profillerine göz atın." },
@@ -8,7 +10,9 @@ const ADIMLAR = [
   { baslik: "Yanıtı bekleyin", metin: "Uzman başvurunuzu kabul ettiğinde panelinizden görürsünüz." },
 ];
 
-export default function AnaSayfa() {
+export default async function AnaSayfa() {
+  const onGorusmeUzmanlari = (await onGorusmeYapanUzmanlar()).slice(0, 3);
+
   return (
     <div className="space-y-16">
       <section className="space-y-6 text-center">
@@ -42,6 +46,26 @@ export default function AnaSayfa() {
             <p className="mt-2 text-sm text-slate-600">{adim.metin}</p>
           </div>
         ))}
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl font-bold">Önce tanış sonra karar ver.</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Bazı uzmanlar ücretsiz ön görüşme yapıyor. Çalışmaya başlamadan önce size uygun olup olmadığını
+            anlayabilirsiniz.
+          </p>
+        </div>
+        {onGorusmeUzmanlari.length > 0 && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {onGorusmeUzmanlari.map((uzman) => (
+              <UzmanKarti key={uzman.id} uzman={uzman} />
+            ))}
+          </div>
+        )}
+        <Link href="/on-gorusme" className="inline-block text-sm text-teal-800 underline">
+          Ücretsiz ön görüşme hakkında bilgi alın
+        </Link>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">

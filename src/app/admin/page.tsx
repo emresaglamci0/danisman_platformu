@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { fotografLinkleri } from "@/lib/fotograf";
-import { BELGE_TURLERI, UZMAN_DURUMLARI, belgeTurleri, tarihYaz, type BelgeTuru, type UzmanDurumu } from "@/lib/sabitler";
+import {
+  BELGE_TURLERI,
+  UZMAN_DURUMLARI,
+  belgeTurleri,
+  tarihSaatYaz,
+  tarihYaz,
+  type BelgeTuru,
+  type UzmanDurumu,
+} from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
-import { fotografKaldir } from "./islemler";
+import { fotografKaldir, tanitimKarari } from "./islemler";
 import { KararFormu } from "./KararFormu";
 import { adminSayfasiniKoru } from "./yetki";
 
@@ -23,7 +31,7 @@ export default async function AdminSayfasi() {
   await adminSayfasiniKoru();
 
   const supabase = await supabaseSunucu();
-  const [{ data: bekleyenler }, { data: fotografli }] = await Promise.all([
+  const [{ data: bekleyenler }, { data: fotografli }, { data: tanitimlar }] = await Promise.all([
     supabase
       .from("expert_profiles")
       .select(
@@ -36,7 +44,13 @@ export default async function AdminSayfasi() {
       .select("id, display_name, status, photo_path")
       .not("photo_path", "is", null)
       .order("display_name"),
+    supabase
+      .from("expert_profiles")
+      .select("id, display_name, bio, bio_updated_at")
+      .eq("bio_needs_review", true)
+      .order("bio_updated_at"),
   ]);
+  const kontrolListesi = (tanitimlar ?? []) as { id: string; display_name: string; bio: string; bio_updated_at: string }[];
 
   const tumBekleyenler = (bekleyenler ?? []) as BekleyenUzman[];
   const incelenecekler = tumBekleyenler.filter((u) => u.expert_documents.some((b) => b.storage_path));
@@ -105,6 +119,41 @@ export default async function AdminSayfasi() {
             </p>
 
             <KararFormu uzmanId={uzman.id} ogrenci={uzman.kind === "student"} varsayilanTarih={varsayilanTarih} />
+          </article>
+        ))}
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Kontrol bekleyen tanıtım yazıları ({kontrolListesi.length})</h2>
+          <p className="text-sm text-slate-500">Bu yazılar yayında. Uygun değilse buradan kaldırabilirsiniz.</p>
+        </div>
+        {kontrolListesi.length === 0 && <p className="text-sm text-slate-600">Kontrol bekleyen yazı yok.</p>}
+        {kontrolListesi.map((uzman) => (
+          <article key={uzman.id} className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 text-sm">
+            <div>
+              <h3 className="font-semibold">{uzman.display_name}</h3>
+              <p className="text-xs text-slate-500">Değişiklik: {tarihSaatYaz(uzman.bio_updated_at)}</p>
+            </div>
+            <p className="whitespace-pre-line">{uzman.bio}</p>
+            <form action={tanitimKarari} className="flex flex-wrap gap-2">
+              <input type="hidden" name="uzmanId" value={uzman.id} />
+              <input type="hidden" name="degisiklik" value={uzman.bio_updated_at} />
+              <button
+                name="karar"
+                value="uygun"
+                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-black hover:text-white hover:bg-teal-800"
+              >
+                Uygun
+              </button>
+              <button
+                name="karar"
+                value="kaldir"
+                className="rounded-lg border border-red-300 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50"
+              >
+                Yazıyı kaldır
+              </button>
+            </form>
           </article>
         ))}
       </section>

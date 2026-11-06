@@ -20,7 +20,14 @@ export async function adminSayfasiniKoru() {
   return kullanici;
 }
 
-type Islem = "belge_goruntule" | "uzman_onayla" | "uzman_reddet" | "foto_kaldir" | "mesaj_goruntule";
+type Islem =
+  | "belge_goruntule"
+  | "uzman_onayla"
+  | "uzman_reddet"
+  | "foto_kaldir"
+  | "mesaj_goruntule"
+  | "tanitim_uygun"
+  | "tanitim_kaldir";
 
 // Admin islemlerini kaydeder: kim, ne zaman, hangi kayit uzerinde ne yapti
 export async function islemKaydet(adminId: string, islem: Islem, hedefId: string) {
