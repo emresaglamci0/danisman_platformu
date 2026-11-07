@@ -25,3 +25,6 @@ npm-debug.log*
 # Sistem ve editör dosyaları
 .DS_Store
 Thumbs.db
+
+# Beyin firtinasi taslaklari
+.superpowers/

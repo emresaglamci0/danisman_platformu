@@ -162,6 +162,60 @@ body {
   }
 }
 
+/* On gorusme sayfasi: meditasyon seridi. Ayni saniyede 18 kare duzeni. */
+.meditasyon-seridi {
+  --kare: calc(1s / 18);
+}
+
+.meditasyon-gunes {
+  transform-origin: 450px 160px;
+  animation: gunes-donus calc(var(--kare) * 720) steps(720) infinite;
+}
+
+.meditasyon-nefes {
+  animation: meditasyon-nefes calc(var(--kare) * 54) steps(54) infinite alternate;
+}
+
+@keyframes meditasyon-nefes {
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+/* Acilir kutu: kayma kare kare degil, akici (kullanici karari). Yalnizca fareli ekranlarda kapanir. Telefonda (hover yok) icerik hep aciktir.
+   Icerik gizlenmez, yalnizca yuksekligi sifirlanir; ekran okuyucu her zaman okur. */
+.acilir-ok {
+  display: none;
+}
+
+@media (hover: hover) {
+  .acilir-ok {
+    display: inline-block;
+    transition: transform 300ms ease;
+  }
+
+  .acilir-icerik {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 300ms ease;
+  }
+
+  .acilir-icerik > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .acilir-kutu:hover .acilir-icerik,
+  .acilir-kutu:focus-within .acilir-icerik {
+    grid-template-rows: 1fr;
+  }
+
+  .acilir-kutu:hover .acilir-ok,
+  .acilir-kutu:focus-within .acilir-ok {
+    transform: rotate(180deg);
+  }
+}
+
 /* Isletim sisteminde "hareketi azalt" secili olan kisiler icin gecisler kapanir */
 @media (prefers-reduced-motion: reduce) {
   *,
