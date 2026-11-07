@@ -59,6 +59,63 @@ body {
   font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+/* Ana sayfa cizimi. Saniyede 18 kare (posterize_time = 18): her sure kare sayisiyla yazilir,
+   steps() de ayni sayiyi alir, boylece hareket yalnizca 1/18 saniyede bir degisir. */
+.oturan-kadin {
+  --kare: calc(1s / 18);
+}
+
+.kadin-govde {
+  animation: kadin-nefes calc(var(--kare) * 36) steps(36) infinite alternate;
+}
+
+.kadin-bas {
+  transform-origin: 160px 150px;
+  animation: kadin-bas calc(var(--kare) * 54) steps(54) infinite alternate;
+}
+
+.kelebek {
+  animation: kelebek-ucus calc(var(--kare) * 72) steps(18) infinite;
+}
+
+.kelebek-kanat {
+  transform-origin: 172px 38px;
+  animation: kelebek-kanat calc(var(--kare) * 4) steps(4) infinite alternate;
+}
+
+@keyframes kadin-nefes {
+  to {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes kadin-bas {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes kelebek-ucus {
+  25% {
+    transform: translate(-8px, -5px);
+  }
+  50% {
+    transform: translate(-2px, 4px);
+  }
+  75% {
+    transform: translate(8px, -3px);
+  }
+}
+
+@keyframes kelebek-kanat {
+  to {
+    transform: scaleX(0.3);
+  }
+}
+
 /* Isletim sisteminde "hareketi azalt" secili olan kisiler icin gecisler kapanir */
 @media (prefers-reduced-motion: reduce) {
   *,

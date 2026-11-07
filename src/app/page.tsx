@@ -1,13 +1,27 @@
 import Link from "next/link";
 import { OlcekAlani } from "@/modules/olcek";
+import { BasvuruGorseli, UzmanlarGorseli, YanitGorseli } from "@/components/AdimGorselleri";
 import { OnayGerekir } from "@/components/OnayGerekir";
+import { OturanKadin } from "@/components/OturanKadin";
 import { UzmanKarti } from "@/components/UzmanKarti";
 import { onGorusmeYapanUzmanlar } from "@/lib/uzmanlar";
 
 const ADIMLAR = [
-  { baslik: "Uzmanları inceleyin", metin: "Belgeleri tek tek kontrol edilmiş uzmanların profillerine göz atın." },
-  { baslik: "Başvurun", metin: "Size uygun uzmana birkaç seçimle başvurun. Uzun form doldurmazsınız." },
-  { baslik: "Yanıtı bekleyin", metin: "Uzman başvurunuzu kabul ettiğinde panelinizden görürsünüz." },
+  {
+    baslik: "Uzmanları inceleyin",
+    metin: "Belgeleri tek tek kontrol edilmiş uzmanların profillerine göz atın.",
+    Gorsel: UzmanlarGorseli,
+  },
+  {
+    baslik: "Başvurun",
+    metin: "Size uygun uzmana birkaç seçimle başvurun. Uzun form doldurmazsınız.",
+    Gorsel: BasvuruGorseli,
+  },
+  {
+    baslik: "Yanıtı bekleyin",
+    metin: "Uzman başvurunuzu kabul ettiğinde panelinizden görürsünüz.",
+    Gorsel: YanitGorseli,
+  },
 ];
 
 export default async function AnaSayfa() {
@@ -15,34 +29,45 @@ export default async function AnaSayfa() {
 
   return (
     <div className="space-y-16 sm:space-y-20">
-      <section className="space-y-6 py-4 text-center sm:py-10">
-        <h1 className="text-balance text-4xl font-bold leading-tight sm:text-5xl">
-          Doğru uzmanla tanışmanın kolay yolu
-        </h1>
-        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600">
-          Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
-          görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
-        </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Link
-            href="/uzmanlar"
-            className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
-          >
-            Uzmanları gör
-          </Link>
-          <OlcekAlani />
+      <section className="grid items-center gap-8 py-4 sm:py-10 lg:grid-cols-[3fr_2fr]">
+        <div className="space-y-6 text-center lg:text-left">
+          <h1 className="text-balance text-4xl font-bold leading-tight sm:text-5xl">
+            Doğru uzmanla tanışmanın kolay yolu
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 lg:mx-0">
+            Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
+            görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
+            <Link
+              href="/uzmanlar"
+              className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
+            >
+              Uzmanları gör
+            </Link>
+            <OlcekAlani />
+          </div>
         </div>
+        <OturanKadin />
       </section>
 
-      <section aria-label="Nasıl çalışır" className="rounded-2xl bg-teal-100 p-6 sm:p-8">
-        <ol className="grid gap-6 sm:grid-cols-3">
+      <section aria-label="Nasıl çalışır" className="rounded-2xl bg-teal-100 p-2 sm:p-4">
+        <ol className="grid gap-2 sm:grid-cols-3 sm:gap-4">
           {ADIMLAR.map((adim, i) => (
-            <li key={adim.baslik}>
+            <li key={adim.baslik} className="group relative overflow-hidden rounded-xl p-4">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white font-semibold text-teal-800">
                 {i + 1}
               </span>
               <h2 className="mt-3 text-lg font-semibold">{adim.baslik}</h2>
               <p className="mt-1 text-sm leading-relaxed text-slate-700">{adim.metin}</p>
+              {/* Ayni metni tekrar ettigi icin ekran okuyuculardan gizli; dokunmatik ekran ve klavyede bilgi kaybolmaz */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 flex translate-y-full items-center gap-3 bg-white p-4 transition-transform duration-300 ease-out group-hover:translate-y-0 sm:flex-col sm:items-start lg:flex-row lg:items-center"
+              >
+                <adim.Gorsel />
+                <p className="text-sm leading-relaxed text-slate-700">{adim.metin}</p>
+              </div>
             </li>
           ))}
         </ol>
