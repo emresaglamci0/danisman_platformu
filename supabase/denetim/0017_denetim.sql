@@ -116,6 +116,16 @@ begin
   assert (select status from public.conversation_flags where id = v_i) = 'closed', 'karar isareti kapatmali';
   assert exists (select 1 from public.admin_audit_log where action = 'seans_iade' and target_id = v_p), 'karar kayda yazilmali';
 
+  -- Onayi kaldirilan uzmana bekletmedeki gecmis odeme aktarilmaz, iade edilir
+  v_p := public.plan_gonder(v_k, a, v_t, 120000);
+  perform public.plan_yanitla(v_p, c, 'onay', true);
+  perform public.demo_odeme_yap(v_p, c);
+  update public.session_offers set starts_at = now() - interval '80 hours', ends_at = now() - interval '79 hours' where id = v_p;
+  update public.expert_profiles set status = 'rejected' where id = a;
+  perform public.demo_odeme_bakimi();
+  assert (select status from public.demo_payments where session_offer_id = v_p) = 'refunded', 'onay kalkinca iade olmali';
+  update public.expert_profiles set status = 'approved' where id = a;
+
   -- Uzman silinince bekletmedeki gecmis odeme iade edilir
   v_p := public.plan_gonder(v_k, a, v_t, 120000);
   perform public.plan_yanitla(v_p, c, 'onay', true);

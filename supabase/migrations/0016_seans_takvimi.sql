@@ -227,6 +227,9 @@ begin
   end if;
 
   select * into v_uzman from public.expert_profiles where id = p_uzman;
+  if v_uzman.status <> 'approved' or (v_uzman.verified_until is not null and v_uzman.verified_until < current_date) then
+    raise exception 'UZMAN_ONAYSIZ';
+  end if;
 
   insert into public.conversations (application_id, client_id, expert_id, wrapped_key)
   values (v_basvuru.id, v_basvuru.client_id, p_uzman, p_sarili_anahtar)
@@ -512,6 +515,30 @@ begin
       select 1 from public.conversation_flags f
       where f.session_offer_id = o.id and f.status = 'open'
     );
+end;
+$$;
+
+-- ---------- Otomatik isaret danisanin sohbet silmesini engellemez ----------
+-- Danisan bu mesaji yazmadi; kanit icin yalnizca kisi sikayeti ve yonetici incelemesi engeller.
+create or replace function public.ayrilan_uzman_sohbetini_sil(p_konusma uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if exists (
+    select 1 from public.conversation_flags
+    where conversation_id = p_konusma and status = 'open' and source <> 'auto_moderation'
+  ) then
+    raise exception 'ACIK_ISARET';
+  end if;
+
+  delete from public.conversations
+  where id = p_konusma and client_id = auth.uid() and expert_id is null;
+  if not found then
+    raise exception 'SILINEMEDI';
+  end if;
 end;
 $$;
 

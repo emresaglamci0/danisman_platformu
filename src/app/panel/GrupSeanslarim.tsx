@@ -81,8 +81,8 @@ export async function UzmanGrupSeanslari({ uzmanId }: { uzmanId: string }) {
 }
 
 export async function DanisanGrupSeanslari({ danisanId }: { danisanId: string }) {
-  const supabase = await supabaseSunucu();
-  const { data } = await supabase
+  // Sunucudan okunur: ayrilan danisan grup tablosunu kendisi okuyamaz. Baglanti burada secilmez.
+  const { data } = await supabaseYonetici()
     .from("group_participants")
     .select("group_session_id, status, group_sessions(topic, starts_at, status)")
     .eq("client_id", danisanId)

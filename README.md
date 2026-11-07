@@ -44,6 +44,7 @@ Sitedeki tüm uzmanlar ve kullanıcılar **uydurma test verisidir**.
    `supabase/migrations/` klasöründeki dosyaları **numara sırasıyla** (önce `0001_...`, sonra `0002_...`)
    ayrı ayrı yapıştırıp **Run** düğmesine basın. Her birinde "Success" yazısını görmelisiniz.
    Bir dosyayı yalnızca **bir kez** çalıştırın; ikinci kez çalıştırırsanız "already exists" hatası alırsınız. Bu hata zararsızdır.
+   İsterseniz sonra `supabase/denetim/` klasöründeki dosyaları da çalıştırın: seans, ödeme ve grup kurallarını uydurma kayıtlarla sınarlar, sonunda hepsini geri alırlar. Hata vermemeli.
 4. **Authentication** > **Sign In / Providers** > **Email** bölümünde **Confirm email** seçeneğini
    kapatın. Bu adım yalnızca test içindir: Supabase'in ücretsiz e-posta gönderimi saatte birkaç e-postayla sınırlı.
 5. **Project Settings** > **API Keys** sayfasından şunları kopyalayın:

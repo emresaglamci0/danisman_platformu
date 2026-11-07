@@ -92,6 +92,7 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
       .eq("conversation_id", konusma.id)
       .eq("reported_by", kullanici.id)
       .eq("status", "open")
+      .neq("category", "seans_yapilmadi") // seans bildirimi genel sikayet hakkini kapatmaz
       .maybeSingle(),
     supabase.rpc("konusma_okundu", { p_konusma: konusma.id }),
   ]);

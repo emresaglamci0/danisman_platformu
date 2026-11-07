@@ -34,11 +34,14 @@ export async function hesabiSil(_onceki: FormDurumu, form: FormData): Promise<Fo
     .or(`client_id.eq.${kullanici.id},expert_id.eq.${kullanici.id}`);
   if (sohbetHatasi) return { hata: GENEL_HATA };
 
-  const { count, error: isaretHatasi } = await yonetici
+  // Otomatik isaret danisani engellemez: o mesaji danisan yazmadi (uzmanin mesaji kontrol edilir)
+  let isaretSorgusu = yonetici
     .from("conversation_flags")
     .select("id", { count: "exact", head: true })
     .eq("status", "open")
     .in("conversation_id", (sohbetler ?? []).map((s) => s.id));
+  if (kullanici.rol === "client") isaretSorgusu = isaretSorgusu.neq("source", "auto_moderation");
+  const { count, error: isaretHatasi } = await isaretSorgusu;
   if (isaretHatasi) return { hata: GENEL_HATA };
   if (count) {
     return { hata: "Sohbetlerinizden birinde açık bir şikayet veya inceleme var. Hesabınız bu işlem sonuçlanınca silinebilir." };

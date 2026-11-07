@@ -140,6 +140,32 @@ begin
   assert (select d.status from public.demo_group_payments d join public.group_participants p on p.id = d.group_participant_id
           where p.group_session_id = v_g and p.client_id = d_[1]) = 'in_review', 'bakim incelemedekine dokunmamali';
 
+  -- Ayrilan danisan artik katilimci sayilmaz (baglantiyi okuyamaz)
+  perform set_config('request.jwt.claims', format('{"sub":"%s"}', d_[12]), true);
+  assert public.grup_katilimcisi_mi(v_g) = false, 'ayrilan danisan katilimci sayilmamali';
+  perform set_config('request.jwt.claims', format('{"sub":"%s"}', d_[2]), true);
+  assert public.grup_katilimcisi_mi(v_g) = true, 'odeyen danisan katilimci sayilmali';
+  perform set_config('request.jwt.claims', '', true);
+
+  -- Bitmis grup, sonradan hesap silinip sayi dusse de iptal olmaz
+  update public.group_sessions set created_at = now() - interval '2 days'; -- hiz sinirina takilmasin
+  v_g2 := public.grup_ac(a, v_t + interval '4 days', 'yas', 'Yas ve kayip uzerine grup calismasi', 50000);
+  perform public.grup_katil(v_g2, d_[5], true);
+  perform public.grup_katil(v_g2, d_[6], true);
+  perform public.grup_katil(v_g2, d_[7], true);
+  update public.session_offers set starts_at = now() - interval '6 hours', ends_at = now() - interval '5 hours' where group_session_id = v_g2;
+  update public.group_sessions set starts_at = now() - interval '6 hours', ends_at = now() - interval '5 hours' where id = v_g2;
+  delete from public.profiles where id = d_[7];
+  perform public.grup_bakimi();
+  assert (select status from public.group_sessions where id = v_g2) = 'open', 'bitmis grup iptal olmamali';
+
+  -- Onayi kaldirilan uzmana bekletmedeki gecmis grup odemesi aktarilmaz, iade edilir
+  update public.expert_profiles set status = 'rejected' where id = a;
+  perform public.demo_grup_odeme_bakimi();
+  assert (select d.status from public.demo_group_payments d join public.group_participants p on p.id = d.group_participant_id
+          where p.group_session_id = v_g2 and p.client_id = d_[5]) = 'refunded', 'onay kalkinca grup odemesi iade olmali';
+  update public.expert_profiles set status = 'approved' where id = a;
+
   -- Uzman onayi kalkinca gelecek grup iptal olur ve iade edilir
   v_g2 := public.grup_ac(a, v_t + interval '3 days', 'yas', 'Yas ve kayip uzerine grup calismasi', 50000);
   perform public.grup_katil(v_g2, d_[4], true);

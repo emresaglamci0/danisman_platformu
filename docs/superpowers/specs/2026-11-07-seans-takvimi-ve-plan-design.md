@@ -220,7 +220,7 @@ bekletmede ──seans + 48 saat, şikayet yok──> uzmana aktarıldı
 
 ### Kapalıyken
 
-Plan ve onay çalışır, ödeme adımı ve komisyon görünmez, onay doğrudan seansı kesinleştirir **[Ö]**. Ödeme parçası dışında hiçbir kod bu modüle bağımlı olmaz. Modül klasörü ve tablosu tamamen kaldırılsa bile diğer özellikler bozulmaz.
+Plan ve onay çalışır, ödeme adımı ve komisyon görünmez, onay doğrudan seansı kesinleştirir **[Ö]**. Ödeme parçası dışında hiçbir kod bu modüle bağımlı olmaz. Ödemeden tamamen vazgeçilirse modül klasörü silinir, onu çağıran birkaç satır (`SeansBolumu`, grup sayfası, `OdemeUyarisi`, işlem dosyaları) temizlenir ve `0017` ile `0018` sonundaki ödeme parçası kaldırılır. Bu satırlar dışındaki kod ödemeye bağlı değildir.
 
 Gerçek ödeme kuruluşu bağlanırken yapılacaklar `YAYIN-ONCESI.md` dosyasına yazılır.
 

@@ -126,6 +126,15 @@ begin
   -- Onay kalkarsa seanslar kapanir
   update public.expert_profiles set status = 'rejected' where id = a;
   assert (select status from public.session_offers where id = v_p) = 'expired', 'onay kalkinca bekleyen plan kapanmali';
+
+  -- Onayi kalkmis uzman bekleyen basvuruyu kabul edemez
+  update public.expert_profiles set status = 'approved' where id = a;
+  insert into public.applications (client_id, expert_id, requested_start)
+    values (c, a, v_t + interval '5 days') returning id into v_b;
+  update public.expert_profiles set status = 'rejected' where id = a;
+  v_hata := null;
+  begin perform public.basvuru_kabul(v_b, a, 'anahtar'); exception when others then v_hata := sqlerrm; end;
+  assert v_hata = 'UZMAN_ONAYSIZ', 'onaysiz uzman kabul edememeli';
   update public.expert_profiles set status = 'approved' where id = a;
 
   -- On gorusme baglantisi bir kez
@@ -144,9 +153,23 @@ begin
   assert (select status from public.session_offers where id = v_p) = 'cancelled', 'uzman silinince seans iptal olmali';
   assert (select expert_id from public.conversations where id = v_k) is null, 'sohbet uzmansiz kalmali';
 
+  -- Otomatik isaret, danisanin ayrilan uzman sohbetini silmesini engellemez; sikayet engeller
+  perform set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000c"}', true);
+  insert into public.conversation_flags (conversation_id, source, category, detector)
+    values (v_k, 'auto_moderation', 'site_disi_odeme', 'denetim');
+  insert into public.conversation_flags (conversation_id, source, reported_by, category)
+    values (v_k, 'user_report', c, 'taciz');
+  v_hata := null;
+  begin perform public.ayrilan_uzman_sohbetini_sil(v_k); exception when others then v_hata := sqlerrm; end;
+  assert v_hata = 'ACIK_ISARET', 'acik sikayet silmeyi engellemeli';
+  update public.conversation_flags set status = 'closed' where conversation_id = v_k and source = 'user_report';
+  perform public.ayrilan_uzman_sohbetini_sil(v_k);
+  assert not exists (select 1 from public.conversations where id = v_k), 'otomatik isaret silmeyi engellememeli';
+  perform set_config('request.jwt.claims', '', true);
+
   -- Danisan silinince sohbet ve seanslar gider
-  delete from public.profiles where id = c;
-  assert not exists (select 1 from public.session_offers where id = v_p), 'danisan silinince seans gitmeli';
+  delete from public.profiles where id = c2;
+  assert not exists (select 1 from public.conversations where id = v_k2), 'danisan silinince sohbet gitmeli';
 end;
 $$;
 

@@ -44,7 +44,7 @@ export function PlanFormu({
   return (
     <details className="rounded-lg border border-slate-200 p-3">
       <summary className="cursor-pointer font-medium">
-        {bagimsiz ? "Ödeme planı yolla" : "Seans randevusu yolla"}
+        {bagimsiz ? "Plan yolla" : "Seans randevusu yolla"}
       </summary>
       <form action={gonder} className="mt-3 space-y-3">
         <DurumMesaji durum={durum} />

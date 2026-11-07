@@ -6,6 +6,7 @@ import { adminSayfasiniKoru } from "../yetki";
 import { IncelemeyeAlFormu } from "./IncelemeyeAlFormu";
 import { isaretKapat } from "./islemler";
 import { SeansKarari } from "./SeansKarari";
+import { UzmanKapatFormu } from "./UzmanKapatFormu";
 
 export const metadata = { title: "İncelemeler | Danışman Buluşma" };
 
@@ -18,6 +19,10 @@ type Isaret = {
   created_at: string;
 };
 
+function dakikaFarki(bas: string, bit: string) {
+  return Math.round((new Date(bit).getTime() - new Date(bas).getTime()) / 60_000);
+}
+
 // "Seans yapilmadi" bildirimi: yonetici yalnizca seansin ozetini gorur, gorusme adresini gormez (0017).
 async function SeansKartiAlani({ isaretId }: { isaretId: string }) {
   const supabase = await supabaseSunucu();
@@ -29,8 +34,8 @@ async function SeansKartiAlani({ isaretId }: { isaretId: string }) {
   return (
     <div className="w-full">
       <p>
-        {saatEtiketi(kart.starts_at)} · {paraYaz(kart.amount_kurus)} · Görüşme bağlantısı:{" "}
-        {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
+        {saatEtiketi(kart.starts_at)} · {dakikaFarki(kart.starts_at, kart.ends_at)} dakika · {paraYaz(kart.amount_kurus)} ·
+        Ödeme incelemede · Görüşme bağlantısı: {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
       </p>
       <SeansKarari isaretId={isaretId} grup={false} />
     </div>
@@ -41,13 +46,14 @@ async function GrupKartiAlani({ isaretId }: { isaretId: string }) {
   const supabase = await supabaseSunucu();
   const { data } = await supabase.rpc("admin_grup_karti", { p_isaret: isaretId });
   const kart = (data ?? [])[0] as
-    | { starts_at: string; amount_kurus: number; baglanti_var: boolean; display_name: string | null }
+    | { starts_at: string; ends_at: string; amount_kurus: number; baglanti_var: boolean; display_name: string | null }
     | undefined;
   if (!kart) return <p className="text-slate-600">Seans özeti okunamadı.</p>;
   return (
     <div>
       <p>
-        {kart.display_name ?? "Ayrılan uzman"} · {saatEtiketi(kart.starts_at)} · {paraYaz(kart.amount_kurus)} · Görüşme
+        {kart.display_name ?? "Ayrılan uzman"} · {saatEtiketi(kart.starts_at)} ·{" "}
+        {dakikaFarki(kart.starts_at, kart.ends_at)} dakika · {paraYaz(kart.amount_kurus)} · Ödeme incelemede · Görüşme
         bağlantısı: {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
       </p>
       <SeansKarari isaretId={isaretId} grup />
@@ -66,7 +72,7 @@ export default async function IncelemelerSayfasi() {
       .eq("status", "open")
       .order("created_at"),
     // Admin yalnizca isaretli sohbetlerin taraflarini gorebilir (veritabani kurali)
-    supabase.from("conversations").select("id, profiles(full_name), expert_profiles(display_name)"),
+    supabase.from("conversations").select("id, expert_id, profiles(full_name), expert_profiles(display_name)"),
     supabase
       .from("conversation_access_log")
       .select("id, admin_id, conversation_id, reason, accessed_at")
@@ -74,6 +80,9 @@ export default async function IncelemelerSayfasi() {
       .limit(30),
   ]);
 
+  const konusmaUzmanlari = new Map(
+    ((konusmalar ?? []) as unknown as { id: string; expert_id: string | null }[]).map((k) => [k.id, k.expert_id]),
+  );
   const taraflar = new Map(
     ((konusmalar ?? []) as unknown as {
       id: string;
@@ -136,6 +145,9 @@ export default async function IncelemelerSayfasi() {
                 </li>
               ))}
             </ul>
+            {liste.some((i) => i.category === "site_disi_odeme") && konusmaUzmanlari.get(konusmaId) && (
+              <UzmanKapatFormu uzmanId={konusmaUzmanlari.get(konusmaId)!} />
+            )}
           </article>
         ))}
       </section>

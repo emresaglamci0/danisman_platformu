@@ -160,6 +160,9 @@ export async function basvuruYanitla(_onceki: FormDurumu, form: FormData): Promi
       if (error.message.includes("SAAT_DOLU")) {
         return { hata: "Bu saat artık uygun değil, başvuruyu kabul edemezsiniz. Reddedebilirsiniz." };
       }
+      if (error.message.includes("UZMAN_ONAYSIZ")) {
+        return { hata: "Hesabınız onaylı olmadığı için başvuru kabul edemezsiniz." };
+      }
       return { hata: "İşlem yapılamadı. Lütfen tekrar deneyin." };
     }
   } else {

@@ -100,7 +100,7 @@ set search_path = ''
 as $$
   select exists (
     select 1 from public.group_participants
-    where group_session_id = p_grup and client_id = auth.uid()
+    where group_session_id = p_grup and client_id = auth.uid() and status = 'paid'
   );
 $$;
 
@@ -370,6 +370,7 @@ begin
   for v_grup in
     select g.id from public.group_sessions g
     where g.status = 'open'
+      and g.starts_at > now()
       and g.starts_at - interval '12 hours' <= now()
       and (select count(*) from public.group_participants p
            where p.group_session_id = g.id and p.status = 'paid') < 3
@@ -525,7 +526,7 @@ end;
 $$;
 
 create or replace function public.admin_grup_karti(p_isaret uuid)
-returns table (starts_at timestamptz, amount_kurus int, odeme_durumu text, baglanti_var boolean, display_name text)
+returns table (starts_at timestamptz, ends_at timestamptz, amount_kurus int, odeme_durumu text, baglanti_var boolean, display_name text)
 language plpgsql
 stable
 security definer
@@ -536,7 +537,7 @@ begin
     raise exception 'YETKI_YOK';
   end if;
   return query
-    select g.starts_at, d.amount_kurus, d.status, g.meeting_url is not null, e.display_name
+    select g.starts_at, g.ends_at, d.amount_kurus, d.status, g.meeting_url is not null, e.display_name
     from public.conversation_flags f
     join public.group_participants p on p.id = f.group_participant_id
     join public.group_sessions g on g.id = p.group_session_id
@@ -588,6 +589,15 @@ language sql
 security definer
 set search_path = ''
 as $$
+  -- Once onayi kalkmis uzmanin bekletmedeki odemeleri iade edilir, sonra 48 saat dolanlar aktarilir
+  update public.demo_group_payments d set status = 'refunded', settled_at = now()
+  from public.group_participants p
+  join public.group_sessions g on g.id = p.group_session_id
+  join public.expert_profiles e on e.id = g.expert_id
+  where p.id = d.group_participant_id
+    and d.status = 'held'
+    and (e.status <> 'approved' or e.verified_until < current_date);
+
   update public.demo_group_payments d set status = 'transferred', settled_at = now()
   from public.group_participants p
   join public.group_sessions g on g.id = p.group_session_id

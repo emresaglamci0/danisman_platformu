@@ -234,13 +234,21 @@ begin
 end;
 $$;
 
--- ---------- Bakim: 48 saat dolan odemeler uzmana aktarilmis sayilir ----------
+-- ---------- Bakim ----------
+-- Once onayi kalkmis uzmanin bekletmedeki odemeleri iade edilir, sonra 48 saat dolanlar aktarilir.
 create or replace function public.demo_odeme_bakimi()
 returns void
 language sql
 security definer
 set search_path = ''
 as $$
+  update public.demo_payments p set status = 'refunded', settled_at = now()
+  from public.session_offers o
+  join public.expert_profiles e on e.id = o.expert_id
+  where o.id = p.session_offer_id
+    and p.status = 'held'
+    and (e.status <> 'approved' or e.verified_until < current_date);
+
   update public.demo_payments p set status = 'transferred', settled_at = now()
   from public.session_offers o
   where o.id = p.session_offer_id

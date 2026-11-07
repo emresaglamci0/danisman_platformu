@@ -6,6 +6,7 @@ import { mevcutKullanici } from "@/lib/oturum";
 import { ALANLAR, paraYaz, type Alan } from "@/lib/sabitler";
 import { iptalIadeli, saatEtiketi } from "@/lib/seans-kurallari";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
+import { supabaseYonetici } from "@/lib/supabase/yonetici";
 import { GrupOdemeDurumu, grupOdemesiGetir, GrupSeansYapilmadi, odemeModuluAktif } from "@/modules/odeme";
 import { AyrilFormu, KatilFormu } from "../GrupFormlari";
 
@@ -45,7 +46,9 @@ export default async function GrupSeansiSayfasi({ params }: PageProps<"/grup-sea
       .maybeSingle();
     katilim = data as Katilim | null;
     if (katilim) {
-      const { data: grup } = await supabase
+      // Ayrilan danisan RLS ile grubu okuyamaz (baglantiyi gormesin diye); kendi kaydi dogrulandigi icin
+      // ozet sunucudan okunur. Baglanti ekrana yalnizca aktif katilimda yazilir.
+      const { data: grup } = await supabaseYonetici()
         .from("group_sessions")
         .select("id, topic, purpose, starts_at, ends_at, price_kurus, status, meeting_url")
         .eq("id", id)

@@ -57,15 +57,17 @@ export async function SeansBolumu({
 
             {odeme && <OdemeDurumu odeme={odeme} uzmanMi={uzmanMi} />}
 
-            {s.status === "sent" && odemeAcik && (
-              <p className="text-slate-600">Site içi ödemede saat güvencesi ve iade hakkınız vardır.</p>
+            {s.status === "sent" && odemeAcik && !uzmanMi && (
+              <p className="text-slate-600">
+                Site içi ödemede saat güvencesi ve iade hakkınız vardır. <OnayGerekir />
+              </p>
             )}
             {s.status === "sent" && !uzmanMi && <PlanYanitFormu planId={s.id} konusmaId={konusmaId} />}
             {s.status === "sent" && uzmanMi && <GeriCekFormu planId={s.id} konusmaId={konusmaId} />}
 
             {s.status === "awaiting_payment" && !uzmanMi && s.price_kurus !== null && (
               <>
-                <OdemeAdimi planId={s.id} konusmaId={konusmaId} tutar={s.price_kurus} />
+                {odemeAcik && <OdemeAdimi planId={s.id} konusmaId={konusmaId} tutar={s.price_kurus} />}
                 <PlanYanitFormu planId={s.id} konusmaId={konusmaId} redYalniz />
               </>
             )}
