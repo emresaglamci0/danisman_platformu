@@ -3,7 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { AcilDurumKutusu } from "@/components/AcilDurumKutusu";
 import { AcikRizaMetni, AydinlatmaMetni } from "@/components/kvkk/Metinler";
 import { TaslakNotu } from "@/components/kvkk/TaslakNotu";
-import { konusmaGetir, mesajlasmaRizasiVar, sohbetSilinmeTarihi, type Konusma } from "@/lib/konusmalar";
+import { OdemeUyarisi } from "@/components/OdemeUyarisi";
+import { konusmaGetir, mesajlasmaRizasiVar, sohbetSilinmeTarihi, uzmanBagimsizMi, type Konusma } from "@/lib/konusmalar";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz, tarihYaz } from "@/lib/sabitler";
 import { mesajlariCoz } from "@/lib/sifreleme";
@@ -88,12 +89,17 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
 
   const uzmanMi = kullanici.id === konusma.expert_id;
   const karsiTaraf = uzmanMi ? konusma.danisanAdi : konusma.uzmanAdi;
+  const odemeUyarisi = konusma.expert_id && (await uzmanBagimsizMi(konusma.expert_id)) ? <OdemeUyarisi /> : null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <AcilDurumKutusu />
       <Baslik baslik={karsiTaraf} />
-      {uzmanMi && <GorusmeBaglantisiFormu konusmaId={konusma.id} baglanti={konusma.meeting_url ?? ""} />}
+      {uzmanMi && (
+        <GorusmeBaglantisiFormu konusmaId={konusma.id} baglanti={konusma.meeting_url ?? ""}>
+          {odemeUyarisi}
+        </GorusmeBaglantisiFormu>
+      )}
       {!uzmanMi && konusma.meeting_url && (
         <section className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
           <h2 className="font-semibold">Görüntülü görüşme</h2>
@@ -101,6 +107,7 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
             Uzmanınız bir görüşme bağlantısı paylaştı. Görüşme bu sitenin dışında, bağlantının ait olduğu
             serviste yapılır ve o servisin kuralları geçerlidir.
           </p>
+          {odemeUyarisi && <div className="mt-3">{odemeUyarisi}</div>}
           <a
             href={konusma.meeting_url}
             target="_blank"

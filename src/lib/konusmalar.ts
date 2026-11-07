@@ -1,5 +1,6 @@
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU } from "./sabitler";
 import { supabaseSunucu } from "./supabase/sunucu";
+import { supabaseYonetici } from "./supabase/yonetici";
 import { uzmanAdlari } from "./uzmanlar";
 
 export type Konusma = {
@@ -50,6 +51,14 @@ export async function konusmaGetir(id: string): Promise<Konusma | null> {
   if (!data) return null;
   const [konusma] = await donustur([data as unknown as Satir]);
   return konusma;
+}
+
+// Danisan asil uzman tablosunu okuyamaz; vitrinde de belgesi suresi dolan uzman gorunmez. Bu yuzden
+// gizli anahtarla okunur. Yalnizca sohbetin tarafi oldugu dogrulanan kullanici icin cagrilmalidir.
+// Tur okunamazsa false doner: ogrenci sohbetinde odeme uyarisi cikmasindansa uyari hic cikmaz.
+export async function uzmanBagimsizMi(uzmanId: string) {
+  const { data } = await supabaseYonetici().from("expert_profiles").select("kind").eq("id", uzmanId).maybeSingle();
+  return data?.kind === "independent";
 }
 
 // Kullanici guncel aydinlatma metnini ve acik riza metnini onaylamis mi?

@@ -30,5 +30,6 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 ## İçerik
 
 - [ ] `src/app/layout.tsx` içindeki "Demo: gerçek bilgilerinizi girmeyin" uyarısını ve alt bilgideki öğrenci projesi notunu kaldırın.
+- [ ] Site içi ödeme açılınca `src/components/OdemeUyarisi.tsx` içindeki "yakında açılacaktır" cümlesini kaldırın. Ödeme açılmadan yayına çıkılırsa uyarı, olmayan bir ödeme yöntemini anlatır.
 - [ ] Görüntülü görüşme için üçüncü taraf servislere yönlendirmeyi KVKK açısından avukata sorun (Google Meet, Zoom, Microsoft Teams).
 - [ ] `/psikolojik-rahatsizliklar` sayfasındaki açıklamaları lisanslı bir ruh sağlığı uzmanına kontrol ettirin.

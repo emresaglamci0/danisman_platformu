@@ -1,11 +1,19 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, type ReactNode } from "react";
 import { gorusmeBaglantisiKaydet } from "./islemler";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
 import { GORUSME_BAGLANTISI_EN_FAZLA } from "@/lib/gorusme";
 
-export function GorusmeBaglantisiFormu({ konusmaId, baglanti }: { konusmaId: string; baglanti: string }) {
+export function GorusmeBaglantisiFormu({
+  konusmaId,
+  baglanti,
+  children,
+}: {
+  konusmaId: string;
+  baglanti: string;
+  children?: ReactNode;
+}) {
   const [durum, gonder, bekliyor] = useActionState(gorusmeBaglantisiKaydet, {});
   const [adres, setAdres] = useState(baglanti);
 
@@ -19,6 +27,7 @@ export function GorusmeBaglantisiFormu({ konusmaId, baglanti }: { konusmaId: str
           Google Meet, Zoom veya Microsoft Teams bağlantınızı ekleyin. Yalnızca bu danışan görür. Görüşme bu
           sitenin dışında yapılır. Silmek için alanı boşaltıp kaydedin.
         </p>
+        {children}
         <label className="block font-medium">
           Bağlantı
           <input
