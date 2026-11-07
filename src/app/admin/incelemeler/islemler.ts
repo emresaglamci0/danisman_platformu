@@ -28,6 +28,27 @@ export async function incelemeyeAl(_onceki: FormDurumu, form: FormData): Promise
   return { basari: "Sohbet incelemeye alındı. Açmak için listeden “İncele”ye tıklayın." };
 }
 
+// "Seans yapilmadi" bildirimi icin iade veya aktarim karari. Karar degistirilemez kayda yazilir (0017).
+export async function seansKarariVer(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  if (!(await adminKullanici())) return { hata: "Bu işlem için yetkiniz yok." };
+
+  const karar = form.get("karar");
+  const sebep = String(form.get("sebep") ?? "").trim();
+  if (karar !== "iade" && karar !== "aktar") return { hata: "Geçersiz karar." };
+  if (sebep.length < 10 || sebep.length > 500) return { hata: "Sebep 10 ile 500 karakter arasında olmalı." };
+
+  const supabase = await supabaseSunucu();
+  const { error } = await supabase.rpc("seans_karari", {
+    p_isaret: String(form.get("isaretId") ?? ""),
+    p_karar: karar,
+    p_sebep: sebep,
+  });
+  if (error) return { hata: "Karar kaydedilemedi. Lütfen tekrar deneyin." };
+
+  revalidatePath("/admin/incelemeler");
+  return { basari: karar === "iade" ? "Ödeme iade edildi." : "Ödeme uzmana aktarıldı." };
+}
+
 export async function isaretKapat(form: FormData) {
   if (!(await adminKullanici())) return;
   const supabase = await supabaseSunucu();

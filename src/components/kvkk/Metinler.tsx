@@ -1,3 +1,4 @@
+import { OnayGerekir } from "@/components/OnayGerekir";
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU } from "@/lib/sabitler";
 
 // TASLAK METINLER: Yayindan once avukat tarafindan hazirlanmali/onaylanmalidir.
@@ -21,7 +22,12 @@ export function AydinlatmaMetni() {
         <li>Kimlik ve iletişim: ad soyad, e-posta adresi.</li>
         <li>Hesap bilgileri: hesap türü, onay kayıtları (tarih, saat ve metin sürümü).</li>
         <li>Uzmanlar için: unvan veya bölüm, yüklenen belgeler ve profil fotoğrafı.</li>
-        <li>Başvurular: seçilen konu (isteğe bağlı) ve uygun zaman aralığı.</li>
+        <li>Başvurular: seçilen konu (isteğe bağlı) ve seçilen tarih ve saat.</li>
+        <li>
+          Seans kayıtları: seansın tarihi, saati, süresi, ücreti, durumu ve görüşme bağlantısı. Bir uzmanla seans
+          yaptığınız bilgisi hassas olabilir; analitik araçlarına veya kayıt dosyalarına yazılmaz.
+        </li>
+        <li>Demo ödeme kayıtları: tutar, komisyon ve durum. Kart bilgisi alınmaz, para çekilmez.</li>
         <li>
           Mesajlar: danışan ile uzman arasındaki yazışmalar. Mesajlar sağlık ve psikolojik
           duruma ilişkin <strong>özel nitelikli kişisel veri</strong> içerebilir.
@@ -55,6 +61,17 @@ export function AydinlatmaMetni() {
         yalnızca sebep yazarak ve sınırlı bir süre için açabilir. Her erişim; yöneticinin kimliği,
         tarih/saat, sohbet ve sebep bilgisiyle değiştirilemeyen bir kayda yazılır.
       </p>
+      <p>
+        Site dışına ödeme yönlendirmesini önlemek için <strong>bağımsız uzmanların yazdığı mesajlar</strong>,
+        gönderilirken ve şifrelenmeden hemen önce bir bilgisayar programı tarafından IBAN ve telefon numarası
+        kalıpları açısından kontrol edilir. Kalıp bulunursa sohbet incelemeye işaretlenir. Mesaj engellenmez, karşı
+        tarafa bildirim gitmez ve bulunan metin ayrıca kaydedilmez. Danışan mesajları ve öğrenci uzman sohbetleri
+        kontrol edilmez. <OnayGerekir />
+      </p>
+      <p>
+        Seans ve demo ödeme kayıtlarını konuşmanın iki tarafı görür. &quot;Seans yapılmadı&quot; bildiriminde yönetici
+        yalnızca seansın tarihini, tutarını ve bağlantı eklenip eklenmediğini görür.
+      </p>
       <p>Uzman belgelerini yalnızca site yöneticisi görür.</p>
       <p>
         Uzmanın paylaştığı görüntülü görüşme bağlantısını kullanırsanız görüşme, bağlantının ait olduğu
@@ -73,6 +90,10 @@ export function AydinlatmaMetni() {
       <p>
         [Saklama süreleri burada netleştirilecek.] Uzman belgeleri, yönetici kararından sonra
         silinir. Hesabınızı sildiğinizde verileriniz, kanunen saklanması gerekenler dışında silinir.
+      </p>
+      <p>
+        Seans ve demo ödeme kayıtları sohbetle birlikte silinir. Sohbet daha uzun süre durursa seansın bitiminden 12
+        ay sonra otomatik silinir. Açık bir inceleme varsa işlem sonuçlanana kadar silinmez.
       </p>
       <p>
         Bir uzman hesabını silerse uzmanın adı ve kimliği silinir. Sohbet ve uzmanın mesajları, danışan
@@ -107,6 +128,10 @@ export function AcikRizaMetni() {
           güvenlik ve kötüye kullanımın önlenmesi amacıyla, sohbetin şikâyet edilmesi veya riskli
           görülmesi durumunda yetkili yönetici tarafından sebep belirtilerek ve erişim kaydı
           tutularak incelenebilmesine,
+        </li>
+        <li>
+          bağımsız uzmanların yazdığı mesajların, site dışına ödeme yönlendirmesini önlemek amacıyla gönderilirken
+          bir bilgisayar programı tarafından IBAN ve telefon numarası kalıpları açısından kontrol edilmesine,
         </li>
         <li>
           uzmanın hesabını silmesi durumunda sohbetin, uzmanın adı olmadan danışanda salt okunur olarak en

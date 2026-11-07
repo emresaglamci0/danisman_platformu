@@ -18,7 +18,7 @@ if (!url || !gizliAnahtar || !sifre || sifre.length < 8) {
 
 // Adresin sonundaki "/rest/v1/" gibi ekleri at; yalnizca "https://xxxx.supabase.co" kalsin
 const supabase = createClient(new URL(url).origin, gizliAnahtar, { auth: { persistSession: false } });
-const KVKK_SURUMU = "2026-11-06-taslak"; // src/lib/sabitler.ts ile ayni olmali
+const KVKK_SURUMU = "2026-11-07-taslak"; // src/lib/sabitler.ts ile ayni olmali
 
 type TestUzmani = {
   eposta: string;
@@ -123,9 +123,17 @@ for (const uzman of UZMANLAR) {
       bio: uzman.tanitim,
       offers_free_intro: uzman.onGorusme ?? false,
       verified_until: uzman.rol === "student_expert" ? ogrenciBelgesiGecerlilik : null,
+      offers_online: true,
+      session_minutes: 50,
     })
     .eq("id", id);
   if (error) throw error;
+
+  // Hafta ici 10:00, 14:00 ve 18:00. Tekrar calistirilirsa hata vermez.
+  const { error: takvimHatasi } = await supabase.from("expert_availability").upsert(
+    [1, 2, 3, 4, 5].flatMap((gun) => [10, 14, 18].map((saat) => ({ expert_id: id, weekday: gun, hour: saat }))),
+  );
+  if (takvimHatasi) throw takvimHatasi;
   console.log(`✓ ${uzman.ad} (${uzman.eposta})`);
 }
 

@@ -104,6 +104,12 @@ export default function GizlilikSayfasi() {
           üçüncü taraf bir servise gider. Bu görüşmeler sitemizde kaydedilmez; ilgili servisin gizlilik
           kuralları geçerlidir. <OnayGerekir />
         </p>
+        <p>
+          Seans ve demo ödeme kayıtları sohbetle birlikte silinir; sohbet daha uzun süre durursa seansın bitiminden
+          12 ay sonra otomatik silinir. Bağımsız uzmanların yazdığı mesajlar, site dışına ödeme yönlendirmesini önlemek
+          için gönderilirken bir bilgisayar programı tarafından IBAN ve telefon numarası kalıpları açısından kontrol
+          edilir; kalıp bulunursa sohbet incelemeye işaretlenir. <OnayGerekir />
+        </p>
       </Bolum>
     </YasalSayfa>
   );

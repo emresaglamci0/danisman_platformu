@@ -55,10 +55,14 @@ export async function konusmaGetir(id: string): Promise<Konusma | null> {
 
 // Danisan asil uzman tablosunu okuyamaz; vitrinde de belgesi suresi dolan uzman gorunmez. Bu yuzden
 // gizli anahtarla okunur. Yalnizca sohbetin tarafi oldugu dogrulanan kullanici icin cagrilmalidir.
-// Tur okunamazsa false doner: ogrenci sohbetinde odeme uyarisi cikmasindansa uyari hic cikmaz.
-export async function uzmanBagimsizMi(uzmanId: string) {
-  const { data } = await supabaseYonetici().from("expert_profiles").select("kind").eq("id", uzmanId).maybeSingle();
-  return data?.kind === "independent";
+// Okunamazsa null doner: ogrenci sohbetinde odeme uyarisi cikmasindansa uyari hic cikmaz.
+export async function uzmanSeansBilgisi(uzmanId: string) {
+  const { data } = await supabaseYonetici()
+    .from("expert_profiles")
+    .select("kind, offers_free_intro, session_minutes")
+    .eq("id", uzmanId)
+    .maybeSingle();
+  return data as { kind: "independent" | "student"; offers_free_intro: boolean; session_minutes: number | null } | null;
 }
 
 // Kullanici guncel aydinlatma metnini ve acik riza metnini onaylamis mi?

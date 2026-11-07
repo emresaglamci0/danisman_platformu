@@ -1,12 +1,14 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { ALANLAR } from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
-import { uzmanGetir, uzmanUnvani } from "@/lib/uzmanlar";
+import { uzmanGetir, uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
+import { BulutGunes } from "@/components/BulutGunes";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
-import { BasvuruFormu } from "./BasvuruFormu";
+import { Takvim } from "./Takvim";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -62,24 +64,80 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         </div>
       </article>
 
-      <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5 md:sticky md:top-6">
-        <h2 className="mb-4 font-semibold">Başvuru yap</h2>
-        <BasvuruAlani uzmanId={uzman.id} kullanici={kullanici} />
+      <aside className="h-fit space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm md:sticky md:top-6">
+        <h2 className="font-semibold">Görüşme bilgileri</h2>
+        <dl className="space-y-2">
+          <div>
+            <dt className="text-slate-600">Görüşme şekli</dt>
+            <dd>{[uzman.offers_online && "Online", uzman.offers_in_person && "Yüz yüze"].filter(Boolean).join(", ")}</dd>
+          </div>
+          {uzman.session_minutes && (
+            <div>
+              <dt className="text-slate-600">Seans süresi</dt>
+              <dd>{uzman.session_minutes} dakika</dd>
+            </div>
+          )}
+          <div>
+            <dt className="text-slate-600">Seans türü</dt>
+            <dd>Bireysel</dd>
+          </div>
+        </dl>
+        {uzman.offers_in_person && uzman.district && (
+          <div className="space-y-1 border-t border-slate-200 pt-3">
+            <p>
+              <strong>Yüz yüze görüşme:</strong> {uzman.district}, {uzman.city}
+            </p>
+            <p className="text-xs text-slate-600">
+              Yüz yüze görüşme ve ödeme site dışındadır, iade ve koruma kapsamında değildir. <OnayGerekir />
+            </p>
+          </div>
+        )}
       </aside>
+
+      <section className="space-y-3 md:col-span-2">
+        <h2 className="text-lg font-semibold">Uygun saatler</h2>
+        <TakvimAlani uzman={uzman} kullanici={kullanici} />
+      </section>
     </div>
   );
 }
 
-async function BasvuruAlani({
-  uzmanId,
-  kullanici,
-}: {
-  uzmanId: string;
-  kullanici: Kullanici | null;
-}) {
-  if (!kullanici) {
+async function TakvimAlani({ uzman, kullanici }: { uzman: Uzman; kullanici: Kullanici | null }) {
+  if (!uzman.offers_online) {
     return (
       <p className="text-sm text-slate-600">
+        Bu uzman yalnızca yüz yüze görüşüyor, site üzerinden randevu alınamaz.
+      </p>
+    );
+  }
+
+  const supabase = await supabaseSunucu();
+  const simdi = new Date();
+  const { data } = await supabase.rpc("uzman_musait_saatler", {
+    p_uzman: uzman.id,
+    p_bas: simdi.toISOString(),
+    p_bit: new Date(simdi.getTime() + 28 * 24 * 3_600_000).toISOString(),
+  });
+  // Veritabani saati kendi biciminde dondurur; takvim aynı metni arayabilsin diye tek bicime cevrilir
+  const saatler = ((data ?? []) as string[]).map((s) => new Date(s).toISOString());
+
+  if (saatler.length === 0) {
+    return <p className="text-sm text-slate-600">Uzman henüz uygun saat belirtmedi.</p>;
+  }
+
+  const takvim = (uzmanId: string | null, not?: ReactNode) => (
+    <>
+      <Takvim saatler={saatler} simdi={simdi.toISOString()} uzmanId={uzmanId} ogrenci={uzman.kind === "student"}>
+        {not && <p className="text-sm text-slate-600">{not}</p>}
+      </Takvim>
+      <BulutGunes />
+    </>
+  );
+
+  if (!kullanici) {
+    return takvim(
+      null,
+      <>
         Başvurmak için{" "}
         <Link href="/giris" className="text-teal-800 underline">
           giriş yapın
@@ -89,33 +147,31 @@ async function BasvuruAlani({
           danışan olarak kayıt olun
         </Link>
         .
-      </p>
+      </>,
     );
   }
-  if (kullanici.rol !== "client") {
-    return <p className="text-sm text-slate-600">Yalnızca danışan hesapları başvuru yapabilir.</p>;
-  }
+  if (kullanici.rol !== "client") return takvim(null, "Yalnızca danışan hesapları başvuru yapabilir.");
 
-  const supabase = await supabaseSunucu();
   const { data: bekleyen } = await supabase
     .from("applications")
     .select("id")
-    .eq("expert_id", uzmanId)
+    .eq("expert_id", uzman.id)
     .eq("client_id", kullanici.id)
     .eq("status", "pending")
     .maybeSingle();
 
   if (bekleyen) {
-    return (
-      <p className="text-sm text-slate-600">
+    return takvim(
+      null,
+      <>
         Bu uzmana yanıt bekleyen bir başvurunuz var.{" "}
         <Link href="/panel" className="text-teal-800 underline">
           Panelinizden
         </Link>{" "}
         takip edebilirsiniz.
-      </p>
+      </>,
     );
   }
 
-  return <BasvuruFormu uzmanId={uzmanId} />;
+  return takvim(uzman.id);
 }

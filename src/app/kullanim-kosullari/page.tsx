@@ -70,8 +70,19 @@ export default function KullanimKosullariSayfasi() {
             şikâyet düğmesiyle bildirin.
           </li>
           <li>
-            Bağımsız uzmanlarla ücretli görüşme ve site üzerinden ödeme henüz kullanıma açılmamıştır.
-            Açıldığında ödeme koşulları ve platformun alacağı hizmet bedeli ayrıca duyurulacaktır.{" "}
+            Bağımsız uzmanlar her seans için tarih, saat ve ücret içeren bir plan yollar. Site içindeki ödeme
+            şu anda <strong>demodur</strong>: para çekilmez, kart bilgisi istenmez. Gerçek ödeme açıldığında
+            koşullar ve platformun alacağı hizmet bedeli ayrıca duyurulacaktır. <OnayGerekir />
+          </li>
+          <li>
+            Seansa 24 saatten fazla varsa danışan veya uzman iptal edebilir, ödeme iade edilir. 24 saatten az
+            kaldıysa danışan iptal ederse iade yapılmaz, uzman iptal ederse iade yapılır. Ödeme, seans bitiminden 48
+            saat sonrasına kadar bekletilir; bu sürede danışan &quot;Seans yapılmadı&quot; diyebilir ve kararı yönetici
+            verir. <OnayGerekir />
+          </li>
+          <li>
+            Yüz yüze görüşmeler ve ödemeleri site dışındadır, iade ve koruma kapsamında değildir. Bir uzmanın sizi
+            site dışında ödemeye yönlendirmesini şikâyet edebilirsiniz; kanıt varsa uzmanın hesabı kapatılır.{" "}
             <OnayGerekir />
           </li>
         </ul>

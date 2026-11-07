@@ -5,7 +5,7 @@ import { sikayetEt } from "./islemler";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
 import { SIKAYET_KATEGORILERI } from "@/lib/sabitler";
 
-export function SikayetFormu({ konusmaId }: { konusmaId: string }) {
+export function SikayetFormu({ konusmaId, bagimsiz }: { konusmaId: string; bagimsiz: boolean }) {
   const [durum, gonder, bekliyor] = useActionState(sikayetEt, {});
 
   if (durum.basari) return <DurumMesaji durum={durum} />;
@@ -22,11 +22,13 @@ export function SikayetFormu({ konusmaId }: { konusmaId: string }) {
             <option value="" disabled>
               Seçin
             </option>
-            {Object.entries(SIKAYET_KATEGORILERI).map(([deger, ad]) => (
-              <option key={deger} value={deger}>
-                {ad}
-              </option>
-            ))}
+            {Object.entries(SIKAYET_KATEGORILERI)
+              .filter(([deger]) => bagimsiz || deger !== "site_disi_odeme")
+              .map(([deger, ad]) => (
+                <option key={deger} value={deger}>
+                  {ad}
+                </option>
+              ))}
           </select>
         </label>
         <label className="block font-medium">

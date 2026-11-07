@@ -2,8 +2,8 @@
 // Buradaki anahtarlar supabase/migrations icindeki "check" listeleriyle ayni olmali.
 
 // Metin degistiginde surum de degistirilmeli; kullanicidan yeni surum icin tekrar onay istenir.
-export const KVKK_SURUMU = "2026-11-06-taslak";
-export const ACIK_RIZA_SURUMU = "2026-11-06-taslak";
+export const KVKK_SURUMU = "2026-11-07-taslak";
+export const ACIK_RIZA_SURUMU = "2026-11-07-taslak";
 
 // Kullanicinin secebilecegi sikayet sebepleri (veritabanindaki listeyle ayni)
 export const SIKAYET_KATEGORILERI = {
@@ -11,6 +11,7 @@ export const SIKAYET_KATEGORILERI = {
   uygunsuz_icerik: "Uygunsuz içerik",
   spam: "Spam / reklam",
   guvenlik_riski: "Güvenlik endişesi (kendine veya başkasına zarar riski)",
+  site_disi_odeme: "Site dışına ödeme yönlendirmesi",
   diger: "Diğer",
 } as const;
 
@@ -24,6 +25,7 @@ export const ISARET_KATEGORILERI: Record<string, string> = {
   ...SIKAYET_KATEGORILERI,
   admin_inceleme: "Yönetici incelemesi",
   otomatik: "Otomatik tespit",
+  seans_yapilmadi: "Seans yapılmadı",
 };
 
 export const MESAJ_EN_FAZLA = 2000;
@@ -33,7 +35,7 @@ export const TANITIM_EN_FAZLA = 600; // veritabanindaki bio siniriyla ayni
 export const ILETISIM_EPOSTASI = "iletisim@example.com";
 
 // Yasal metin sayfalarinin (kullanim kosullari, gizlilik, cerez vb.) son guncelleme tarihi
-export const YASAL_METIN_TARIHI = "06.11.2026";
+export const YASAL_METIN_TARIHI = "07.11.2026";
 
 export const ROLLER = {
   client: "Danışan",
@@ -108,6 +110,10 @@ export function listedeMi<T extends Record<string, unknown>>(
   deger: unknown,
 ): deger is keyof T {
   return typeof deger === "string" && Object.hasOwn(liste, deger);
+}
+
+export function paraYaz(kurus: number) {
+  return (kurus / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 2 });
 }
 
 export function tarihYaz(iso: string) {

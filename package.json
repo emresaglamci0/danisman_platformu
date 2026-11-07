@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test-verisi": "node --env-file=.env.local scripts/test-verisi.mts"
+    "test": "node --test scripts/*.test.mts",
+    "test-verisi":"node --env-file=.env.local scripts/test-verisi.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

@@ -13,10 +13,16 @@ export type Uzman = {
   bio: string | null;
   photo_path: string | null;
   offers_free_intro: boolean;
+  offers_online: boolean;
+  offers_in_person: boolean;
+  city: string | null;
+  district: string | null;
+  session_minutes: number | null;
   fotoLink: string | null;
 };
 
-const ALANLAR_SORGU = "id, kind, display_name, title, department, specialties, bio, photo_path, offers_free_intro";
+const ALANLAR_SORGU =
+  "id, kind, display_name, title, department, specialties, bio, photo_path, offers_free_intro, offers_online, offers_in_person, city, district, session_minutes";
 
 async function fotograflariEkle(uzmanlar: Omit<Uzman, "fotoLink">[]): Promise<Uzman[]> {
   const linkler = await fotografLinkleri(uzmanlar.map((u) => u.photo_path));

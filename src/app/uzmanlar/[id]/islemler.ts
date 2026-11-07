@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import type { FormDurumu } from "@/lib/hatalar";
-import { ALANLAR, UYGUN_ZAMANLAR, listedeMi } from "@/lib/sabitler";
+import { ALANLAR, listedeMi } from "@/lib/sabitler";
 
 export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
@@ -13,9 +13,9 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
 
   const uzmanId = String(form.get("uzmanId") ?? "");
   const konu = form.get("konu");
-  const zaman = form.get("zaman");
+  const baslangic = new Date(String(form.get("baslangic") ?? ""));
 
-  if (!listedeMi(UYGUN_ZAMANLAR, zaman)) return { hata: "Lütfen size uygun zamanı seçin." };
+  if (Number.isNaN(baslangic.getTime())) return { hata: "Lütfen takvimden bir saat seçin." };
   if (konu && !listedeMi(ALANLAR, konu)) return { hata: "Geçersiz konu seçimi." };
 
   const supabase = await supabaseSunucu();
@@ -23,7 +23,7 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
     client_id: kullanici.id,
     expert_id: uzmanId,
     topic: konu || null,
-    availability: zaman,
+    requested_start: baslangic.toISOString(),
   });
 
   if (error) {
@@ -31,6 +31,9 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
     if (error.code === "23505") return { hata: "Bu uzmana zaten yanıt bekleyen bir başvurunuz var." };
     if (error.message.includes("HIZ_SINIRI")) {
       return { hata: "Son 24 saatte çok fazla başvuru yaptınız. Lütfen daha sonra tekrar deneyin." };
+    }
+    if (error.message.includes("SAAT_UYGUN_DEGIL")) {
+      return { hata: "Bu saat artık uygun değil. Lütfen sayfayı yenileyip başka bir saat seçin." };
     }
     return { hata: "Başvuru gönderilemedi. Lütfen tekrar deneyin." };
   }

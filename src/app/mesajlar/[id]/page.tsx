@@ -4,7 +4,9 @@ import { AcilDurumKutusu } from "@/components/AcilDurumKutusu";
 import { AcikRizaMetni, AydinlatmaMetni } from "@/components/kvkk/Metinler";
 import { TaslakNotu } from "@/components/kvkk/TaslakNotu";
 import { OdemeUyarisi } from "@/components/OdemeUyarisi";
-import { konusmaGetir, mesajlasmaRizasiVar, sohbetSilinmeTarihi, uzmanBagimsizMi, type Konusma } from "@/lib/konusmalar";
+import { OnayGerekir } from "@/components/OnayGerekir";
+import { konusmaGetir, mesajlasmaRizasiVar, sohbetSilinmeTarihi, uzmanSeansBilgisi, type Konusma } from "@/lib/konusmalar";
+import { seanslariGetir } from "@/lib/seanslar";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz, tarihYaz } from "@/lib/sabitler";
 import { mesajlariCoz } from "@/lib/sifreleme";
@@ -14,6 +16,7 @@ import { GorusmeBaglantisiFormu } from "./GorusmeBaglantisiFormu";
 import { MesajFormu } from "./MesajFormu";
 import { OtomatikYenile } from "./OtomatikYenile";
 import { RizaFormu } from "./RizaFormu";
+import { SeansBolumu } from "./SeansBolumu";
 import { SikayetFormu } from "./SikayetFormu";
 import { SohbetSilmeFormu } from "./SohbetSilmeFormu";
 
@@ -60,6 +63,12 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
             sohbetler yetkili yönetici tarafından incelenebilir. Yönetici bunu yalnızca sebep yazarak
             yapabilir ve her erişim değiştirilemeyen bir kayda yazılır.
           </p>
+          <p>
+            Site dışına ödeme yönlendirmesini önlemek için bağımsız uzmanların yazdığı mesajlar, gönderilirken
+            bir bilgisayar programı tarafından IBAN ve telefon numarası kalıpları açısından kontrol edilir. Bu
+            kalıp bulunursa sohbet incelemeye işaretlenir. Danışan mesajları ve öğrenci uzman sohbetleri kontrol
+            edilmez. <OnayGerekir />
+          </p>
         </div>
         <section className="max-h-80 space-y-2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-5">
           <h2 className="font-semibold">KVKK Aydınlatma Metni</h2>
@@ -89,25 +98,43 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
 
   const uzmanMi = kullanici.id === konusma.expert_id;
   const karsiTaraf = uzmanMi ? konusma.danisanAdi : konusma.uzmanAdi;
-  const odemeUyarisi = konusma.expert_id && (await uzmanBagimsizMi(konusma.expert_id)) ? <OdemeUyarisi /> : null;
+  const bilgi = konusma.expert_id ? await uzmanSeansBilgisi(konusma.expert_id) : null;
+  const bagimsiz = bilgi?.kind === "independent";
+  const seanslar = await seanslariGetir(konusma.id);
+  // Ucretsiz baglanti, ucretli seans yerine kullanilamasin diye ilk seans kesinlesince gizlenir
+  const seansKesinlesti = seanslar.some((s) => s.status === "confirmed");
+  const { data: basvuru } = await supabase
+    .from("applications")
+    .select("requested_start")
+    .eq("id", konusma.application_id)
+    .maybeSingle();
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <AcilDurumKutusu />
       <Baslik baslik={karsiTaraf} />
-      {uzmanMi && (
-        <GorusmeBaglantisiFormu konusmaId={konusma.id} baglanti={konusma.meeting_url ?? ""}>
-          {odemeUyarisi}
-        </GorusmeBaglantisiFormu>
+      {bagimsiz && (
+        <div className="text-sm">
+          <OdemeUyarisi />
+        </div>
       )}
-      {!uzmanMi && konusma.meeting_url && (
+      {uzmanMi && bilgi?.offers_free_intro && !konusma.meeting_url && (
         <section className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
-          <h2 className="font-semibold">Görüntülü görüşme</h2>
+          <GorusmeBaglantisiFormu konusmaId={konusma.id} />
+        </section>
+      )}
+      {uzmanMi && konusma.meeting_url && (
+        <p className="rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-700">
+          Ön görüşme bağlantısını bu danışana yolladınız. Yeniden yollayamazsınız.
+        </p>
+      )}
+      {!uzmanMi && konusma.meeting_url && !seansKesinlesti && (
+        <section className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
+          <h2 className="font-semibold">Ön görüşme</h2>
           <p className="mt-1 text-slate-600">
             Uzmanınız bir görüşme bağlantısı paylaştı. Görüşme bu sitenin dışında, bağlantının ait olduğu
             serviste yapılır ve o servisin kuralları geçerlidir.
           </p>
-          {odemeUyarisi && <div className="mt-3">{odemeUyarisi}</div>}
           <a
             href={konusma.meeting_url}
             target="_blank"
@@ -118,6 +145,15 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
           </a>
         </section>
       )}
+      <SeansBolumu
+        konusmaId={konusma.id}
+        seanslar={seanslar}
+        uzmanMi={uzmanMi}
+        bagimsiz={bagimsiz}
+        sure={bilgi?.session_minutes ?? null}
+        yeniPlanAcik={!uzmanAyrildi}
+        istenenSaat={basvuru?.requested_start ?? null}
+      />
       <MesajListesi kullanici={kullanici} konusma={konusma} />
       {uzmanAyrildi ? (
         <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 text-sm">
@@ -136,7 +172,7 @@ async function TarafGorunumu({ kullanici, konusma }: { kullanici: Kullanici; kon
           Bu sohbeti şikayet ettiniz. Yetkili yönetici sohbeti inceleyebilir.
         </p>
       ) : (
-        <SikayetFormu konusmaId={konusma.id} />
+        <SikayetFormu konusmaId={konusma.id} bagimsiz={bagimsiz} />
       )}
       {!uzmanAyrildi && <OtomatikYenile />}
     </div>

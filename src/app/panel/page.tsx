@@ -20,10 +20,14 @@ import { fotografLinkleri } from "@/lib/fotograf";
 import { uzmanAdlari } from "@/lib/uzmanlar";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
+import { saatEtiketi } from "@/lib/seans-kurallari";
+import { BasvuruYanitFormu } from "./BasvuruYanitFormu";
 import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
 import { FotografFormu } from "./FotografFormu";
+import { GorusmeBilgileriFormu } from "./GorusmeBilgileriFormu";
+import { HaftalikTablo } from "./HaftalikTablo";
 import { HesapSilmeFormu } from "./HesapSilmeFormu";
-import { basvuruYanitla, onGorusmeTercihiDegistir } from "./islemler";
+import { onGorusmeTercihiDegistir } from "./islemler";
 import { ProfilFormu } from "./ProfilFormu";
 
 export const metadata = { title: "Panelim | Danışman Buluşma" };
@@ -31,7 +35,8 @@ export const metadata = { title: "Panelim | Danışman Buluşma" };
 type Basvuru = {
   id: string;
   topic: Alan | null;
-  availability: UygunZaman;
+  availability: UygunZaman | null; // yalnizca eski basvurularda dolu
+  requested_start: string | null;
   status: BasvuruDurumu;
   created_at: string;
 };
@@ -66,7 +71,7 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
   await supabase.rpc("basvurular_goruldu");
   const { data } = await supabase
     .from("applications")
-    .select("id, topic, availability, status, created_at, expert_id")
+    .select("id, topic, availability, requested_start, status, created_at, expert_id")
     .eq("client_id", kullanici.id)
     .order("created_at", { ascending: false });
   const basvurular = (data ?? []) as (Basvuru & { expert_id: string })[];
@@ -94,10 +99,12 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
 
 async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const supabase = await supabaseSunucu();
-  const [{ data: profil }, { data: belgeler }, { data }] = await Promise.all([
+  const [{ data: profil }, { data: belgeler }, { data }, { data: duzen }] = await Promise.all([
     supabase
       .from("expert_profiles")
-      .select("kind, status, verified_until, review_note, photo_path, offers_free_intro, bio, specialties")
+      .select(
+        "kind, status, verified_until, review_note, photo_path, offers_free_intro, bio, specialties, offers_online, offers_in_person, city, district, session_minutes",
+      )
       .eq("id", kullanici.id)
       .single(),
     supabase
@@ -106,9 +113,10 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
       .eq("expert_id", kullanici.id),
     supabase
       .from("applications")
-      .select("id, topic, availability, status, created_at, profiles(full_name)")
+      .select("id, topic, availability, requested_start, status, created_at, profiles(full_name)")
       .eq("expert_id", kullanici.id)
       .order("created_at", { ascending: false }),
+    supabase.from("expert_availability").select("weekday, hour").eq("expert_id", kullanici.id),
   ]);
   const basvurular = (data ?? []) as unknown as (Basvuru & { profiles: { full_name: string } | null })[];
 
@@ -166,6 +174,28 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
         <ProfilFormu tanitim={profil?.bio ?? ""} alanlar={(profil?.specialties ?? []) as Alan[]} />
       </section>
 
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="mb-3 font-semibold">Görüşme bilgilerim</h2>
+        <GorusmeBilgileriFormu
+          bilgiler={{
+            online: profil?.offers_online ?? true,
+            yuzYuze: profil?.offers_in_person ?? false,
+            il: profil?.city ?? "",
+            ilce: profil?.district ?? "",
+            sure: profil?.session_minutes ?? null,
+          }}
+        />
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="font-semibold">Uygun saatlerim</h2>
+        <p className="mb-3 mt-1 text-sm text-slate-600">
+          Online seans için müsait olduğunuz saatleri seçin. Bu düzen her hafta tekrar eder. Danışanlar önümüzdeki 4
+          haftayı görür, görüşmeniz olan saatler kendiliğinden gizlenir.
+        </p>
+        <HaftalikTablo secili={(duzen ?? []).map((d) => `${d.weekday}-${d.hour}`)} />
+      </section>
+
       {tur === "independent" && (
         <section className="rounded-xl border border-slate-200 bg-white p-5">
           <h2 className="font-semibold">
@@ -177,8 +207,8 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
               Ücretsiz Ön Görüşme
             </Link>{" "}
             sayfasında listelenirsiniz ve danışanlardan ön görüşme için ücret istememeyi kabul edersiniz.
-            Ön görüşmeyi mesajlaşarak yapabilir veya isterseniz sohbetin içinden görüntülü görüşme
-            bağlantısı paylaşabilirsiniz.
+            Ön görüşmeyi mesajlaşarak yapabilir veya isterseniz sohbetin içinden bir kez görüntülü
+            görüşme bağlantısı yollayabilirsiniz.
           </p>
           <form action={onGorusmeTercihiDegistir} className="mt-3">
             <input type="hidden" name="acik" value={profil?.offers_free_intro ? "false" : "true"} />
@@ -224,25 +254,7 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
         ) : (
           basvurular.map((b) => (
             <BasvuruSatiri key={b.id} basvuru={b} kisi={b.profiles?.full_name ?? "Danışan"}>
-              {b.status === "pending" && (
-                <form action={basvuruYanitla} className="flex gap-2">
-                  <input type="hidden" name="basvuruId" value={b.id} />
-                  <button
-                    name="karar"
-                    value="accepted"
-                    className="rounded-lg bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800"
-                  >
-                    Kabul et
-                  </button>
-                  <button
-                    name="karar"
-                    value="rejected"
-                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
-                  >
-                    Reddet
-                  </button>
-                </form>
-              )}
+              {b.status === "pending" && <BasvuruYanitFormu basvuruId={b.id} />}
             </BasvuruSatiri>
           ))
         )}
@@ -266,7 +278,10 @@ function BasvuruSatiri({
         <p className="font-medium">{kisi}</p>
         <p className="text-slate-600">
           {basvuru.topic ? ALANLAR[basvuru.topic] : "Konu belirtilmedi"} ·{" "}
-          {UYGUN_ZAMANLAR[basvuru.availability]} · {tarihYaz(basvuru.created_at)}
+          {basvuru.requested_start
+            ? `İstenen saat: ${saatEtiketi(basvuru.requested_start)}`
+            : basvuru.availability && UYGUN_ZAMANLAR[basvuru.availability]}{" "}
+          · {tarihYaz(basvuru.created_at)}
         </p>
         <p className="mt-1 font-medium text-teal-800">
           {BASVURU_DURUMLARI[basvuru.status]}

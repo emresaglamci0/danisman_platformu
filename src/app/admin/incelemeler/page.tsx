@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, tarihSaatYaz } from "@/lib/sabitler";
+import { ISARET_KATEGORILERI, ISARET_KAYNAKLARI, paraYaz, tarihSaatYaz } from "@/lib/sabitler";
+import { saatEtiketi } from "@/lib/seans-kurallari";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { adminSayfasiniKoru } from "../yetki";
 import { IncelemeyeAlFormu } from "./IncelemeyeAlFormu";
 import { isaretKapat } from "./islemler";
+import { SeansKarari } from "./SeansKarari";
 
 export const metadata = { title: "İncelemeler | Danışman Buluşma" };
 
@@ -15,6 +17,25 @@ type Isaret = {
   note: string | null;
   created_at: string;
 };
+
+// "Seans yapilmadi" bildirimi: yonetici yalnizca seansin ozetini gorur, gorusme adresini gormez (0017).
+async function SeansKartiAlani({ isaretId }: { isaretId: string }) {
+  const supabase = await supabaseSunucu();
+  const { data } = await supabase.rpc("admin_seans_karti", { p_isaret: isaretId });
+  const kart = (data ?? [])[0] as
+    | { starts_at: string; ends_at: string; amount_kurus: number; baglanti_var: boolean }
+    | undefined;
+  if (!kart) return <p className="w-full text-slate-600">Seans özeti okunamadı.</p>;
+  return (
+    <div className="w-full">
+      <p>
+        {saatEtiketi(kart.starts_at)} · {paraYaz(kart.amount_kurus)} · Görüşme bağlantısı:{" "}
+        {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
+      </p>
+      <SeansKarari isaretId={isaretId} />
+    </div>
+  );
+}
 
 export default async function IncelemelerSayfasi() {
   await adminSayfasiniKoru();
@@ -84,10 +105,14 @@ export default async function IncelemelerSayfasi() {
                     {tarihSaatYaz(i.created_at)}
                     {i.note && <span className="block text-slate-600">“{i.note}”</span>}
                   </span>
-                  <form action={isaretKapat}>
-                    <input type="hidden" name="isaretId" value={i.id} />
-                    <button className="text-teal-800 hover:underline">İncelemeyi kapat</button>
-                  </form>
+                  {i.category === "seans_yapilmadi" ? (
+                    <SeansKartiAlani isaretId={i.id} />
+                  ) : (
+                    <form action={isaretKapat}>
+                      <input type="hidden" name="isaretId" value={i.id} />
+                      <button className="text-teal-800 hover:underline">İncelemeyi kapat</button>
+                    </form>
+                  )}
                 </li>
               ))}
             </ul>

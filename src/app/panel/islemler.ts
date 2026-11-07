@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import type { FormDurumu } from "@/lib/hatalar";
 import { mevcutKullanici } from "@/lib/oturum";
+import { ILLER } from "@/lib/iller";
 import { ALANLAR, TANITIM_EN_FAZLA, listedeMi } from "@/lib/sabitler";
+import { SAAT_ILK, SAAT_SON, SEANS_SURELERI } from "@/lib/seans-kurallari";
 import { yeniKonusmaAnahtari } from "@/lib/sifreleme";
-import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { supabaseYonetici } from "@/lib/supabase/yonetici";
 
 // Uzman tanitim yazisini ve calisma alanlarini gunceller. Ad ve unvan belgelerle dogrulandigi icin
@@ -53,39 +54,118 @@ export async function onGorusmeTercihiDegistir(form: FormData) {
   revalidatePath("/panel");
 }
 
-// Uzman bir basvuruyu kabul eder veya reddeder.
-// Veritabani kurallari (RLS) da yalnizca ilgili uzmanin, yalnizca bekleyen basvuruyu
-// degistirmesine izin verir. Kabul edilirse iki taraf arasinda konusma acilir.
-export async function basvuruYanitla(form: FormData) {
+// Uzman gorusme seklini, yuz yuze konumunu ve seans suresini kaydeder (0016).
+export async function gorusmeBilgileriKaydet(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
-  if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) return;
+  if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) {
+    return { hata: "Bu işlem yalnızca uzman hesapları içindir." };
+  }
 
-  const basvuruId = String(form.get("basvuruId") ?? "");
-  const karar = form.get("karar");
-  if (karar !== "accepted" && karar !== "rejected") return;
+  const online = form.get("online") === "on";
+  const yuzYuze = form.get("yuzYuze") === "on";
+  const il = String(form.get("il") ?? "");
+  const ilce = String(form.get("ilce") ?? "").trim();
+  const sure = Number(form.get("sure"));
 
-  const supabase = await supabaseSunucu();
-  const { data: basvuru } = await supabase
-    .from("applications")
-    .update({ status: karar })
-    .eq("id", basvuruId)
-    .eq("expert_id", kullanici.id)
-    .eq("status", "pending")
-    .select("id, client_id, expert_id")
-    .maybeSingle();
+  if (!online && !yuzYuze) return { hata: "En az bir görüşme şekli seçin." };
+  if (!(SEANS_SURELERI as readonly number[]).includes(sure)) return { hata: "Lütfen seans süresini seçin." };
+  if (yuzYuze) {
+    if (!ILLER.includes(il)) return { hata: "Lütfen şehir seçin." };
+    // Yalnizca harf ve bosluk: buraya telefon veya acik adres yazilamasin
+    if (!/^[\p{L} ]{1,40}$/u.test(ilce)) return { hata: "İlçe yalnızca harflerden oluşmalı (en fazla 40 karakter)." };
+  }
 
-  if (basvuru && karar === "accepted") {
-    // Konusma tablosuna kullanicilar yazamaz; sunucu, kabul edilmis basvuru icin acar.
-    // Veritabani da basvurunun gercekten kabul edildigini ayrica kontrol eder.
-    await supabaseYonetici()
-      .from("conversations")
-      .insert({
-        application_id: basvuru.id,
-        client_id: basvuru.client_id,
-        expert_id: basvuru.expert_id,
-        wrapped_key: await yeniKonusmaAnahtari(basvuru.id),
-      });
+  const { error } = await supabaseYonetici()
+    .from("expert_profiles")
+    .update({
+      offers_online: online,
+      offers_in_person: yuzYuze,
+      city: yuzYuze ? il : null,
+      district: yuzYuze ? ilce : null,
+      session_minutes: sure,
+    })
+    .eq("id", kullanici.id);
+  if (error) return { hata: "Bilgileriniz kaydedilemedi. Lütfen tekrar deneyin." };
+
+  revalidatePath("/panel");
+  return { basari: "Görüşme bilgileriniz güncellendi." };
+}
+
+// Uzman haftalik uygun saatlerini kaydeder. Once yeniler eklenir, sonra kaldirilanlar silinir:
+// yarida hata olursa uzmanin tum saatleri kaybolmaz.
+export async function haftalikDuzenKaydet(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) {
+    return { hata: "Bu işlem yalnızca uzman hesapları içindir." };
+  }
+
+  const satirlar = [];
+  for (const deger of new Set(form.getAll("saat"))) {
+    const [gun, saat] = String(deger).split("-").map(Number);
+    if (!(gun >= 1 && gun <= 7) || !(saat >= SAAT_ILK && saat <= SAAT_SON)) return { hata: "Geçersiz saat seçimi." };
+    satirlar.push({ expert_id: kullanici.id, weekday: gun, hour: saat });
+  }
+
+  const yonetici = supabaseYonetici();
+  const { data: mevcut, error: okumaHatasi } = await yonetici
+    .from("expert_availability")
+    .select("weekday, hour")
+    .eq("expert_id", kullanici.id);
+  if (okumaHatasi) return { hata: "Saatleriniz kaydedilemedi. Lütfen tekrar deneyin." };
+
+  if (satirlar.length > 0) {
+    const { error } = await yonetici.from("expert_availability").upsert(satirlar);
+    if (error) return { hata: "Saatleriniz kaydedilemedi. Lütfen tekrar deneyin." };
+  }
+  for (const eski of mevcut ?? []) {
+    if (satirlar.some((s) => s.weekday === eski.weekday && s.hour === eski.hour)) continue;
+    const { error } = await yonetici
+      .from("expert_availability")
+      .delete()
+      .match({ expert_id: kullanici.id, weekday: eski.weekday, hour: eski.hour });
+    if (error) return { hata: "Saatleriniz kaydedilemedi. Lütfen tekrar deneyin." };
   }
 
   revalidatePath("/panel");
+  return { basari: "Uygun saatleriniz güncellendi." };
+}
+
+// Uzman bir basvuruyu kabul eder veya reddeder. Kullanicilarin basvuru tablosuna yazma izni yok (0016).
+// Kabulde basvuru, sohbet ve (ogrenci uzmanda) seans veritabaninda tek islemde olusur.
+export async function basvuruYanitla(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici || (kullanici.rol !== "expert" && kullanici.rol !== "student_expert")) {
+    return { hata: "Bu işlem yalnızca uzman hesapları içindir." };
+  }
+
+  const basvuruId = String(form.get("basvuruId") ?? "");
+  const karar = form.get("karar");
+  const yonetici = supabaseYonetici();
+
+  if (karar === "rejected") {
+    const { error } = await yonetici
+      .from("applications")
+      .update({ status: "rejected" })
+      .eq("id", basvuruId)
+      .eq("expert_id", kullanici.id)
+      .eq("status", "pending");
+    if (error) return { hata: "İşlem yapılamadı. Lütfen tekrar deneyin." };
+  } else if (karar === "accepted") {
+    const { error } = await yonetici.rpc("basvuru_kabul", {
+      p_basvuru: basvuruId,
+      p_uzman: kullanici.id,
+      p_sarili_anahtar: await yeniKonusmaAnahtari(basvuruId),
+    });
+    if (error) {
+      if (error.message.includes("SAAT_DOLU")) {
+        return { hata: "Bu saat artık uygun değil, başvuruyu kabul edemezsiniz. Reddedebilirsiniz." };
+      }
+      return { hata: "İşlem yapılamadı. Lütfen tekrar deneyin." };
+    }
+  } else {
+    return { hata: "Geçersiz işlem." };
+  }
+
+  revalidatePath("/panel");
+  return {};
 }

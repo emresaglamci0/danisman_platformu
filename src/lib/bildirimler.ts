@@ -20,6 +20,18 @@ export async function bildirimSayilari(kullanici: Kullanici) {
     ? basvurular.eq("client_id", kullanici.id).neq("status", "pending").is("client_seen_at", null)
     : basvurular.eq("expert_id", kullanici.id).eq("status", "pending"));
 
+  // Danisanin yanit bekleyen planlari, sohbetin icinde oldugu icin mesaj sayacina eklenir
+  let bekleyenPlan = 0;
+  if (kullanici.rol === "client") {
+    const { count: planlar } = await supabase
+      .from("session_offers")
+      .select("id", { count: "exact", head: true })
+      .eq("client_id", kullanici.id)
+      .eq("status", "sent")
+      .gt("expires_at", new Date().toISOString());
+    bekleyenPlan = planlar ?? 0;
+  }
+
   const mesajlar = await okunmamisMesajlar();
-  return { mesaj: [...mesajlar.values()].reduce((a, b) => a + b, 0), panel: count ?? 0 };
+  return { mesaj: [...mesajlar.values()].reduce((a, b) => a + b, 0) + bekleyenPlan, panel: count ?? 0 };
 }

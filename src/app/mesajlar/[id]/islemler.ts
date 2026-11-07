@@ -4,9 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { FormDurumu } from "@/lib/hatalar";
 import { GORUSME_BAGLANTISI_EN_FAZLA, gorusmeBaglantisiGecerli } from "@/lib/gorusme";
-import { konusmaGetir, mesajlasmaRizasiVar } from "@/lib/konusmalar";
+import { konusmaGetir, mesajlasmaRizasiVar, uzmanSeansBilgisi } from "@/lib/konusmalar";
 import { mevcutKullanici } from "@/lib/oturum";
 import { ACIK_RIZA_SURUMU, KVKK_SURUMU, MESAJ_EN_FAZLA, SIKAYET_KATEGORILERI, listedeMi } from "@/lib/sabitler";
+import { odemeKalibiVar } from "@/lib/seans-kurallari";
 import { mesajSifrele } from "@/lib/sifreleme";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { supabaseYonetici } from "@/lib/supabase/yonetici";
@@ -57,11 +58,16 @@ export async function mesajGonder(_onceki: FormDurumu, form: FormData): Promise<
   // Kullanicilarin mesaj tablosuna dogrudan yazma izni yok (0007). Mesaji yalnizca sunucu,
   // yukaridaki kontrollerden ve sifrelemeden sonra yazar. Veritabani da bicim, boyut,
   // taraf, onay ve hiz kurallarini ayrica uygular.
-  const { error } = await supabaseYonetici().from("messages").insert({
-    conversation_id: konusma.id,
-    sender_id: kullanici.id,
-    ciphertext: await mesajSifrele(konusma, metin),
-  });
+  const yonetici = supabaseYonetici();
+  const { data: mesaj, error } = await yonetici
+    .from("messages")
+    .insert({
+      conversation_id: konusma.id,
+      sender_id: kullanici.id,
+      ciphertext: await mesajSifrele(konusma, metin),
+    })
+    .select("id")
+    .single();
   if (error) {
     if (error.message.includes("HIZ_SINIRI")) {
       return { hata: "Çok hızlı mesaj gönderiyorsunuz. Lütfen biraz bekleyip tekrar deneyin." };
@@ -69,21 +75,43 @@ export async function mesajGonder(_onceki: FormDurumu, form: FormData): Promise<
     return { hata: "Mesaj gönderilemedi. Lütfen tekrar deneyin." };
   }
 
+  // Site disina odeme yonlendirmesi kontrolu: yalnizca bagimsiz uzmanin mesajlari (kullanici karari, 2026-11-07).
+  // Mesaj engellenmez. Bulunan metin hicbir yere yazilmaz. Isaretleme basarisiz olursa mesaj yine gonderilmis olur;
+  // ayni sohbette zaten acik otomatik isaret varsa veritabani ikincisini reddeder (0016).
+  if (konusma.expert_id === kullanici.id && odemeKalibiVar(metin)) {
+    const bilgi = await uzmanSeansBilgisi(kullanici.id);
+    if (bilgi?.kind === "independent") {
+      await yonetici.from("conversation_flags").insert({
+        conversation_id: konusma.id,
+        source: "auto_moderation",
+        category: "site_disi_odeme",
+        detector: "odeme_kaliplari_v1",
+        message_id: mesaj.id,
+      });
+    }
+  }
+
   revalidatePath(`/mesajlar/${konusma.id}`);
   return { basari: "gonderildi" };
 }
 
-// Uzman kendi gorusme baglantisini kaydeder veya kaldirir (bos gonderilirse). Yalnizca izinli
-// servislerin adresi kabul edilir. Kullanicilarin yazma izni yok; kaydi sunucu yapar (0014).
+// On gorusme baglantisi: yalnizca ucretsiz on gorusme yapan bagimsiz uzman, sohbet basina BIR KEZ yollar.
+// Yalnizca izinli servislerin adresi kabul edilir. Kullanicilarin yazma izni yok; kaydi sunucu yapar (0014, 0016).
 export async function gorusmeBaglantisiKaydet(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
   if (!kullanici) return { hata: "Lütfen giriş yapın." };
 
   const konusma = await konusmaGetir(String(form.get("konusmaId") ?? ""));
   if (!konusma || konusma.expert_id !== kullanici.id) return { hata: "Bu işlemi yalnızca sohbetin uzmanı yapabilir." };
+  if (konusma.meeting_url) return { hata: "Ön görüşme bağlantısı yalnızca bir kez yollanabilir." };
+
+  const bilgi = await uzmanSeansBilgisi(kullanici.id);
+  if (bilgi?.kind !== "independent" || !bilgi.offers_free_intro) {
+    return { hata: "Bu bağlantı yalnızca ücretsiz ön görüşme yapan bağımsız uzmanlar içindir." };
+  }
 
   const baglanti = String(form.get("baglanti") ?? "").trim();
-  if (baglanti && !gorusmeBaglantisiGecerli(baglanti)) {
+  if (!gorusmeBaglantisiGecerli(baglanti)) {
     return {
       hata: `Yalnızca Google Meet, Zoom veya Microsoft Teams bağlantısı ekleyebilirsiniz (https ile başlamalı, en fazla ${GORUSME_BAGLANTISI_EN_FAZLA} karakter).`,
     };
@@ -91,13 +119,18 @@ export async function gorusmeBaglantisiKaydet(_onceki: FormDurumu, form: FormDat
 
   const { error } = await supabaseYonetici()
     .from("conversations")
-    .update({ meeting_url: baglanti || null })
+    .update({ meeting_url: baglanti })
     .eq("id", konusma.id)
     .eq("expert_id", kullanici.id);
-  if (error) return { hata: "Bağlantı kaydedilemedi. Lütfen tekrar deneyin." };
+  if (error) {
+    if (error.message.includes("BAGLANTI_DEGISTIRILEMEZ")) {
+      return { hata: "Ön görüşme bağlantısı yalnızca bir kez yollanabilir." };
+    }
+    return { hata: "Bağlantı kaydedilemedi. Lütfen tekrar deneyin." };
+  }
 
   revalidatePath(`/mesajlar/${konusma.id}`);
-  return { basari: baglanti ? "Bağlantı danışanınızla paylaşıldı." : "Bağlantı kaldırıldı." };
+  return { basari: "Bağlantı danışanınızla paylaşıldı." };
 }
 
 // Danisan, uzmani ayrilmis sohbeti 6 ay dolmadan kendisi siler. Kurallari veritabani fonksiyonu uygular.
@@ -131,6 +164,10 @@ export async function sikayetEt(_onceki: FormDurumu, form: FormData): Promise<Fo
   const kategori = form.get("kategori");
   const not = String(form.get("not") ?? "").trim();
   if (!listedeMi(SIKAYET_KATEGORILERI, kategori)) return { hata: "Lütfen bir şikayet sebebi seçin." };
+  if (kategori === "site_disi_odeme") {
+    const bilgi = konusma.expert_id ? await uzmanSeansBilgisi(konusma.expert_id) : null;
+    if (bilgi?.kind !== "independent") return { hata: "Bu sebep bu sohbet için geçerli değil." };
+  }
   if (not.length > 500) return { hata: "Açıklama en fazla 500 karakter olabilir." };
 
   const supabase = await supabaseSunucu();

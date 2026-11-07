@@ -30,6 +30,8 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 ## İçerik
 
 - [ ] `src/app/layout.tsx` içindeki "Demo: gerçek bilgilerinizi girmeyin" uyarısını ve alt bilgideki öğrenci projesi notunu kaldırın.
-- [ ] Site içi ödeme açılınca `src/components/OdemeUyarisi.tsx` içindeki "yakında açılacaktır" cümlesini kaldırın. Ödeme açılmadan yayına çıkılırsa uyarı, olmayan bir ödeme yöntemini anlatır.
+- [ ] **Demo ödemeyi değiştirin veya kapatın.** `src/modules/odeme/` şu an demodur: para çekilmez. Yayında ya Türkiye'de lisanslı, alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu bağlanmalı (kart bilgisi sunucumuza gelmemeli, CSP'ye yalnızca o adres eklenmeli) ya da `ODEME_MODULU_AKTIF=false` yapılmalı. Gerçek ödemede kayıtların yasal saklama süresi ayrıca belirlenmeli; şu an seans kayıtları sohbetle birlikte silinir.
+- [ ] İptal, iade ve 48 saatlik bekletme kurallarını ve yöneticinin iade kararını avukata onaylatın.
+- [ ] Bağımsız uzman mesajlarındaki otomatik IBAN ve telefon kontrolünü avukata onaylatın. Yanlış alarm oranına bakın; `src/lib/seans-kurallari.ts` içindeki kalıplar yalnızca düz yazılmış numarayı yakalar.
 - [ ] Görüntülü görüşme için üçüncü taraf servislere yönlendirmeyi KVKK açısından avukata sorun (Google Meet, Zoom, Microsoft Teams).
 - [ ] `/psikolojik-rahatsizliklar` sayfasındaki açıklamaları lisanslı bir ruh sağlığı uzmanına kontrol ettirin.

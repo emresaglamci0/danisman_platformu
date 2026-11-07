@@ -136,6 +136,32 @@ body {
   }
 }
 
+/* Uzman profilindeki bulut ve gunes. Ana sayfa cizimiyle ayni saniyede 18 kare duzeni. */
+.bulut-gunes {
+  --kare: calc(1s / 18);
+}
+
+.gunes {
+  transform-origin: 62px 42px;
+  animation: gunes-donus calc(var(--kare) * 720) steps(720) infinite;
+}
+
+.bulut {
+  animation: bulut-kayma calc(var(--kare) * 126) steps(126) infinite alternate;
+}
+
+@keyframes gunes-donus {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bulut-kayma {
+  to {
+    transform: translateX(12px);
+  }
+}
+
 /* Isletim sisteminde "hareketi azalt" secili olan kisiler icin gecisler kapanir */
 @media (prefers-reduced-motion: reduce) {
   *,

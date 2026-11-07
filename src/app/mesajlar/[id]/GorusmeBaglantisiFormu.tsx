@@ -1,42 +1,32 @@
 "use client";
 
-import { useActionState, useState, type ReactNode } from "react";
+import { useActionState } from "react";
 import { gorusmeBaglantisiKaydet } from "./islemler";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
 import { GORUSME_BAGLANTISI_EN_FAZLA } from "@/lib/gorusme";
 
-export function GorusmeBaglantisiFormu({
-  konusmaId,
-  baglanti,
-  children,
-}: {
-  konusmaId: string;
-  baglanti: string;
-  children?: ReactNode;
-}) {
+// Ucretsiz on gorusme icin tek seferlik baglanti. Yollandiktan sonra sayfa bu formu gostermez.
+export function GorusmeBaglantisiFormu({ konusmaId }: { konusmaId: string }) {
   const [durum, gonder, bekliyor] = useActionState(gorusmeBaglantisiKaydet, {});
-  const [adres, setAdres] = useState(baglanti);
 
   return (
-    <details className="rounded-xl border border-slate-200 bg-white p-4 text-sm" open={!!baglanti}>
-      <summary className="cursor-pointer font-semibold">Görüntülü görüşme bağlantısı</summary>
+    <details className="rounded-lg border border-slate-200 p-3">
+      <summary className="cursor-pointer font-medium">Ön görüşme bağlantısı yolla</summary>
       <form action={gonder} className="mt-3 space-y-3">
         <DurumMesaji durum={durum} />
         <input type="hidden" name="konusmaId" value={konusmaId} />
         <p className="text-slate-600">
-          Google Meet, Zoom veya Microsoft Teams bağlantınızı ekleyin. Yalnızca bu danışan görür. Görüşme bu
-          sitenin dışında yapılır. Silmek için alanı boşaltıp kaydedin.
+          Google Meet, Zoom veya Microsoft Teams bağlantınızı ekleyin. Yalnızca bu danışan görür. Görüşme bu sitenin
+          dışında yapılır. <strong>Bu bağlantıyı yalnızca bir kez yollayabilirsiniz</strong>, sonra değiştiremezsiniz.
         </p>
-        {children}
         <label className="block font-medium">
           Bağlantı
           <input
             name="baglanti"
             type="url"
+            required
             maxLength={GORUSME_BAGLANTISI_EN_FAZLA}
             placeholder="https://meet.google.com/..."
-            value={adres}
-            onChange={(e) => setAdres(e.target.value)}
             className={girdiSinifi}
           />
         </label>
@@ -44,7 +34,7 @@ export function GorusmeBaglantisiFormu({
           disabled={bekliyor}
           className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800 disabled:opacity-60"
         >
-          {bekliyor ? "Kaydediliyor..." : "Kaydet"}
+          {bekliyor ? "Yollanıyor..." : "Yolla"}
         </button>
       </form>
     </details>

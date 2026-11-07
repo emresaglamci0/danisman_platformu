@@ -71,9 +71,9 @@ export default async function OnGorusmeSayfasi() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-600">
           <h3 className="mb-2 font-semibold text-slate-900">Nasıl yapılır?</h3>
           <p>
-            Uzmanın profilinden başvurursunuz. Uzman başvurunuzu kabul edince ön görüşmeyi sitedeki
-            mesajlaşma üzerinden veya uzmanın sohbette paylaştığı görüntülü görüşme bağlantısıyla
-            yaparsınız. Ön görüşme bir tanışma sohbetidir; tanı konulan veya tedavi
+            Uzmanın profilinden, size uygun bir saat seçerek başvurursunuz. Bu saat bir istektir. Uzman
+            başvurunuzu kabul edince ön görüşmeyi sitedeki mesajlaşma üzerinden veya uzmanın sohbetten bir
+            kez yollayabildiği görüntülü görüşme bağlantısıyla yaparsınız. Ön görüşme bir tanışma sohbetidir; tanı konulan veya tedavi
             uygulanan bir seans değildir.
           </p>
           <p className="mt-2">
