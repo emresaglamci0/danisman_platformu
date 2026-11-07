@@ -30,6 +30,14 @@ export async function incelemeyeAl(_onceki: FormDurumu, form: FormData): Promise
 
 // "Seans yapilmadi" bildirimi icin iade veya aktarim karari. Karar degistirilemez kayda yazilir (0017).
 export async function seansKarariVer(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  return karariKaydet("seans_karari", form);
+}
+
+export async function grupKarariVer(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  return karariKaydet("grup_karari", form);
+}
+
+async function karariKaydet(fonksiyon: "seans_karari" | "grup_karari", form: FormData): Promise<FormDurumu> {
   if (!(await adminKullanici())) return { hata: "Bu işlem için yetkiniz yok." };
 
   const karar = form.get("karar");
@@ -38,7 +46,7 @@ export async function seansKarariVer(_onceki: FormDurumu, form: FormData): Promi
   if (sebep.length < 10 || sebep.length > 500) return { hata: "Sebep 10 ile 500 karakter arasında olmalı." };
 
   const supabase = await supabaseSunucu();
-  const { error } = await supabase.rpc("seans_karari", {
+  const { error } = await supabase.rpc(fonksiyon, {
     p_isaret: String(form.get("isaretId") ?? ""),
     p_karar: karar,
     p_sebep: sebep,
@@ -47,6 +55,18 @@ export async function seansKarariVer(_onceki: FormDurumu, form: FormData): Promi
 
   revalidatePath("/admin/incelemeler");
   return { basari: karar === "iade" ? "Ödeme iade edildi." : "Ödeme uzmana aktarıldı." };
+}
+
+// Grup seansi amac metni sonradan kontrol edilir. "Kaldir" seansi iptal eder ve odemeleri iade eder (0018).
+export async function grupAmacKarari(form: FormData) {
+  if (!(await adminKullanici())) return;
+  const supabase = await supabaseSunucu();
+  await supabase.rpc("grup_amac_karari", {
+    p_grup: String(form.get("grupId") ?? ""),
+    p_kaldir: form.get("karar") === "kaldir",
+  });
+  revalidatePath("/admin");
+  revalidatePath("/grup-seanslari");
 }
 
 export async function isaretKapat(form: FormData) {

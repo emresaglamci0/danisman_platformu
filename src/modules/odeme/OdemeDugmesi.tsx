@@ -2,18 +2,19 @@
 
 import { useActionState } from "react";
 import { DurumMesaji } from "@/components/FormParcalari";
-import { demoOdemeYap, seansYapilmadiBildir } from "./islemler";
+import { demoOdemeYap, grupSeansYapilmadiBildir, seansYapilmadiBildir } from "./islemler";
 
 export function OdemeDugmesi({
   tur,
   planId,
   konusmaId,
 }: {
-  tur: "odeme" | "yapilmadi";
+  tur: "odeme" | "yapilmadi" | "grup-yapilmadi";
   planId: string;
   konusmaId: string;
 }) {
-  const [durum, gonder, bekliyor] = useActionState(tur === "odeme" ? demoOdemeYap : seansYapilmadiBildir, {});
+  const eylem = { odeme: demoOdemeYap, yapilmadi: seansYapilmadiBildir, "grup-yapilmadi": grupSeansYapilmadiBildir }[tur];
+  const [durum, gonder, bekliyor] = useActionState(eylem, {});
 
   if (durum.basari) return <DurumMesaji durum={durum} />;
 

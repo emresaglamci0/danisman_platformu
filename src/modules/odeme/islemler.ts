@@ -22,6 +22,28 @@ export async function demoOdemeYap(_onceki: FormDurumu, form: FormData): Promise
   return { basari: "Demo ödeme tamamlandı, seansınız kesinleşti." };
 }
 
+// OdemeDugmesi "planId" alaninda grup numarasini yollar
+export async function grupSeansYapilmadiBildir(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
+  const kullanici = await mevcutKullanici();
+  if (!kullanici) return { hata: "Lütfen giriş yapın." };
+  if (!odemeModuluAktif()) return { hata: "Bu işlem şu anda kullanılamıyor." };
+
+  const grupId = String(form.get("planId") ?? "");
+  const { error } = await supabaseYonetici().rpc("grup_seans_yapilmadi_bildir", {
+    p_grup: grupId,
+    p_danisan: kullanici.id,
+  });
+  if (error) {
+    if (error.message.includes("HIZ_SINIRI")) {
+      return { hata: "Son 24 saatte çok fazla şikayet gönderdiniz. Lütfen daha sonra tekrar deneyin." };
+    }
+    return { hata: "Bildiriminiz alınamadı. Bildirim süresi dolmuş olabilir." };
+  }
+
+  revalidatePath(`/grup-seanslari/${grupId}`);
+  return { basari: "Bildiriminiz alındı. Ödemeniz yönetici kararına kadar bekletilecek." };
+}
+
 export async function seansYapilmadiBildir(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
   if (!kullanici) return { hata: "Lütfen giriş yapın." };

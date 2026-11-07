@@ -2,10 +2,10 @@
 
 import { useActionState } from "react";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
-import { seansKarariVer } from "./islemler";
+import { grupKarariVer, seansKarariVer } from "./islemler";
 
-export function SeansKarari({ isaretId }: { isaretId: string }) {
-  const [durum, gonder, bekliyor] = useActionState(seansKarariVer, {});
+export function SeansKarari({ isaretId, grup }: { isaretId: string; grup: boolean }) {
+  const [durum, gonder, bekliyor] = useActionState(grup ? grupKarariVer : seansKarariVer, {});
 
   if (durum.basari) return <DurumMesaji durum={durum} />;
 

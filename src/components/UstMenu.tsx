@@ -69,6 +69,9 @@ export function UstMenu({ rol }: { rol: Rol | null }) {
         <Link href="/on-gorusme" onClick={kapat} className={baglanti}>
           Ücretsiz Ön Görüşme
         </Link>
+        <Link href="/grup-seanslari" onClick={kapat} className={baglanti}>
+          Grup Seansları
+        </Link>
         <Link href="/psikolojik-rahatsizliklar" onClick={kapat} className={baglanti}>
           Psikolojik Rahatsızlıklar
         </Link>

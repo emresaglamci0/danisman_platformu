@@ -11,7 +11,7 @@ export const metadata = { title: "İncelemeler | Danışman Buluşma" };
 
 type Isaret = {
   id: string;
-  conversation_id: string;
+  conversation_id: string | null;
   source: keyof typeof ISARET_KAYNAKLARI;
   category: string;
   note: string | null;
@@ -32,7 +32,25 @@ async function SeansKartiAlani({ isaretId }: { isaretId: string }) {
         {saatEtiketi(kart.starts_at)} · {paraYaz(kart.amount_kurus)} · Görüşme bağlantısı:{" "}
         {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
       </p>
-      <SeansKarari isaretId={isaretId} />
+      <SeansKarari isaretId={isaretId} grup={false} />
+    </div>
+  );
+}
+
+async function GrupKartiAlani({ isaretId }: { isaretId: string }) {
+  const supabase = await supabaseSunucu();
+  const { data } = await supabase.rpc("admin_grup_karti", { p_isaret: isaretId });
+  const kart = (data ?? [])[0] as
+    | { starts_at: string; amount_kurus: number; baglanti_var: boolean; display_name: string | null }
+    | undefined;
+  if (!kart) return <p className="text-slate-600">Seans özeti okunamadı.</p>;
+  return (
+    <div>
+      <p>
+        {kart.display_name ?? "Ayrılan uzman"} · {saatEtiketi(kart.starts_at)} · {paraYaz(kart.amount_kurus)} · Görüşme
+        bağlantısı: {kart.baglanti_var ? "eklenmiş" : "eklenmemiş"}
+      </p>
+      <SeansKarari isaretId={isaretId} grup />
     </div>
   );
 }
@@ -64,10 +82,12 @@ export default async function IncelemelerSayfasi() {
     }[]).map((k) => [k.id, `${k.profiles?.full_name ?? "Danışan"} ↔ ${k.expert_profiles?.display_name ?? "Uzman"}`]),
   );
 
-  // Acik isaretleri sohbete gore grupla
+  // Acik isaretleri sohbete gore grupla. Grup seansi bildirimlerinin sohbeti yoktur.
   const gruplar = new Map<string, Isaret[]>();
+  const grupBildirimleri: Isaret[] = [];
   for (const i of (isaretler ?? []) as Isaret[]) {
-    gruplar.set(i.conversation_id, [...(gruplar.get(i.conversation_id) ?? []), i]);
+    if (i.conversation_id === null) grupBildirimleri.push(i);
+    else gruplar.set(i.conversation_id, [...(gruplar.get(i.conversation_id) ?? []), i]);
   }
 
   return (
@@ -119,6 +139,20 @@ export default async function IncelemelerSayfasi() {
           </article>
         ))}
       </section>
+
+      {grupBildirimleri.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold">Grup seansı bildirimleri ({grupBildirimleri.length})</h2>
+          {grupBildirimleri.map((i) => (
+            <article key={i.id} className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm">
+              <p>
+                <strong>Seans yapılmadı</strong> · {tarihSaatYaz(i.created_at)}
+              </p>
+              <GrupKartiAlani isaretId={i.id} />
+            </article>
+          ))}
+        </section>
+      )}
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-5">
         <h2 className="text-lg font-semibold">Bir sohbeti incelemeye al</h2>

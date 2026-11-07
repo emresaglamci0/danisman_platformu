@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
+import { acikGruplar } from "@/lib/gruplar";
 import { ALANLAR } from "@/lib/sabitler";
+import { saatEtiketi } from "@/lib/seans-kurallari";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanGetir, uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { BulutGunes } from "@/components/BulutGunes";
@@ -20,6 +22,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
   if (!uzman) notFound();
 
   const kullanici = await mevcutKullanici();
+  const gruplar = uzman.kind === "independent" ? await acikGruplar(uzman.id) : [];
 
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_320px]">
@@ -79,7 +82,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
           )}
           <div>
             <dt className="text-slate-600">Seans türü</dt>
-            <dd>Bireysel</dd>
+            <dd>{gruplar.length > 0 ? "Bireysel, Grup" : "Bireysel"}</dd>
           </div>
         </dl>
         {uzman.offers_in_person && uzman.district && (
@@ -98,6 +101,21 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         <h2 className="text-lg font-semibold">Uygun saatler</h2>
         <TakvimAlani uzman={uzman} kullanici={kullanici} />
       </section>
+
+      {gruplar.length > 0 && (
+        <section className="space-y-3 md:col-span-2">
+          <h2 className="text-lg font-semibold">Açık grup seansları</h2>
+          <ul className="space-y-2 text-sm">
+            {gruplar.map((g) => (
+              <li key={g.id}>
+                <Link href={`/grup-seanslari/${g.id}`} className="text-teal-800 underline">
+                  {ALANLAR[g.topic]} · {saatEtiketi(g.starts_at)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

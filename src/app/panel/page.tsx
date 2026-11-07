@@ -25,6 +25,7 @@ import { BasvuruYanitFormu } from "./BasvuruYanitFormu";
 import { BelgeYuklemeFormu } from "./BelgeYuklemeFormu";
 import { FotografFormu } from "./FotografFormu";
 import { GorusmeBilgileriFormu } from "./GorusmeBilgileriFormu";
+import { DanisanGrupSeanslari, UzmanGrupSeanslari } from "./GrupSeanslarim";
 import { HaftalikTablo } from "./HaftalikTablo";
 import { HesapSilmeFormu } from "./HesapSilmeFormu";
 import { onGorusmeTercihiDegistir } from "./islemler";
@@ -78,6 +79,7 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
   const adlar = await uzmanAdlari(basvurular.map((b) => b.expert_id));
 
   return (
+    <>
     <section className="space-y-3">
       <h2 className="text-lg font-semibold">Başvurularım</h2>
       {basvurular.length === 0 ? (
@@ -94,6 +96,8 @@ async function DanisanPaneli({ kullanici }: { kullanici: Kullanici }) {
         ))
       )}
     </section>
+    <DanisanGrupSeanslari danisanId={kullanici.id} />
+    </>
   );
 }
 
@@ -218,6 +222,8 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
           </form>
         </section>
       )}
+
+      {tur === "independent" && <UzmanGrupSeanslari uzmanId={kullanici.id} />}
 
       <section className="rounded-xl border border-slate-200 bg-white p-5">
         <h2 className="mb-3 font-semibold">Belgelerim</h2>

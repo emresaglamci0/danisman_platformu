@@ -53,6 +53,33 @@ export function OdemeDurumu({ odeme, uzmanMi }: { odeme: DemoOdeme; uzmanMi: boo
   );
 }
 
+// Grup seansi odemesi (0018). Danisan yalnizca kendi kaydini okuyabilir.
+export async function grupOdemesiGetir(katilimciId: string): Promise<Pick<DemoOdeme, "status"> | null> {
+  if (!odemeModuluAktif()) return null;
+  const supabase = await supabaseSunucu();
+  const { data } = await supabase
+    .from("demo_group_payments")
+    .select("status")
+    .eq("group_participant_id", katilimciId)
+    .maybeSingle();
+  return data as Pick<DemoOdeme, "status"> | null;
+}
+
+export function GrupOdemeDurumu({ odeme }: { odeme: Pick<DemoOdeme, "status"> }) {
+  return <p className="text-slate-600">{DURUMLAR[odeme.status]} (demo)</p>;
+}
+
+export function GrupSeansYapilmadi({ grupId }: { grupId: string }) {
+  return (
+    <div className="space-y-1">
+      <OdemeDugmesi tur="grup-yapilmadi" planId={grupId} konusmaId="" />
+      <p className="text-xs text-slate-600">
+        Seans bitiminden sonraki 48 saat içinde bildirebilirsiniz. Karar yönetici tarafından verilir. <OnayGerekir />
+      </p>
+    </div>
+  );
+}
+
 export function SeansYapilmadi({ planId, konusmaId }: { planId: string; konusmaId: string }) {
   return (
     <div className="space-y-1">

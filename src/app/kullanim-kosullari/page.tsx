@@ -81,6 +81,11 @@ export default function KullanimKosullariSayfasi() {
             verir. <OnayGerekir />
           </li>
           <li>
+            Grup seansları yalnızca bağımsız uzmanlar tarafından açılır ve en az 3, en fazla 12 kişiyle yapılır. Yer,
+            önceden ödeme yapılınca ayrılır. Seansa 12 saat kala 3 kişi olmazsa veya sonradan 3 kişinin altına düşerse
+            seans iptal edilir ve ödemeler iade edilir; 24 saatten az kala ayrılan kişiye iade yapılmaz. <OnayGerekir />
+          </li>
+          <li>
             Yüz yüze görüşmeler ve ödemeleri site dışındadır, iade ve koruma kapsamında değildir. Bir uzmanın sizi
             site dışında ödemeye yönlendirmesini şikâyet edebilirsiniz; kanıt varsa uzmanın hesabı kapatılır.{" "}
             <OnayGerekir />

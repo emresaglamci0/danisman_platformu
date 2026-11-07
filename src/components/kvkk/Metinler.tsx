@@ -29,6 +29,10 @@ export function AydinlatmaMetni() {
         </li>
         <li>Demo ödeme kayıtları: tutar, komisyon ve durum. Kart bilgisi alınmaz, para çekilmez.</li>
         <li>
+          Grup seansları: katıldığınız seans ve katılım durumu. Seansın konusu sağlık veya psikolojik duruma ilişkin bilgi
+          verebilir. Adınızı yalnızca grubun uzmanı görür, diğer katılımcılar görmez.
+        </li>
+        <li>
           Mesajlar: danışan ile uzman arasındaki yazışmalar. Mesajlar sağlık ve psikolojik
           duruma ilişkin <strong>özel nitelikli kişisel veri</strong> içerebilir.
         </li>

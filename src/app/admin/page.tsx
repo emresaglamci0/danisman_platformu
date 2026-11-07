@@ -2,16 +2,19 @@ import Link from "next/link";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { fotografLinkleri } from "@/lib/fotograf";
 import {
+  ALANLAR,
   BELGE_TURLERI,
   UZMAN_DURUMLARI,
   belgeTurleri,
   tarihSaatYaz,
   tarihYaz,
+  type Alan,
   type BelgeTuru,
   type UzmanDurumu,
 } from "@/lib/sabitler";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
+import { grupAmacKarari } from "./incelemeler/islemler";
 import { fotografKaldir, tanitimKarari } from "./islemler";
 import { KararFormu } from "./KararFormu";
 import { adminSayfasiniKoru } from "./yetki";
@@ -51,6 +54,14 @@ export default async function AdminSayfasi() {
       .order("bio_updated_at"),
   ]);
   const kontrolListesi = (tanitimlar ?? []) as { id: string; display_name: string; bio: string; bio_updated_at: string }[];
+  const { data: grupKontrol } = await supabase.rpc("admin_grup_kontrol_listesi");
+  const grupListesi = (grupKontrol ?? []) as {
+    id: string;
+    display_name: string | null;
+    topic: Alan;
+    purpose: string;
+    starts_at: string;
+  }[];
 
   const tumBekleyenler = (bekleyenler ?? []) as BekleyenUzman[];
   const incelenecekler = tumBekleyenler.filter((u) => u.expert_documents.some((b) => b.storage_path));
@@ -152,6 +163,42 @@ export default async function AdminSayfasi() {
                 className="rounded-lg border border-red-300 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50"
               >
                 Yazıyı kaldır
+              </button>
+            </form>
+          </article>
+        ))}
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Kontrol bekleyen grup seansları ({grupListesi.length})</h2>
+          <p className="text-sm text-slate-500">Bu seanslar yayında. Kaldırırsanız seans iptal edilir ve ödemeler iade sayılır.</p>
+        </div>
+        {grupListesi.length === 0 && <p className="text-sm text-slate-600">Kontrol bekleyen seans yok.</p>}
+        {grupListesi.map((g) => (
+          <article key={g.id} className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 text-sm">
+            <div>
+              <h3 className="font-semibold">{g.display_name ?? "Ayrılan uzman"}</h3>
+              <p className="text-xs text-slate-500">
+                {ALANLAR[g.topic]} · {tarihSaatYaz(g.starts_at)}
+              </p>
+            </div>
+            <p className="whitespace-pre-line">{g.purpose}</p>
+            <form action={grupAmacKarari} className="flex flex-wrap gap-2">
+              <input type="hidden" name="grupId" value={g.id} />
+              <button
+                name="karar"
+                value="uygun"
+                className="rounded-lg bg-teal-700 px-3 py-1.5 font-medium text-white hover:bg-teal-800"
+              >
+                Uygun
+              </button>
+              <button
+                name="karar"
+                value="kaldir"
+                className="rounded-lg border border-red-300 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50"
+              >
+                Seansı kaldır
               </button>
             </form>
           </article>
