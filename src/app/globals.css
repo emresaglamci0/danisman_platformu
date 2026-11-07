@@ -61,8 +61,28 @@ body {
 
 /* Ana sayfa cizimi. Saniyede 18 kare (posterize_time = 18): her sure kare sayisiyla yazilir,
    steps() de ayni sayiyi alir, boylece hareket yalnizca 1/18 saniyede bir degisir. */
-.oturan-kadin {
+.oturan-kadin,
+.online-gorusme {
   --kare: calc(1s / 18);
+}
+
+.psikolog-bas {
+  transform-origin: 96px 98px;
+  animation: gorusme-bas calc(var(--kare) * 72) steps(72) infinite alternate;
+}
+
+.ekran-bas {
+  transform-origin: 230px 118px;
+  animation: gorusme-bas calc(var(--kare) * 54) steps(54) infinite alternate;
+}
+
+@keyframes gorusme-bas {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
 }
 
 .kadin-govde {

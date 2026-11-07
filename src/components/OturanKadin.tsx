@@ -1,6 +1,6 @@
 // Ana sayfa cizimi: yerde oturan kadin ve basinin ustunde kelebek. Yalnizca susleme oldugu icin
 // ekran okuyuculardan gizlenir. Animasyonlar globals.css icindedir.
-function Uzuv({ d }: { d: string }) {
+export function Uzuv({ d }: { d: string }) {
   return (
     <>
       <path d={d} className="fill-none stroke-slate-900" strokeWidth={15} strokeLinecap="round" />

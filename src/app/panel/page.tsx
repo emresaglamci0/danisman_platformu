@@ -177,6 +177,8 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
               Ücretsiz Ön Görüşme
             </Link>{" "}
             sayfasında listelenirsiniz ve danışanlardan ön görüşme için ücret istememeyi kabul edersiniz.
+            Ön görüşmeyi mesajlaşarak yapabilir veya isterseniz sohbetin içinden görüntülü görüşme
+            bağlantısı paylaşabilirsiniz.
           </p>
           <form action={onGorusmeTercihiDegistir} className="mt-3">
             <input type="hidden" name="acik" value={profil?.offers_free_intro ? "false" : "true"} />

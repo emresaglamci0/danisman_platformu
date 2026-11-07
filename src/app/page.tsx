@@ -2,6 +2,7 @@ import Link from "next/link";
 import { OlcekAlani } from "@/modules/olcek";
 import { BasvuruGorseli, UzmanlarGorseli, YanitGorseli } from "@/components/AdimGorselleri";
 import { OnayGerekir } from "@/components/OnayGerekir";
+import { OnlineGorusme } from "@/components/OnlineGorusme";
 import { OturanKadin } from "@/components/OturanKadin";
 import { UzmanKarti } from "@/components/UzmanKarti";
 import { onGorusmeYapanUzmanlar } from "@/lib/uzmanlar";
@@ -74,12 +75,15 @@ export default async function AnaSayfa() {
       </section>
 
       <section className="space-y-5">
-        <div>
-          <h2 className="text-2xl font-bold">Önce tanış, sonra karar ver.</h2>
-          <p className="mt-2 max-w-2xl leading-relaxed text-slate-600">
-            Bazı uzmanlar ücretsiz ön görüşme yapıyor. Çalışmaya başlamadan önce size uygun olup olmadığını
-            anlayabilirsiniz.
-          </p>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Önce tanış, sonra karar ver.</h2>
+            <p className="mt-2 max-w-2xl leading-relaxed text-slate-600">
+              Bazı uzmanlar ücretsiz ön görüşme yapıyor. Çalışmaya başlamadan önce size uygun olup olmadığını
+              anlayabilirsiniz.
+            </p>
+          </div>
+          <OnlineGorusme />
         </div>
         {onGorusmeUzmanlari.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
