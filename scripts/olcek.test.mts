@@ -128,3 +128,12 @@ test("bilinmeyen alan yok sayılır", () => {
   const { bagimsiz } = uzmanlariSec([u("X", "independent", ["eski_alan", "kaygi"])], degerlendir(y({ 1: 3 })));
   assert.deepEqual(bagimsiz.map((x) => x.id), ["X"]);
 });
+
+test("madde 10 Sık sık → öğrenci gizli", () => {
+  assert.equal(degerlendir(y({ 1: 3, 2: 3, 3: 3, 10: 2 })).ogrenciGizli, true);
+});
+
+test("üç grup uygunsa yalnızca en iyi iki grup alınır (eşitlikte öndeki grup)", () => {
+  const s = degerlendir(y({ 1: 3, 2: 3, 3: 3, 4: 3, 5: 2, 6: 3, 7: 2 }));
+  es(s.alanlar, ["kaygi", "tukenmislik", "uyku", "duygudurum", "yas", "travma"]);
+});

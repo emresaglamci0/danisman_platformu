@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { ACIL_HATLAR } from "@/lib/acil-hatlar";
 import { GIRIS, MADDELER, YANITLAR } from "./maddeler";
+import type { Alan } from "@/lib/sabitler";
 import { degerlendir, uzmanlariSec, type Sonuc, type UzmanOzeti, type Yanit } from "./puanlama";
 
 type Adim = "davet" | number | "sonuc";
@@ -23,6 +24,9 @@ export function OlcekPenceresi({
   kartlar: Record<string, ReactNode>;
 }) {
   const pencere = useRef<HTMLDialogElement>(null);
+  const odakHedefi = useRef<HTMLElement | null>(null);
+  // Davet bir kez islendiyse (otomatik acildi ya da dugmeyle baslandi) kendiliginden yeniden acilmaz.
+  const islendi = useRef(false);
   const [adim, setAdim] = useState<Adim>("davet");
   const [yanitlar, setYanitlar] = useState<Yanit[]>([]);
   const [sonuc, setSonuc] = useState<Sonuc | null>(null);
@@ -35,6 +39,20 @@ export function OlcekPenceresi({
     setSecim(null);
   }
 
+  function gorulduYaz() {
+    islendi.current = true;
+    try {
+      localStorage.setItem(ANAHTAR, "1");
+    } catch {
+      // yok say
+    }
+  }
+
+  // Adim degisince odak soru metnine ya da sonuc basligina tasinir (cevap dugmesi odagi tutmasin).
+  useEffect(() => {
+    if (adim !== "davet") odakHedefi.current?.focus();
+  }, [adim]);
+
   useEffect(() => {
     let goruldu = false;
     try {
@@ -42,22 +60,19 @@ export function OlcekPenceresi({
     } catch {
       // depolama kapaliysa yine acilir
     }
-    if (goruldu) return;
+    if (goruldu) islendi.current = true;
+    if (islendi.current) return;
 
     let acildi = false;
     const ac = () => {
-      if (acildi) return;
+      if (acildi || islendi.current) return;
       acildi = true;
       clearTimeout(zamanlayici);
       window.removeEventListener("scroll", kaydir);
       if (!pencere.current || pencere.current.open) return;
       setAdim("davet");
       pencere.current.showModal();
-      try {
-        localStorage.setItem(ANAHTAR, "1");
-      } catch {
-        // yok say
-      }
+      gorulduYaz();
     };
     const kaydir = () => {
       if (window.scrollY >= document.documentElement.scrollHeight * 0.3) ac();
@@ -86,6 +101,8 @@ export function OlcekPenceresi({
   }
 
   function bolum(baslik: string, kind: "independent" | "student", liste: UzmanOzeti[], enUstAlan: string) {
+    // Bu alanda hic uzman yoksa "Tumunu gor" bos liste acmasin diye alansiz baglanir.
+    const alanVar = uzmanlar.some((u) => u.kind === kind && u.specialties.includes(enUstAlan as Alan));
     return (
       <section className="mt-5">
         <h3 className="font-semibold text-slate-900">{baslik}</h3>
@@ -107,14 +124,15 @@ export function OlcekPenceresi({
               ))}
             </ul>
             <Link
-              href={`/uzmanlar?alan=${enUstAlan}&tur=${kind}`}
+              href={alanVar ? `/uzmanlar?alan=${enUstAlan}&tur=${kind}` : `/uzmanlar?tur=${kind}`}
+              prefetch={false}
               className="mt-3 inline-block text-sm font-medium text-teal-800 underline"
             >
               Tümünü gör
             </Link>
           </>
         ) : (
-          <Link href={`/uzmanlar?tur=${kind}`} className="mt-3 inline-block text-sm font-medium text-teal-800 underline">
+          <Link href={`/uzmanlar?tur=${kind}`} prefetch={false} className="mt-3 inline-block text-sm font-medium text-teal-800 underline">
             Tüm uzmanları gör
           </Link>
         )}
@@ -127,6 +145,7 @@ export function OlcekPenceresi({
       <button
         type="button"
         onClick={() => {
+          gorulduYaz();
           sifirla();
           setAdim(0);
           pencere.current?.showModal();
@@ -137,6 +156,7 @@ export function OlcekPenceresi({
       </button>
       <dialog
         ref={pencere}
+        aria-labelledby="olcek-baslik"
         onClose={sifirla}
         className="m-auto max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto rounded-xl p-6 shadow-xl backdrop:bg-black/40"
       >
@@ -148,7 +168,7 @@ export function OlcekPenceresi({
 
         {adim === "davet" && (
           <div>
-            <h2 className="pr-8 text-lg font-semibold text-slate-900">Nereden başlayacağını bilmiyor musun?</h2>
+            <h2 id="olcek-baslik" className="pr-8 text-lg font-semibold text-slate-900">Nereden başlayacağını bilmiyor musun?</h2>
             <p className="mt-2 text-sm text-slate-600">
               1 dakikalık birkaç soruyla sana uygun uzmanları gösterelim.
             </p>
@@ -172,7 +192,17 @@ export function OlcekPenceresi({
               className="w-full"
             />
             <p className="mt-3 text-sm text-slate-600">{GIRIS}</p>
-            <p className="mt-2 font-medium text-slate-900">{MADDELER[adim].metin}</p>
+            <p
+              id="olcek-baslik"
+              ref={odakHedefi as React.RefObject<HTMLParagraphElement>}
+              tabIndex={-1}
+              className="mt-2 font-medium text-slate-900 outline-none"
+            >
+              <span className="sr-only">
+                Soru {adim + 1} / {MADDELER.length}.{" "}
+              </span>
+              {MADDELER[adim].metin}
+            </p>
             <div className="mt-4 grid gap-2">
               {YANITLAR.map((etiket, puan) => (
                 <button key={etiket} type="button" onClick={() => yanitla(puan as Yanit)} className={IKINCIL}>
@@ -209,7 +239,14 @@ export function OlcekPenceresi({
                 </ul>
               </aside>
             )}
-            <h2 className="pr-8 text-lg font-semibold text-slate-900">İşte sana uygun uzmanlar</h2>
+            <h2
+              id="olcek-baslik"
+              ref={odakHedefi as React.RefObject<HTMLHeadingElement>}
+              tabIndex={-1}
+              className="pr-8 text-lg font-semibold text-slate-900 outline-none"
+            >
+              İşte sana uygun uzmanlar
+            </h2>
             {bolum("Bağımsız uzmanlar", "independent", secim.bagimsiz, sonuc.enUstAlan)}
             {secim.ogrenci !== null && bolum("Öğrenci uzmanlar", "student", secim.ogrenci, sonuc.enUstAlan)}
             <p className="mt-5 text-xs text-slate-600">Bu bir tanı değildir; yalnızca başlangıç için bir öneridir.</p>

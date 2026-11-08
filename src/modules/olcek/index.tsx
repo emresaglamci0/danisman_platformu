@@ -14,6 +14,6 @@ export async function OlcekAlani() {
   // shortcut: tüm onaylı uzmanlar ana sayfaya gömülür; uzman sayısı yüzleri aşınca küçük sayfalı istemci sorgusu düşünülmeli.
   const liste = await onayliUzmanlar();
   const uzmanlar = liste.map(({ id, kind, display_name, specialties }) => ({ id, kind, display_name, specialties }));
-  const kartlar = Object.fromEntries(liste.map((x) => [x.id, <UzmanKarti key={x.id} uzman={x} />]));
+  const kartlar = Object.fromEntries(liste.map((x) => [x.id, <UzmanKarti key={x.id} uzman={x} prefetch={false} />]));
   return <OlcekPenceresi uzmanlar={uzmanlar} kartlar={kartlar} />;
 }

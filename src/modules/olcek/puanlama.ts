@@ -24,7 +24,10 @@ export function degerlendir(yanitlar: Yanit[]): Sonuc {
   // Eslesen maddeler: kazanan gruplarda Hic disi yanitlananlar (+ psikotik)
   let eslesen: number[] = [];
   if (enYuksek >= 1) {
-    const kazanan = ortalamalar.filter(([, o]) => o === enYuksek || (o >= 1 && enYuksek - o <= 0.5)).map(([g]) => g);
+    // en yuksek grup + en fazla bir grup daha (esitlikte onceki grup; sort kararli)
+    const [birinci, ...kalan] = [...ortalamalar].sort((a, b) => b[1] - a[1]);
+    const ikinci = kalan.find(([, o]) => o >= 1 && enYuksek - o <= 0.5);
+    const kazanan = [birinci[0], ...(ikinci ? [ikinci[0]] : [])];
     eslesen = MADDELER.flatMap((m, i) => (kazanan.includes(m.grup as Grup) && yanitlar[i] > 0 ? [i] : []));
   }
   if (psikotik) eslesen.push(13);

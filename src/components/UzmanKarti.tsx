@@ -3,10 +3,11 @@ import { ALANLAR } from "@/lib/sabitler";
 import { uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { UzmanFotografi } from "./UzmanFotografi";
 
-export function UzmanKarti({ uzman }: { uzman: Uzman }) {
+export function UzmanKarti({ uzman, prefetch }: { uzman: Uzman; prefetch?: boolean }) {
   return (
     <Link
       href={`/uzmanlar/${uzman.id}`}
+      prefetch={prefetch}
       className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-600 hover:shadow-md"
     >
       <div className="flex items-center gap-3">
