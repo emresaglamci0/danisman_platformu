@@ -87,6 +87,11 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     ),
   },
   {
+    soru: "Uzmanlar nasıl sıralanıyor?",
+    yanit:
+      "Bağımsız uzmanlar, danışanların verdiği yıldız puanına göre sıralanır. Az değerlendirme alan uzmanın puanı ortalamaya yakın tutulur; böylece tek bir puan sıralamayı belirlemez. Henüz puanı olmayan uzmanlar ve öğrenci uzmanlar rastgele sıralanır. Uzmanın kaç çalışma alanının sizinkiyle eşleştiği sıralamayı etkilemez.",
+  },
+  {
     soru: "Acil bir durumdayım, ne yapmalıyım?",
     yanit: (
       <>

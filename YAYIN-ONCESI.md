@@ -9,6 +9,7 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
   `test.*@example.com` hesaplarının hepsi aynı, bilinen şifreyi kullanıyor; yayında arka kapı olur.
   Supabase > **Authentication** > **Users** sayfasından silin. Silinen danışanın sohbetleri de silinir; silinen uzmanın sohbetleri danışanda 6 ay kalır.
   Yayındaki veritabanında `npm run test-verisi` komutunu **çalıştırmayın**.
+- [ ] Uzman puanlama: ödeme demo olduğu için iki sahte seansla puan verilebilir. Gerçek ödemeyle birlikte puan şartı yeniden değerlendirilmeli.
 - [ ] **E-posta doğrulamasını açın** (güvenlik denetimi, Bulgu 4).
   Supabase > **Authentication** > **Sign In / Providers** > **Email** > **Confirm email** seçeneğini açın.
   Bunun için kendi e-posta gönderim servisinizi (SMTP) de bağlamanız gerekir; Supabase'in ücretsiz gönderimi saatte birkaç e-postayla sınırlı.

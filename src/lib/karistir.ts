@@ -1,4 +1,4 @@
-// Uzmanlar arasinda esit rekabet icin liste karistirilir (Fisher-Yates).
+// Puansiz uzmanlar ve ogrenci uzmanlar icin liste karistirilir (Fisher-Yates); siralama kurali src/lib/siralama.ts.
 // Girdi degistirilmez; yeni dizi doner. Bu dosya runtime importu icermez.
 export function karistir<T>(liste: readonly T[], rastgele: () => number = Math.random): T[] {
   const sonuc = [...liste];

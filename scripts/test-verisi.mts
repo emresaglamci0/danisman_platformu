@@ -2,6 +2,7 @@
 // Calistirma: npm run test-verisi
 // Gizli anahtar (SUPABASE_SECRET_KEY) yalnizca bu betikte kullanilir; tarayiciya asla gitmez.
 
+import { createCipheriv, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -103,6 +104,7 @@ async function kullaniciOlustur(eposta: string, ekBilgi: Record<string, unknown>
 }
 
 const ogrenciBelgesiGecerlilik = "2027-06-30";
+const uzmanKimlikleri = new Map<string, string>();
 
 for (const uzman of UZMANLAR) {
   const id = await kullaniciOlustur(uzman.eposta, {
@@ -113,6 +115,7 @@ for (const uzman of UZMANLAR) {
     final_year: uzman.rol === "student_expert",
     kvkk_version: KVKK_SURUMU,
   });
+  uzmanKimlikleri.set(uzman.eposta, id);
 
   // Gercekte bu adim yonetici onayi ile yapilir; test icin dogrudan onayliyoruz.
   const { error } = await supabase
@@ -137,11 +140,101 @@ for (const uzman of UZMANLAR) {
   console.log(`✓ ${uzman.ad} (${uzman.eposta})`);
 }
 
-await kullaniciOlustur("test.danisan@example.com", {
+const DANISAN_EPOSTA = "test.danisan@example.com";
+const danisanId = await kullaniciOlustur(DANISAN_EPOSTA, {
   role: "client",
   full_name: "Deniz Deneme",
   kvkk_version: KVKK_SURUMU,
 });
-console.log("✓ Deniz Deneme (test.danisan@example.com) - danışan");
+console.log(`✓ Deniz Deneme (${DANISAN_EPOSTA}) - danışan`);
+
+// ---------- Puanlama demosu ----------
+// Tekrar calistirilirsa yalnizca bu betigin urettigi satirlar silinip yeniden yazilir:
+// test uzmanlarinin puanlari ve test danisaninin seans kayitlari.
+const bagimsizUzmanlar = UZMANLAR.filter((u) => u.rol === "expert").map((u) => uzmanKimlikleri.get(u.eposta)!);
+const { error: eskiPuanHatasi } = await supabase.from("expert_ratings").delete().in("expert_id", bagimsizUzmanlar);
+if (eskiPuanHatasi) throw eskiPuanHatasi;
+const { error: eskiSeansHatasi } = await supabase.from("session_offers").delete().eq("client_id", danisanId);
+if (eskiSeansHatasi) throw eskiSeansHatasi;
+
+// Danisan baglantisi yok (client_id bos): silinmis danisanin puani gibi davranir.
+const puanSatirlari = (eposta: string, puanlar: number[]) =>
+  puanlar.map((rating) => ({ expert_id: uzmanKimlikleri.get(eposta)!, client_id: null, rating }));
+const { error: puanHatasi } = await supabase.from("expert_ratings").insert([
+  ...puanSatirlari("test.uzman1@example.com", [...Array(15).fill(5), ...Array(15).fill(4)]), // 30 x 4,5
+  ...puanSatirlari("test.uzman2@example.com", [5]), // 1 x 5
+  ...puanSatirlari("test.uzman3@example.com", Array(5).fill(1)), // 5 x 1 (alt bolum)
+]); // test.uzman4 puansiz
+if (puanHatasi) throw puanHatasi;
+console.log("✓ Test puanları: uzman1 30 x 4,5; uzman2 1 x 5; uzman3 5 x 1; uzman4 puansız");
+
+// Puan penceresi icin danisan ile uzman1 arasinda bir sohbet gerekir.
+// Anahtar, src/lib/sifreleme.ts ile ayni bicimde (ana anahtarla AES-256-GCM) sarilir.
+// Betik "server-only" iceren o dosyayi iceri alamaz; bu yuzden ayni adimlar burada tekrarlanir.
+const puanliUzmanId = uzmanKimlikleri.get("test.uzman1@example.com")!;
+let { data: konusma } = await supabase
+  .from("conversations")
+  .select("id")
+  .eq("client_id", danisanId)
+  .eq("expert_id", puanliUzmanId)
+  .maybeSingle();
+
+if (!konusma) {
+  let { data: basvuru } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("client_id", danisanId)
+    .eq("expert_id", puanliUzmanId)
+    .eq("status", "pending")
+    .maybeSingle();
+  if (!basvuru) {
+    const { data: saatler, error: saatHatasi } = await supabase.rpc("uzman_musait_saatler", {
+      p_uzman: puanliUzmanId,
+      p_bas: new Date().toISOString(),
+      p_bit: new Date(Date.now() + 14 * 86400000).toISOString(),
+    });
+    if (saatHatasi || !saatler?.length) throw saatHatasi ?? new Error("Uzman1 için uygun saat bulunamadı");
+    const { data, error } = await supabase
+      .from("applications")
+      .insert({ client_id: danisanId, expert_id: puanliUzmanId, topic: "genel", requested_start: saatler[0] })
+      .select("id")
+      .single();
+    if (error) throw error;
+    basvuru = data;
+  }
+  const { data: anaAnahtarMetni, error: anahtarHatasi } = await supabase.rpc("mesaj_ana_anahtari");
+  if (anahtarHatasi || typeof anaAnahtarMetni !== "string") throw anahtarHatasi ?? new Error("Ana anahtar alınamadı");
+  const iv = randomBytes(12);
+  const sifreleyici = createCipheriv("aes-256-gcm", Buffer.from(anaAnahtarMetni, "base64"), iv);
+  sifreleyici.setAAD(Buffer.from(`konusma:${basvuru.id}`, "utf8"));
+  const sifreli = Buffer.concat([sifreleyici.update(randomBytes(32)), sifreleyici.final()]);
+  const sarilmis = ["v1", iv, sifreleyici.getAuthTag(), sifreli]
+    .map((p) => (typeof p === "string" ? p : p.toString("base64url")))
+    .join(".");
+  const { data: konusmaId, error: kabulHatasi } = await supabase.rpc("basvuru_kabul", {
+    p_basvuru: basvuru.id,
+    p_uzman: puanliUzmanId,
+    p_sarili_anahtar: sarilmis,
+  });
+  if (kabulHatasi) throw kabulHatasi;
+  konusma = { id: konusmaId as string };
+}
+
+// Geçmiş tarihli, onaylı, ücretli 2 seans (çakışmaz): puan penceresi bunlarla açılır.
+const seansBaslangiclari = [3, 2].map((gun) => new Date(Date.now() - gun * 86400000));
+const { error: seansHatasi } = await supabase.from("session_offers").insert(
+  seansBaslangiclari.map((bas) => ({
+    conversation_id: konusma.id,
+    expert_id: puanliUzmanId,
+    client_id: danisanId,
+    starts_at: bas.toISOString(),
+    ends_at: new Date(bas.getTime() + 50 * 60000).toISOString(),
+    price_kurus: 150000,
+    status: "confirmed",
+  })),
+);
+if (seansHatasi) throw seansHatasi;
+console.log("✓ Deniz Deneme ile Ayla Örnek arasında 2 geçmiş seans");
 
 console.log("\nTest verisi hazır. Tüm test hesaplarının şifresi .env.local içindeki SEED_TEST_SIFRESI değeridir.");
+console.log(`Puan penceresi için: ${DANISAN_EPOSTA} ile giriş yapın.`);

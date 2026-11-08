@@ -86,6 +86,12 @@ export default function KullanimKosullariSayfasi() {
             seans iptal edilir ve ödemeler iade edilir; 24 saatten az kala ayrılan kişiye iade yapılmaz. <OnayGerekir />
           </li>
           <li>
+            Puan verebilmek için danışan olmanız ve aynı bağımsız uzmanla en az 2 tamamlanmış, ücretli seans
+            yapmış olmanız gerekir. Puan 1 ile 5 yıldız arasındadır, yazılı yorum alınmaz. Öğrenci uzmanlar
+            puanlanmaz. Puanı sonradan değiştirebilirsiniz. Gerçeğe aykırı veya karşılıklı çıkara dayalı puan
+            vermek yasaktır. <OnayGerekir />
+          </li>
+          <li>
             Yüz yüze görüşmeler ve ödemeleri site dışındadır, iade ve koruma kapsamında değildir. Bir uzmanın sizi
             site dışında ödemeye yönlendirmesini şikâyet edebilirsiniz; kanıt varsa uzmanın hesabı kapatılır.{" "}
             <OnayGerekir />
