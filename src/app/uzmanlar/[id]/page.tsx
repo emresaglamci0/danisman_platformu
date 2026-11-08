@@ -3,12 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { acikGruplar } from "@/lib/gruplar";
+import { danisanPuanDurumu } from "@/lib/puanlar";
 import { ALANLAR } from "@/lib/sabitler";
 import { saatEtiketi } from "@/lib/seans-kurallari";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { uzmanGetir, uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { BulutGunes } from "@/components/BulutGunes";
 import { OnayGerekir } from "@/components/OnayGerekir";
+import { PuanFormu } from "@/components/PuanFormu";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
 import { Yildizlar } from "@/components/Yildizlar";
 import { Takvim } from "./Takvim";
@@ -24,6 +26,10 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
 
   const kullanici = await mevcutKullanici();
   const gruplar = uzman.kind === "independent" ? await acikGruplar(uzman.id) : [];
+  const puanDurumu =
+    kullanici?.rol === "client" && uzman.kind === "independent"
+      ? await danisanPuanDurumu(kullanici.id, uzman.id)
+      : null;
 
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_320px]">
@@ -100,6 +106,16 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
           </div>
         )}
       </aside>
+
+      {puanDurumu?.puanVerebilir && (
+        <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 md:col-span-2">
+          <h2 className="text-lg font-semibold">Bu uzmanı değerlendirin</h2>
+          {puanDurumu.puanim !== null && (
+            <p className="text-sm text-slate-600">Daha önce verdiğiniz puanı değiştirebilirsiniz.</p>
+          )}
+          <PuanFormu uzmanId={uzman.id} mevcutPuan={puanDurumu.puanim} />
+        </section>
+      )}
 
       <section className="space-y-3 md:col-span-2">
         <h2 className="text-lg font-semibold">Uygun saatler</h2>

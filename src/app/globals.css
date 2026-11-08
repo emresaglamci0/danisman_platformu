@@ -158,6 +158,22 @@ body {
 .yildizlar .y:nth-child(4) { animation-delay: calc(var(--kare) * 12), calc(var(--kare) * 43); }
 .yildizlar .y:nth-child(5) { animation-delay: calc(var(--kare) * 16), calc(var(--kare) * 50); }
 
+/* Puan verme penceresindeki seçici: üzerine gelince ve klavyeyle odaklanınca büyür. Nefes almaz. */
+.puan-secici svg {
+  transition: transform calc(1s / 18 * 3) steps(3);
+}
+
+.puan-secici label:hover svg,
+.puan-secici input:focus-visible + label svg {
+  transform: scale(1.3);
+}
+
+.puan-secici input:focus-visible + label {
+  outline: 2px solid #2f5d50;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 @keyframes yildiz-belir {
   from { transform: scale(0.4); opacity: 0.3; }
   to { transform: scale(1); opacity: 1; }
