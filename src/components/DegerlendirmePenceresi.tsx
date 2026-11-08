@@ -52,8 +52,9 @@ export function DegerlendirmePenceresi({ uzmanId, uzmanAdi }: { uzmanId: string;
       onClick={(e) => {
         if (e.target === pencere.current) oturumdaKapat();
       }}
-      className="m-auto max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto rounded-xl p-6 shadow-xl backdrop:bg-black/40"
+      className="m-auto max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto rounded-xl p-0 shadow-xl backdrop:bg-black/40"
     >
+      <div className="p-6">
       <h2 id="degerlendirme-baslik" className="text-lg font-semibold text-slate-900">
         Son görüşmeni değerlendir
       </h2>
@@ -64,6 +65,7 @@ export function DegerlendirmePenceresi({ uzmanId, uzmanAdi }: { uzmanId: string;
       <div className="mt-4">
         <PuanFormu
           uzmanId={uzmanId}
+          kaynak="pencere"
           basarida={basarida}
           ekDugme={
             <button
@@ -75,6 +77,7 @@ export function DegerlendirmePenceresi({ uzmanId, uzmanAdi }: { uzmanId: string;
             </button>
           }
         />
+      </div>
       </div>
     </dialog>
   );

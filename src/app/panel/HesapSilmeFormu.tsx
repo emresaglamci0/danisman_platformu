@@ -19,6 +19,11 @@ export function HesapSilmeFormu({ uzman }: { uzman: boolean }) {
             <li>Başvurularınız</li>
             {!uzman && <li>Sohbetleriniz ve mesajlarınız (uzman da bu sohbetlere erişemez)</li>}
           </ul>
+          {!uzman && (
+            <p className="mt-2">
+              Verdiğiniz yıldız puanları silinmez; kişiyle bağı olmadan, adsız olarak uzmanın ortalamasında kalır.
+            </p>
+          )}
           {uzman && (
             <p className="mt-2">
               <strong>Danışanlarınız sohbetlerini kaybetmez:</strong> adınız silinir, ama sohbetler ve

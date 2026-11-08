@@ -10,7 +10,9 @@ export function PuanFormu({
   mevcutPuan,
   ekDugme,
   basarida,
+  kaynak,
 }: {
+  kaynak?: "pencere";
   uzmanId: string;
   mevcutPuan?: number | null;
   ekDugme?: ReactNode;
@@ -31,6 +33,7 @@ export function PuanFormu({
     <form action={gonder} className="space-y-3">
       <DurumMesaji durum={durum} />
       <input type="hidden" name="uzmanId" value={uzmanId} />
+      {kaynak && <input type="hidden" name="kaynak" value={kaynak} />}
       <PuanSecici ad="puan" baslangic={mevcutPuan} />
       <div className="flex items-center justify-end gap-2">
         {ekDugme}

@@ -88,7 +88,8 @@ export default function KullanimKosullariSayfasi() {
           <li>
             Puan verebilmek için danışan olmanız ve aynı bağımsız uzmanla en az 2 tamamlanmış, ücretli seans
             yapmış olmanız gerekir. Puan 1 ile 5 yıldız arasındadır, yazılı yorum alınmaz. Öğrenci uzmanlar
-            puanlanmaz. Puanı sonradan değiştirebilirsiniz. Gerçeğe aykırı veya karşılıklı çıkara dayalı puan
+            puanlanmaz. Puanı sonradan değiştirebilirsiniz. Puanınız adsız gösterilir ve hesabınızı silseniz de
+            adsız olarak kalır. Gerçeğe aykırı veya karşılıklı çıkara dayalı puan
             vermek yasaktır. <OnayGerekir />
           </li>
           <li>

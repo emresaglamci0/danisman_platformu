@@ -30,8 +30,11 @@ export async function puanVer(_onceki: FormDurumu, form: FormData): Promise<Form
     return { hata: GENEL_HATA };
   }
 
-  revalidatePath("/uzmanlar");
-  revalidatePath(`/uzmanlar/${uzmanId}`);
+  // Pencereden gelirse yenileme yok: sayfa yenilenirse pencere başarı mesajını göstermeden kapanır.
+  if (form.get("kaynak") !== "pencere") {
+    revalidatePath("/uzmanlar");
+    revalidatePath(`/uzmanlar/${uzmanId}`);
+  }
   return { basari: "Puanınız kaydedildi. Teşekkürler!" };
 }
 

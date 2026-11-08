@@ -96,6 +96,10 @@ export function AydinlatmaMetni() {
         silinir. Hesabınızı sildiğinizde verileriniz, kanunen saklanması gerekenler dışında silinir.
       </p>
       <p>
+        Bir uzmana verdiğiniz yıldız puanı (1-5) uzmanın hesabı durdukça saklanır ve sitede yalnızca ortalama olarak
+        gösterilir. Hesabınızı silerseniz puan silinmez; sizinle bağı koparılarak adsız olarak kalır.
+      </p>
+      <p>
         Seans ve demo ödeme kayıtları sohbetle birlikte silinir. Sohbet daha uzun süre durursa seansın bitiminden 12
         ay sonra otomatik silinir. Açık bir inceleme varsa işlem sonuçlanana kadar silinmez.
       </p>

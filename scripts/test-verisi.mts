@@ -19,7 +19,7 @@ if (!url || !gizliAnahtar || !sifre || sifre.length < 8) {
 
 // Adresin sonundaki "/rest/v1/" gibi ekleri at; yalnizca "https://xxxx.supabase.co" kalsin
 const supabase = createClient(new URL(url).origin, gizliAnahtar, { auth: { persistSession: false } });
-const KVKK_SURUMU = "2026-11-07-taslak"; // src/lib/sabitler.ts ile ayni olmali
+const KVKK_SURUMU = "2026-11-08-taslak"; // src/lib/sabitler.ts ile ayni olmali
 
 type TestUzmani = {
   eposta: string;

@@ -2,7 +2,7 @@
 // Buradaki anahtarlar supabase/migrations icindeki "check" listeleriyle ayni olmali.
 
 // Metin degistiginde surum de degistirilmeli; kullanicidan yeni surum icin tekrar onay istenir.
-export const KVKK_SURUMU = "2026-11-07-taslak";
+export const KVKK_SURUMU = "2026-11-08-taslak";
 export const ACIK_RIZA_SURUMU = "2026-11-07-taslak";
 
 // Kullanicinin secebilecegi sikayet sebepleri (veritabanindaki listeyle ayni)

@@ -7,5 +7,5 @@ export async function DegerlendirmeAlani({ kullanici }: { kullanici: Kullanici |
   if (kullanici?.rol !== "client") return null;
   const bekleyen = await bekleyenDegerlendirme(kullanici.id);
   if (!bekleyen) return null;
-  return <DegerlendirmePenceresi uzmanId={bekleyen.uzmanId} uzmanAdi={bekleyen.uzmanAdi} />;
+  return <DegerlendirmePenceresi key={bekleyen.uzmanId} uzmanId={bekleyen.uzmanId} uzmanAdi={bekleyen.uzmanAdi} />;
 }

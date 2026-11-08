@@ -77,7 +77,8 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
         Panelinizin altındaki &quot;Hesabımı sil&quot; bölümünden silebilirsiniz. Danışan hesabı silinince
         sohbetleri de silinir. Uzman hesabı silinince sohbetler danışanda, uzmanın adı olmadan, salt
         okunur olarak en fazla 6 ay kalır; danışan bunları daha önce silebilir. Açık bir şikayet veya
-        inceleme varsa silme, işlem sonuçlanana kadar yapılamaz.
+        inceleme varsa silme, işlem sonuçlanana kadar yapılamaz. Verdiğiniz yıldız puanı adsız gösterilir ve
+        hesabınızı silseniz de adsız olarak kalır. <OnayGerekir />{" "}
         Sorun yaşarsanız{" "}
         <a href={`mailto:${ILETISIM_EPOSTASI}`} className={baglanti}>
           {ILETISIM_EPOSTASI}

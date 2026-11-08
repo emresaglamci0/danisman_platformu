@@ -14,13 +14,15 @@ export function PuanSecici({ ad, baslangic }: { ad: string; baslangic?: number |
   return (
     <fieldset className="puan-secici" onMouseLeave={() => setUzerinde(null)}>
       <legend className="sr-only">Puan seçin</legend>
+      {/* Form sıfırlanınca radyolar eski haline döner; gönderilen değer burada kalır. */}
+      <input type="hidden" name={ad} value={secili || ""} />
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
           <span key={n} className="contents">
             <input
               type="radio"
               id={`${onek}-${n}`}
-              name={ad}
+              name={`${ad}-secim`}
               value={n}
               checked={secili === n}
               onChange={() => {
