@@ -96,6 +96,14 @@ Düğme, alanda uzman olsun olmasın her açık kartta görünür (kapalı kartt
 - Durum yalnızca bileşen içinde (`useState`) tutulur; URL'ye, `localStorage`'a, sunucuya yazılmaz.
 - His listesi ve her hissin hangi kartlara bağlandığı içerik verisinin parçasıdır. Önizlemedeki örnekler: "Sürekli endişeleniyorum", "Uyuyamıyorum", "Hiçbir şeyden keyif almıyorum", "Yemekle ilişkim bozuldu", "Aklımdan atamadığım düşünceler", "Yaşadığım bir olayı unutamıyorum". Tam liste (yaklaşık 12-16 his) ve eşleşmeler içerik taslağıyla birlikte yazılır; kullanıcı kontrol eder. Bir his hem ağır hem normal kartlara bağlanabilir (ör. "Uyuyamıyorum": İnsomni ve Narkolepsi); his düğmeleri bir yere bağlantı vermez, yalnızca kart öne çıkarır, ağır kural kartın kendi düğmesinde uygulanır (Claude'un kararı).
 
+### Psikolog çizimi (kullanıcı kararı, seçenek C)
+
+- "Neler yaşıyorsun?" sorusunun yanında SVG çizim: düşünceli bir psikolog, bir eli çenesinde, başının üstünde küçük bir soru işareti. Tarz sitedeki diğer çizimlerle aynıdır (`src/components/OturanKadin.tsx`, `OnGorusmeCizimleri.tsx`): kalın `stroke-slate-900` çizgi, adaçayı/kum renkleri, kollar `Uzuv` bileşeniyle, altta `fill-teal-100` gölge elipsi. Yalnızca süs: `aria-hidden="true"`.
+- Animasyon, oturan kadın gibi `globals.css` içinde kare kare (`steps`, `--kare`) ve yavaş: gövde hafif nefes alır, baş ara sıra yana eğilir, gözler arada kırpılır, soru işareti yavaşça süzülür.
+- Tepki: ziyaretçi en az bir his düğmesi seçince soru işareti küçük bir ampule dönüşür; seçim temizlenince soru işaretine geri döner. Bu yüzden çizim, his düğmeleriyle aynı istemci bileşeninde (veya ondan `secimVar` gibi bir değer alarak) durur.
+- `prefers-reduced-motion: reduce` olduğunda tüm hareket durur; ampul/soru işareti değişimi animasyonsuz anında olur. Mevcut `globals.css` bloğuna eklenir.
+- Mobilde çizim sorunun üstünde veya yanında küçük kalır; düğmeleri aşağı itip sayfayı uzatmamalı (yerleşim yapıcıya kalmıştır).
+
 ### Açık kart içeriği (seçenek A, kullanıcı kararı)
 
 Kart açılınca, sırasıyla:
