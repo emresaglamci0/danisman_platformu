@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ALANLAR } from "../src/lib/sabitler.ts";
+import { oneCikanKartlar, uzmanBaglantisi } from "../src/app/psikolojik-rahatsizliklar/kurallar.ts";
 import { HISLER, RAHATSIZLIKLAR } from "../src/app/psikolojik-rahatsizliklar/veri.ts";
 
 const bul = (ad: string) => {
@@ -68,4 +69,19 @@ test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur",
     }
   }
   for (const ad of adlar) assert.ok(bagli.has(ad), `hiçbir hisle bulunmuyor: ${ad}`);
+});
+
+test("ağır kart yalnızca bağımsız uzmanlara bağlanır", () => {
+  assert.equal(uzmanBaglantisi({ alan: "psikotik", agir: true }), "/uzmanlar?alan=psikotik&tur=independent");
+  assert.equal(uzmanBaglantisi({ alan: "kaygi", agir: false }), "/uzmanlar?alan=kaygi");
+});
+
+test("tüm ağır kartların bağlantısında tur=independent var", () => {
+  for (const r of RAHATSIZLIKLAR.filter((r) => r.agir)) assert.match(uzmanBaglantisi(r), /tur=independent/);
+});
+
+test("oneCikanKartlar: boş seçim null, seçim birleşim kümesi", () => {
+  const h = [{ ad: "A", kartlar: ["X", "Y"] }, { ad: "B", kartlar: ["Y", "Z"] }];
+  assert.equal(oneCikanKartlar([], h), null);
+  assert.deepEqual([...oneCikanKartlar(["A", "B"], h)!].sort(), ["X", "Y", "Z"]);
 });
