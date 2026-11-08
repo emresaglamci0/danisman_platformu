@@ -10,6 +10,7 @@ import { uzmanGetir, uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { BulutGunes } from "@/components/BulutGunes";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { UzmanFotografi } from "@/components/UzmanFotografi";
+import { Yildizlar } from "@/components/Yildizlar";
 import { Takvim } from "./Takvim";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,6 +36,9 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
           <div>
             <h1 className="text-2xl font-bold">{uzman.display_name}</h1>
             <p className="text-teal-800">{uzmanUnvani(uzman)}</p>
+            {uzman.kind === "independent" && uzman.puan_sayisi > 0 && uzman.puan_ortalama !== null && (
+              <Yildizlar ortalama={uzman.puan_ortalama} sayi={uzman.puan_sayisi} boyut={24} />
+            )}
           </div>
         </div>
         {uzman.kind === "student" && (

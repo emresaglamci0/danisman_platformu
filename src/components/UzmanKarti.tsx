@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ALANLAR } from "@/lib/sabitler";
 import { uzmanUnvani, type Uzman } from "@/lib/uzmanlar";
 import { UzmanFotografi } from "./UzmanFotografi";
+import { Yildizlar } from "./Yildizlar";
 
 export function UzmanKarti({ uzman, prefetch }: { uzman: Uzman; prefetch?: boolean }) {
   return (
@@ -15,6 +16,9 @@ export function UzmanKarti({ uzman, prefetch }: { uzman: Uzman; prefetch?: boole
         <div className="min-w-0 flex-1">
           <h2 className="font-semibold">{uzman.display_name}</h2>
           <p className="text-sm text-teal-800">{uzmanUnvani(uzman)}</p>
+          {uzman.kind === "independent" && uzman.puan_sayisi > 0 && uzman.puan_ortalama !== null && (
+            <Yildizlar ortalama={uzman.puan_ortalama} sayi={uzman.puan_sayisi} />
+          )}
         </div>
       </div>
       {uzman.bio && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600">{uzman.bio}</p>}

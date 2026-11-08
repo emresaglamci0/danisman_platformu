@@ -136,6 +136,38 @@ body {
   }
 }
 
+/* Uzman puani yildizlari. Ayni 18 kare duzeni. Once sirayla belirir, sonra nefes alir.
+   Taban stilde opacity/scale yok: hareketi azalt acikken yildizlar tam gorunur. */
+.yildizlar {
+  --kare: calc(1s / 18);
+  display: inline-flex;
+  gap: 2px;
+}
+
+.yildizlar .y {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation:
+    yildiz-belir calc(var(--kare) * 6) steps(6) both,
+    yildiz-nefes calc(var(--kare) * 36) steps(36) infinite alternate;
+}
+
+.yildizlar .y:nth-child(1) { animation-delay: 0s, calc(var(--kare) * 22); }
+.yildizlar .y:nth-child(2) { animation-delay: calc(var(--kare) * 4), calc(var(--kare) * 29); }
+.yildizlar .y:nth-child(3) { animation-delay: calc(var(--kare) * 8), calc(var(--kare) * 36); }
+.yildizlar .y:nth-child(4) { animation-delay: calc(var(--kare) * 12), calc(var(--kare) * 43); }
+.yildizlar .y:nth-child(5) { animation-delay: calc(var(--kare) * 16), calc(var(--kare) * 50); }
+
+@keyframes yildiz-belir {
+  from { transform: scale(0.4); opacity: 0.3; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes yildiz-nefes {
+  from { transform: scale(1); }
+  to { transform: scale(0.88); }
+}
+
 /* "Neler yasiyorsun?" yanindaki psikolog. Ayni 18 kare duzeni. (.psikolog-bas baska cizime ait,
    o yuzden bunlarin adi psikolog-cizim-* ile baslar.) Hareketi azalt ayari asagidaki blokta hepsini kapatir. */
 .psikolog-cizim {
