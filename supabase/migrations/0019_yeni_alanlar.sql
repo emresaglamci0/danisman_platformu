@@ -36,7 +36,7 @@ create or replace function public.uzman_alan_kontrol()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if new.kind = 'student'
@@ -59,7 +59,7 @@ create or replace function public.basvuru_alan_kontrol()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if new.topic in ('psikotik', 'bagimlilik')

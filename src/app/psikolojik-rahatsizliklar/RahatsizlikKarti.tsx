@@ -10,8 +10,8 @@ export function RahatsizlikKarti({ r, soluk }: { r: Rahatsizlik; soluk: boolean 
 
   return (
     <li
-      className={`rounded-xl border border-slate-200 bg-white transition-opacity hover:border-teal-600 motion-reduce:transition-none ${
-        soluk ? "opacity-50" : ""
+      className={`rounded-xl border border-slate-200 hover:border-teal-600 motion-reduce:transition-none ${
+        soluk ? "border-dashed bg-slate-50" : "bg-white"
       }`}
     >
       <h3>

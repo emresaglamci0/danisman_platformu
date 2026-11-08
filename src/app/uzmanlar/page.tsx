@@ -102,7 +102,7 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
                 href={adres({ alan: undefined, ara: undefined })}
                 className="mt-2 inline-block font-medium text-teal-700 underline"
               >
-                {secili === "independent" ? "Tüm bağımsız uzmanları gör" : "Tüm uzmanları gör"}
+                {secili === "independent" ? "Tüm bağımsız uzmanları gör" : secili === "student" ? "Tüm stajyer öğrencileri gör" : "Tüm uzmanları gör"}
               </Link>
             </>
           ) : (

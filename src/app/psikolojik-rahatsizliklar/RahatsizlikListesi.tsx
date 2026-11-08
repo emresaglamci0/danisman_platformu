@@ -58,6 +58,7 @@ export function RahatsizlikListesi() {
         </div>
       </section>
 
+      <h2 className="sr-only">Rahatsızlıklar</h2>
       <ul className="grid items-start gap-3 sm:grid-cols-2">
         {RAHATSIZLIKLAR.map((r) => (
           <RahatsizlikKarti key={r.ad} r={r} soluk={oneCikan !== null && !oneCikan.has(r.ad)} />
