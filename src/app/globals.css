@@ -136,6 +136,76 @@ body {
   }
 }
 
+/* "Neler yasiyorsun?" yanindaki psikolog. Ayni 18 kare duzeni. (.psikolog-bas baska cizime ait,
+   o yuzden bunlarin adi psikolog-cizim-* ile baslar.) Hareketi azalt ayari asagidaki blokta hepsini kapatir. */
+.psikolog-cizim {
+  --kare: calc(1s / 18);
+}
+
+.psikolog-cizim-govde {
+  animation: kadin-nefes calc(var(--kare) * 36) steps(36) infinite alternate;
+}
+
+.psikolog-cizim-bas {
+  transform-origin: 110px 140px;
+  animation: psikolog-cizim-egil calc(var(--kare) * 90) steps(90) infinite;
+}
+
+.psikolog-cizim-goz {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: psikolog-cizim-kirp calc(var(--kare) * 72) steps(1) infinite;
+}
+
+.psikolog-cizim-isaret {
+  animation: psikolog-cizim-suzul calc(var(--kare) * 36) steps(18) infinite alternate;
+}
+
+.psikolog-cizim-ampul {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: psikolog-cizim-parla calc(var(--kare) * 6) steps(6) 1;
+}
+
+@keyframes psikolog-cizim-egil {
+  0%,
+  60% {
+    transform: rotate(0deg);
+  }
+  70%,
+  90% {
+    transform: rotate(-4deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes psikolog-cizim-kirp {
+  0%,
+  92% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes psikolog-cizim-suzul {
+  to {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes psikolog-cizim-parla {
+  from {
+    transform: scale(0.4);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 /* Uzman profilindeki bulut ve gunes. Ana sayfa cizimiyle ayni saniyede 18 kare duzeni. */
 .bulut-gunes {
   --kare: calc(1s / 18);
