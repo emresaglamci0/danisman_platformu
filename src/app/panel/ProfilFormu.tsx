@@ -3,10 +3,18 @@
 import { useActionState, useState } from "react";
 import { profilGuncelle } from "./islemler";
 import { DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
-import { ALANLAR, TANITIM_EN_FAZLA, type Alan } from "@/lib/sabitler";
+import { ALANLAR, TANITIM_EN_FAZLA, ogrenciyeAcik, type Alan } from "@/lib/sabitler";
 
 // Alanlar state'te tutulur: React gonderimden sonra formu sifirlar, hata olursa yazilanlar kaybolmasin.
-export function ProfilFormu({ tanitim, alanlar }: { tanitim: string; alanlar: Alan[] }) {
+export function ProfilFormu({
+  tanitim,
+  alanlar,
+  ogrenci,
+}: {
+  tanitim: string;
+  alanlar: Alan[];
+  ogrenci: boolean;
+}) {
   const [durum, gonder, bekliyor] = useActionState(profilGuncelle, {});
   const [metin, setMetin] = useState(tanitim);
   const [secili, setSecili] = useState(alanlar);
@@ -31,7 +39,7 @@ export function ProfilFormu({ tanitim, alanlar }: { tanitim: string; alanlar: Al
       <fieldset>
         <legend className="text-sm font-medium">Çalıştığım alanlar (en az bir tane)</legend>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          {(Object.keys(ALANLAR) as Alan[]).map((alan) => (
+          {(Object.keys(ALANLAR) as Alan[]).filter((alan) => !ogrenci || ogrenciyeAcik(alan)).map((alan) => (
             <label key={alan} className="flex gap-2 text-sm">
               <input
                 type="checkbox"

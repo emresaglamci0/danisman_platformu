@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { FormDurumu } from "@/lib/hatalar";
 import { mevcutKullanici } from "@/lib/oturum";
 import { ILLER } from "@/lib/iller";
-import { ALANLAR, TANITIM_EN_FAZLA, listedeMi } from "@/lib/sabitler";
+import { TANITIM_EN_FAZLA, alanlariSuz } from "@/lib/sabitler";
 import { SAAT_ILK, SAAT_SON, SEANS_SURELERI } from "@/lib/seans-kurallari";
 import { yeniKonusmaAnahtari } from "@/lib/sifreleme";
 import { supabaseYonetici } from "@/lib/supabase/yonetici";
@@ -18,7 +18,7 @@ export async function profilGuncelle(_onceki: FormDurumu, form: FormData): Promi
   }
 
   const tanitim = String(form.get("tanitim") ?? "").trim();
-  const alanlar = [...new Set(form.getAll("alanlar"))].filter((alan) => listedeMi(ALANLAR, alan));
+  const alanlar = alanlariSuz(form.getAll("alanlar"), kullanici.rol === "student_expert");
   if (tanitim.length > TANITIM_EN_FAZLA) return { hata: `Tanıtım yazısı en fazla ${TANITIM_EN_FAZLA} karakter olabilir.` };
   if (alanlar.length === 0) return { hata: "En az bir çalışma alanı seçin." };
 
@@ -34,6 +34,9 @@ export async function profilGuncelle(_onceki: FormDurumu, form: FormData): Promi
       ...(yaziDegisti && { bio_needs_review: !!tanitim, bio_updated_at: new Date().toISOString() }),
     })
     .eq("id", kullanici.id);
+  if (error?.message.includes("ALAN_OGRENCIYE_KAPALI")) {
+    return { hata: "Seçtiğiniz alanlardan bazıları öğrenci uzmanlar için uygun değil." };
+  }
   if (error) return { hata: "Profiliniz kaydedilemedi. Lütfen tekrar deneyin." };
 
   revalidatePath("/panel");

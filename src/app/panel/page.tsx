@@ -11,6 +11,7 @@ import {
   belgeTurleri,
   tarihYaz,
   type Alan,
+  alanlariSuz,
   type BasvuruDurumu,
   type BelgeTuru,
   type UygunZaman,
@@ -175,7 +176,11 @@ async function UzmanPaneli({ kullanici }: { kullanici: Kullanici }) {
           Danışanlar bu bilgileri profilinizde görür. Sağlık bilgisi veya danışanlarınızla ilgili
           bilgi yazmayın. Adınız ve unvanınız belgelerinizle doğrulandığı için buradan değiştirilemez.
         </p>
-        <ProfilFormu tanitim={profil?.bio ?? ""} alanlar={(profil?.specialties ?? []) as Alan[]} />
+        <ProfilFormu
+          tanitim={profil?.bio ?? ""}
+          alanlar={alanlariSuz(profil?.specialties ?? [], kullanici.rol === "student_expert")}
+          ogrenci={kullanici.rol === "student_expert"}
+        />
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-5">

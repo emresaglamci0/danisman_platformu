@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { basvuruYap } from "./islemler";
 import { butonSinifi, DurumMesaji, girdiSinifi } from "@/components/FormParcalari";
-import { ALANLAR } from "@/lib/sabitler";
+import { ALANLAR, ogrenciyeAcik, type Alan } from "@/lib/sabitler";
 import { saatEtiketi } from "@/lib/seans-kurallari";
 
 export function BasvuruFormu({
@@ -29,7 +29,9 @@ export function BasvuruFormu({
         Konu <span className="font-normal text-slate-500">(isteğe bağlı)</span>
         <select name="konu" defaultValue="" className={girdiSinifi}>
           <option value="">Belirtmek istemiyorum</option>
-          {Object.entries(ALANLAR).map(([deger, ad]) => (
+          {Object.entries(ALANLAR)
+            .filter(([deger]) => !ogrenci || ogrenciyeAcik(deger as Alan))
+            .map(([deger, ad]) => (
             <option key={deger} value={deger}>
               {ad}
             </option>

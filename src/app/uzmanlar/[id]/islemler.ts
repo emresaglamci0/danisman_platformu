@@ -32,6 +32,9 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
     if (error.message.includes("HIZ_SINIRI")) {
       return { hata: "Son 24 saatte çok fazla başvuru yaptınız. Lütfen daha sonra tekrar deneyin." };
     }
+    if (error.message.includes("ALAN_OGRENCIYE_KAPALI")) {
+      return { hata: "Bu konu öğrenci uzmanlar için uygun değil. Lütfen bağımsız bir uzman seçin." };
+    }
     if (error.message.includes("SAAT_UYGUN_DEGIL")) {
       return { hata: "Bu saat artık uygun değil. Lütfen sayfayı yenileyip başka bir saat seçin." };
     }
