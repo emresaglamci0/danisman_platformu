@@ -95,7 +95,7 @@ export async function uzmanAdlari(idler: string[]): Promise<Map<string, string>>
 
 export function uzmanUnvani(uzman: Pick<Uzman, "kind" | "title" | "department">) {
   if (uzman.kind === "student" && uzman.department) {
-    return `Stajyer · ${BOLUMLER[uzman.department]} son sınıf`;
+    return `Stajyer · ${BOLUMLER[uzman.department]}`;
   }
   return uzman.title ? UNVANLAR[uzman.title] : "";
 }

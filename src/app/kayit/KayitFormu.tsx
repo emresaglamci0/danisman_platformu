@@ -12,7 +12,7 @@ const ROL_SECENEKLERI = [
   {
     deger: "student_expert",
     baslik: "Öğrenci Uzman",
-    aciklama: "Son sınıf Psikoloji/PDR öğrencisiyim, ücretsiz ve staj kapsamında görüşme yapacağım.",
+    aciklama: "PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisiyim, ücretsiz ve staj kapsamında görüşme yapacağım.",
   },
 ];
 
@@ -91,7 +91,7 @@ export function KayitFormu() {
           <label className="flex gap-2 text-sm">
             <input type="checkbox" name="sonSinif" required className="mt-0.5" />
             <span>
-              Son sınıf öğrencisiyim. Görüşmeleri <strong>ücretsiz</strong> yapacağımı ve hiçbir ad
+              PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisiyim. Görüşmeleri <strong>ücretsiz</strong> yapacağımı ve hiçbir ad
               altında ödeme istemeyeceğimi kabul ediyorum.{" "}
               <Link href="/ogrenci-uzmanlar" target="_blank" className="text-teal-800 underline">
                 Öğrenci Uzmanlar Hakkında

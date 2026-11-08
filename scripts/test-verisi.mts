@@ -37,7 +37,7 @@ const UZMANLAR: TestUzmani[] = [
     eposta: "test.uzman1@example.com",
     ad: "Ayla Örnek",
     rol: "expert",
-    unvan: "klinik_psikolog",
+    unvan: "psikolog",
     alanlar: ["kaygi", "ozguven", "duygudurum", "travma"],
     tanitim: "Uydurma test profili. Kaygı ve özgüven konularında bilişsel davranışçı yaklaşımla çalışır.",
     onGorusme: true,
@@ -63,7 +63,7 @@ const UZMANLAR: TestUzmani[] = [
     eposta: "test.uzman4@example.com",
     ad: "Murat Uydurma",
     rol: "expert",
-    unvan: "uzman_psikolojik_danisman",
+    unvan: "psikolojik_danisman",
     alanlar: ["yas", "kaygi", "genel"],
     tanitim: "Uydurma test profili. Yas ve kayıp süreçlerinde destek verir.",
   },
@@ -71,9 +71,9 @@ const UZMANLAR: TestUzmani[] = [
     eposta: "test.ogrenci1@example.com",
     ad: "Ece Prova",
     rol: "student_expert",
-    bolum: "psikoloji",
+    bolum: "klinik_psikoloji_yl",
     alanlar: ["genel", "ozguven", "yeme"],
-    tanitim: "Uydurma test profili. Psikoloji son sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
+    tanitim: "Uydurma test profili. Klinik Psikoloji yüksek lisans öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
   },
   {
     eposta: "test.ogrenci2@example.com",
@@ -81,7 +81,7 @@ const UZMANLAR: TestUzmani[] = [
     rol: "student_expert",
     bolum: "pdr",
     alanlar: ["kariyer"],
-    tanitim: "Uydurma test profili. PDR son sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
+    tanitim: "Uydurma test profili. PDR 4. sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
   },
 ];
 

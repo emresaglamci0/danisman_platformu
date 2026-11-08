@@ -44,7 +44,7 @@ export async function kayitOl(_onceki: FormDurumu, form: FormData): Promise<Form
     if (!listedeMi(BOLUMLER, bolum)) return { hata: "Lütfen bölümünüzü seçin.", alan: "bolum" };
     if (form.get("sonSinif") !== "on") {
       return {
-        hata: "Öğrenci uzman olarak yalnızca son sınıf öğrencileri staj kapsamında katılabilir.",
+        hata: "Öğrenci uzman olarak yalnızca PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencileri staj kapsamında katılabilir.",
         alan: "sonSinif",
       };
     }

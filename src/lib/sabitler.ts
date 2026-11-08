@@ -47,15 +47,13 @@ export type Rol = keyof typeof ROLLER;
 
 export const UNVANLAR = {
   psikolog: "Psikolog",
-  klinik_psikolog: "Klinik Psikolog",
   psikolojik_danisman: "Psikolojik Danışman",
-  uzman_psikolojik_danisman: "Uzman Psikolojik Danışman",
 } as const;
 export type Unvan = keyof typeof UNVANLAR;
 
 export const BOLUMLER = {
-  psikoloji: "Psikoloji",
-  pdr: "Rehberlik ve Psikolojik Danışmanlık (PDR)",
+  pdr: "PDR 4. sınıf",
+  klinik_psikoloji_yl: "Klinik Psikoloji Yüksek Lisans",
 } as const;
 export type Bolum = keyof typeof BOLUMLER;
 
