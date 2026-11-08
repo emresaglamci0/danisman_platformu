@@ -506,7 +506,8 @@ export const HISLER: His[] = [
   { ad: "Yaşadığım bir olayı unutamıyorum", kartlar: ["Travma Sonrası Stres Bozukluğu", "Uyum Bozukluğu"] },
   { ad: "Yemekle ilişkim bozuldu", kartlar: ["Anoreksiya", "Bulimiya", "Tıkınırcasına Yeme Bozukluğu"] },
   { ad: "Görünüşümden çok rahatsızım", kartlar: ["Beden Disformik Bozukluğu", "Anoreksiya"] },
-  { ad: "Uyuyamıyorum", kartlar: ["İnsomni", "Narkolepsi"] },
+  { ad: "Uyuyamıyorum", kartlar: ["İnsomni"] },
+  { ad: "Gündüz istemeden uyuyakalıyorum", kartlar: ["Narkolepsi"] },
   { ad: "Bırakmak istiyorum ama bırakamıyorum", kartlar: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu"] },
   {
     ad: "Çocukluğumdan beri dikkat, okuma ya da iletişimde zorlanıyorum",

@@ -57,7 +57,7 @@ test("kart-alan eşleşmesi spec tablosuyla aynı", () => {
 });
 
 test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur", () => {
-  assert.ok(HISLER.length >= 12 && HISLER.length <= 16, "his sayısı 12-16");
+  assert.ok(HISLER.length >= 12 && HISLER.length <= 17, "his sayısı 12-17");
   assert.equal(new Set(HISLER.map((h) => h.ad)).size, HISLER.length);
   const adlar = new Set(RAHATSIZLIKLAR.map((r) => r.ad));
   const bagli = new Set<string>();
