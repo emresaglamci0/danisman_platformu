@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { UzmanKarti } from "@/components/UzmanKarti";
 import { girdiSinifi } from "@/components/FormParcalari";
-import { karistir } from "@/lib/karistir";
+import { puanaGoreSirala } from "@/lib/siralama";
 import { ALANLAR, listedeMi, type Alan } from "@/lib/sabitler";
 import { onayliUzmanlar, type Uzman } from "@/lib/uzmanlar";
 
@@ -29,7 +29,7 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
   const secili = tur === "independent" || tur === "student" ? tur : undefined;
   const seciliAlan = listedeMi(ALANLAR, alan) ? alan : undefined;
   const aranan = typeof ara === "string" ? ara.trim().slice(0, 80) : "";
-  const uzmanlar = karistir(await onayliUzmanlar({ tur: secili, alan: seciliAlan, ara: aranan }));
+  const uzmanlar = puanaGoreSirala(await onayliUzmanlar({ tur: secili, alan: seciliAlan, ara: aranan }));
 
   // Bir filtre degisirken digerleri korunur
   const adres = (degisen: { tur?: string; alan?: string; ara?: string }) => {

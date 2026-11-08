@@ -14,7 +14,7 @@ export async function OlcekAlani() {
 
   // shortcut: tüm onaylı uzmanlar ana sayfaya gömülür; uzman sayısı yüzleri aşınca küçük sayfalı istemci sorgusu düşünülmeli.
   const liste = await onayliUzmanlar();
-  const uzmanlar = liste.map(({ id, kind, display_name, specialties }) => ({ id, kind, display_name, specialties }));
+  const uzmanlar = liste.map(({ id, kind, display_name, specialties, puan_ortalama, puan_sayisi }) => ({ id, kind, display_name, specialties, puan_ortalama, puan_sayisi }));
   const kartlar = Object.fromEntries(liste.map((x) => [x.id, <UzmanKarti key={x.id} uzman={x} prefetch={false} />]));
   // Bekleyen uzman degerlendirmesi penceresi varken olcek daveti kendiliginden acilmaz.
   const bekleyen = kullanici ? await bekleyenDegerlendirme(kullanici.id) : null;

@@ -1,11 +1,11 @@
 // Puanlama tamamen tarayicida calisir; girdi ve sonuc hicbir yere gonderilmez.
 import type { Alan } from "@/lib/sabitler";
-import { karistir } from "../../lib/karistir.ts";
+import { puanaGoreSirala } from "../../lib/siralama.ts";
 import { MADDELER, type Grup } from "./maddeler.ts";
 
 export type Yanit = 0 | 1 | 2 | 3;
 export type Sonuc = { alanlar: Alan[]; psikotik: boolean; ogrenciGizli: boolean; risk: boolean; enUstAlan: Alan };
-export type UzmanOzeti = { id: string; kind: "independent" | "student"; display_name: string; specialties: Alan[] };
+export type UzmanOzeti = { id: string; kind: "independent" | "student"; display_name: string; specialties: Alan[]; puan_ortalama: number | null; puan_sayisi: number };
 
 const GRUPLAR: Grup[] = ["g1", "g2", "g3", "g4", "g5"];
 
@@ -53,8 +53,9 @@ export function uzmanlariSec(
     const buKind = uzmanlar.filter((u) => u.kind === kind);
     let uygun = buKind.filter((u) => u.specialties.some((a) => sonuc.alanlar.includes(a)));
     if (uygun.length === 0 && !yalnizPsikotik) uygun = buKind.filter((u) => u.specialties.includes("genel"));
-    const karisik = karistir(uygun, rastgele);
-    // kararli bolme: psikotik uzmanlar one, kendi karisik siralari korunur
+    const karisik = puanaGoreSirala(uygun, rastgele);
+    // puana gore (puansizlar rastgele, ogrenciler hep ortada); eslesen alan sayisi siralamayi etkilemez.
+    // kararli bolme: psikotik uzmanlar one, kendi siralari korunur
     const onde = sonuc.psikotik ? karisik.filter((u) => u.specialties.includes("psikotik")) : [];
     return [...onde, ...karisik.filter((u) => !onde.includes(u))].slice(0, enFazla);
   };

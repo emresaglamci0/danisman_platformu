@@ -81,7 +81,7 @@ test("uzunluk 15 değilse hata", () => {
 });
 
 const u = (id: string, kind: UzmanOzeti["kind"], specialties: string[]): UzmanOzeti =>
-  ({ id, kind, display_name: id, specialties: specialties as UzmanOzeti["specialties"] });
+  ({ id, kind, display_name: id, specialties: specialties as UzmanOzeti["specialties"], puan_ortalama: null, puan_sayisi: 0 });
 
 test("psikotik işaretliyse psikotik uzmanı her zaman başta", () => {
   const s = degerlendir(y({ 1: 3, 14: 1 }));
@@ -136,4 +136,24 @@ test("madde 10 Sık sık → öğrenci gizli", () => {
 test("üç grup uygunsa yalnızca en iyi iki grup alınır (eşitlikte öndeki grup)", () => {
   const s = degerlendir(y({ 1: 3, 2: 3, 3: 3, 4: 3, 5: 2, 6: 3, 7: 2 }));
   es(s.alanlar, ["kaygi", "tukenmislik", "uyku", "duygudurum", "yas", "travma"]);
+});
+
+test("ölçek: bağımsız uzmanlar puana göre, psikotikler önce", () => {
+  const p = (id: string, alanlar: string[], ort: number | null, sayi: number) => ({ ...u(id, "independent", alanlar), puan_ortalama: ort, puan_sayisi: sayi });
+  const liste = [p("Pdusuk", ["psikotik"], 4, 2), p("Piyi", ["psikotik"], 4.8, 40), p("Kiyi", ["kaygi"], 4.9, 50)];
+  const s = degerlendir(y({ 1: 3, 14: 1 })); // mevcut psikotik testindeki yanıt kalıbı
+  assert.deepEqual(uzmanlariSec(liste, s).bagimsiz.map((x) => x.id), ["Piyi", "Pdusuk", "Kiyi"]);
+});
+
+test("ölçek: puanlı uzman puansızın önünde, en fazla 3", () => {
+  const s = degerlendir(y({ 1: 3 }));
+  const liste = [
+    ...["A", "B", "C", "D", "E"].map((id) => u(id, "independent", ["kaygi"])),
+    { ...u("Puanli", "independent", ["kaygi"]), puan_ortalama: 4.5, puan_sayisi: 20 },
+  ];
+  for (let i = 0; i < 50; i++) {
+    const secim = uzmanlariSec(liste, s).bagimsiz;
+    assert.equal(secim.length, 3);
+    assert.equal(secim[0].id, "Puanli");
+  }
 });
