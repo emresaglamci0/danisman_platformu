@@ -32,7 +32,7 @@ export async function puanVer(_onceki: FormDurumu, form: FormData): Promise<Form
 
   revalidatePath("/uzmanlar");
   revalidatePath(`/uzmanlar/${uzmanId}`);
-  return { basari: "✓ Puanınız kaydedildi. Teşekkürler!" };
+  return { basari: "Puanınız kaydedildi. Teşekkürler!" };
 }
 
 export async function degerlendirmeyiErtele(uzmanId: string): Promise<void> {
