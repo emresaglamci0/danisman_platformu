@@ -31,8 +31,6 @@ begin
   -- Yeni alan basvuruda ve grupta kabul edilir
   insert into public.applications (client_id, expert_id, topic, requested_start) values (d1, a, 'travma', v_t);
   assert exists (select 1 from public.applications where client_id = d1 and topic = 'travma'), 'travma basvurusu kabul edilmeli';
-  perform public.grup_ac(a, v_t, 'psikotik', 'Psikotik deneyimler uzerine grup', 50000);
-  assert exists (select 1 from public.group_sessions where topic = 'psikotik'), 'psikotik grup kabul edilmeli';
 
   -- Bagimsiz uzmana kapali alan basvurusu yapilabilir
   insert into public.applications (client_id, expert_id, topic, requested_start) values (d2, a, 'bagimlilik', v_t);
@@ -49,6 +47,10 @@ begin
   begin insert into public.applications (client_id, expert_id, topic, requested_start) values (d4, o, 'bagimlilik', v_t);
   exception when others then v_hata := sqlerrm; end;
   assert v_hata = 'ALAN_OGRENCIYE_KAPALI', 'ogrenciye bagimlilik basvurusu reddedilmeli';
+
+  -- Grup seansi uzmanin saatini tutar: tum basvurulardan SONRA ve baska bir gunde acilir
+  perform public.grup_ac(a, v_t + interval '1 day', 'psikotik', 'Psikotik deneyimler uzerine grup', 50000);
+  assert exists (select 1 from public.group_sessions where topic = 'psikotik'), 'psikotik grup kabul edilmeli';
 
   -- Ogrenci uzman kapali alani calisma alani yapamaz, digerini yapabilir
   v_hata := null;
