@@ -10,17 +10,17 @@ const bul = (ad: string) => {
   return r;
 };
 
-test("26 rahatsızlık, adlar benzersiz ve Türkçe alfabetik", () => {
-  assert.equal(RAHATSIZLIKLAR.length, 26);
+test("27 rahatsızlık, adlar benzersiz ve Türkçe alfabetik", () => {
+  assert.equal(RAHATSIZLIKLAR.length, 27);
   const adlar = RAHATSIZLIKLAR.map((r) => r.ad);
-  assert.equal(new Set(adlar).size, 26);
+  assert.equal(new Set(adlar).size, 27);
   assert.deepEqual(adlar, [...adlar].sort((a, b) => a.localeCompare(b, "tr")));
 });
 
-test("ağır liste tam olarak spec'teki 7 kart", () => {
+test("ağır liste tam olarak beklenen 8 kart", () => {
   assert.deepEqual(
     RAHATSIZLIKLAR.filter((r) => r.agir).map((r) => r.ad).sort((a, b) => a.localeCompare(b, "tr")),
-    ["Anoreksiya", "Bipolar Bozukluk", "Bulimiya", "Kumar Bozukluğu", "Madde Kullanımı Bozukluğu", "Narkolepsi", "Şizofreni"],
+    ["Anoreksiya", "Bipolar Bozukluk", "Bulimiya", "Kumar Bozukluğu", "Madde Kullanımı Bozukluğu", "Narkolepsi", "Oyun ve İnternet Bağımlılığı", "Şizofreni"],
   );
 });
 
@@ -40,7 +40,7 @@ test("kart-alan eşleşmesi spec tablosuyla aynı", () => {
     duygudurum: ["Depresyon", "Bipolar Bozukluk", "Kalıcı Depresif Bozukluk", "Doğum Sonrası Depresyon"],
     travma: ["Travma Sonrası Stres Bozukluğu", "Uyum Bozukluğu"],
     yeme: ["Anoreksiya", "Bulimiya", "Tıkınırcasına Yeme Bozukluğu", "Beden Disformik Bozukluğu"],
-    bagimlilik: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu"],
+    bagimlilik: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu", "Oyun ve İnternet Bağımlılığı"],
     uyku: ["İnsomni", "Narkolepsi"],
     cinsel: ["Cinsel Bozukluklar"],
     norogelisim: ["DEHB (Dikkat Eksikliği ve Hiperaktivite Bozukluğu)", "Otizm Spektrum Bozukluğu", "Disleksi"],
@@ -53,7 +53,12 @@ test("kart-alan eşleşmesi spec tablosuyla aynı", () => {
       satir++;
     }
   }
-  assert.equal(satir, 26);
+  assert.equal(satir, 27);
+});
+
+test("bırakamama hissi oyun ve internet bağımlılığı kartını da gösterir", () => {
+  const his = HISLER.find((h) => h.ad === "Bırakmak istiyorum ama bırakamıyorum");
+  assert.ok(his?.kartlar.includes("Oyun ve İnternet Bağımlılığı"));
 });
 
 test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur", () => {

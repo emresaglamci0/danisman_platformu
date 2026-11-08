@@ -367,6 +367,24 @@ export const RAHATSIZLIKLAR: Rahatsizlik[] = [
     kaynaklar: [DSM, DSO("Otizm", "autism-spectrum-disorders"), NIMH("Otizm spektrum bozukluğu", "topics/autism-spectrum-disorders-asd")],
   },
   {
+    ad: "Oyun ve İnternet Bağımlılığı",
+    alan: "bagimlilik",
+    agir: true,
+    aciklama:
+      "Oyun ya da internet kullanımını, günlük hayata zarar vermesine rağmen kontrol edememe ve sürdürme halidir. ICD-11'de “oyun bozukluğu” (6C51) resmi bir tanıdır. DSM-5-TR'de “internet oyun bozukluğu” ise yalnızca ileride araştırılması gereken durumlar bölümünde yer alır. Sosyal medya ve genel internet kullanımı için resmi bir tanı yoktur.",
+    belirtiler: [
+      "Oyunu ya da internette geçirdiğim süreyi azaltmak istiyorum ama yapamıyorum.",
+      "Oyun ya da internet, diğer ilgi alanlarımın ve günlük işlerimin önüne geçti.",
+      "Okulum, işim veya ilişkilerim zarar görse de kullanmaya devam ediyorum.",
+      "Kullanamadığımda huzursuz, sinirli ya da kaygılı oluyorum.",
+    ],
+    nedenler:
+      "Beynin ödül sistemi, dürtüsellik, yalnızlık, stres ve eşlik eden kaygı, depresyon ya da DEHB rol oynayabilir. Ödül ve ilerleme sunan oyun tasarımları ile kesintisiz çevrimiçi erişim de etkili olabilir.",
+    tedavi:
+      "Bilişsel davranışçı terapi (BDT) ve motivasyonel görüşme kullanılır. Eşlik eden kaygı, depresyon ya da DEHB varsa onların tedavisi de önemlidir. Aile desteği ve günlük düzenin yeniden kurulması iyileşmeye katkı sağlar.",
+    kaynaklar: [ICD, DSM],
+  },
+  {
     ad: "Özgül Fobi",
     alan: "kaygi",
     agir: false,
@@ -508,7 +526,7 @@ export const HISLER: His[] = [
   { ad: "Görünüşümden çok rahatsızım", kartlar: ["Beden Disformik Bozukluğu", "Anoreksiya"] },
   { ad: "Uyuyamıyorum", kartlar: ["İnsomni"] },
   { ad: "Gündüz istemeden uyuyakalıyorum", kartlar: ["Narkolepsi"] },
-  { ad: "Bırakmak istiyorum ama bırakamıyorum", kartlar: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu"] },
+  { ad: "Bırakmak istiyorum ama bırakamıyorum", kartlar: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu", "Oyun ve İnternet Bağımlılığı"] },
   {
     ad: "Çocukluğumdan beri dikkat, okuma ya da iletişimde zorlanıyorum",
     kartlar: ["DEHB (Dikkat Eksikliği ve Hiperaktivite Bozukluğu)", "Disleksi", "Otizm Spektrum Bozukluğu"],
