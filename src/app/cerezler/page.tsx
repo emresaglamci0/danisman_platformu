@@ -17,6 +17,11 @@ const CEREZLER = [
     amac: "Giriş ve e-posta doğrulama sırasında bağlantının size ait olduğunu kontrol eder.",
     sure: "İşlem bitene kadar (kısa süreli)",
   },
+  {
+    ad: "olcek-davet-goruldu (tarayıcı depolaması)",
+    amac: "Ana sayfadaki ölçek davetini bir kez gösterdikten sonra tekrar göstermemek için kullanılır. Ölçek yanıtlarınız kaydedilmez.",
+    sure: "Tarayıcı verilerinizi silene kadar",
+  },
 ];
 
 export default function CerezlerSayfasi() {

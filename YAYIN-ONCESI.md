@@ -27,6 +27,7 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 - [ ] Yurt dışına aktarım için standart sözleşmeyi imzalayıp KVKK Kurumu'na bildirin; VERBİS kaydını kontrol edin.
 - [ ] Sohbet ekranındaki acil durum numaralarını (112, 183, 114) resmi kaynaklardan yeniden doğrulayın.
 - [ ] **Rahatsızlık metinlerini onaylayın.** /psikolojik-rahatsizliklar sayfasındaki açıklama, belirti, yaygınlık ve kaynakları proje sahibi okuyup onaylamalı.
+- [ ] **Ölçek metinlerini onaylayın.** src/modules/olcek/maddeler.ts içindeki 15 madde, sonuç ekranı açıklamaları ve "Oyun ve İnternet Bağımlılığı" kartı proje sahibi tarafından onaylanmalı.
 
 ## İçerik
 

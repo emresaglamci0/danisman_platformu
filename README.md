@@ -168,5 +168,5 @@ Demo hesaplarının şifresini herkese açık bir yere yazmayın. Paylaşacağı
 
 ## Ölçek modülünü açıp kapatma
 
-`.env.local` dosyasındaki `OLCEK_MODULU_AKTIF=true` satırı ana sayfaya pasif bir "Ölçekler" düğmesi ekler.
+`.env.local` dosyasındaki `OLCEK_MODULU_AKTIF=true` satırı ana sayfada uzman bulma ölçeğini açar (davet penceresi + "Sana uygun uzmanı bul" düğmesi). Yanıtlar tarayıcıdan çıkmaz.
 `false` iken modül tamamen gizlidir ve site normal çalışır.
