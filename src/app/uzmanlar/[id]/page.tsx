@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ciddiDurumlar } from "@/app/psikolojik-rahatsizliklar/kurallar";
+import { RAHATSIZLIKLAR } from "@/app/psikolojik-rahatsizliklar/veri";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { acikGruplar } from "@/lib/gruplar";
 import { danisanPuanDurumu } from "@/lib/puanlar";
@@ -168,7 +170,13 @@ async function TakvimAlani({ uzman, kullanici }: { uzman: Uzman; kullanici: Kull
 
   const takvim = (uzmanId: string | null, not?: ReactNode) => (
     <>
-      <Takvim saatler={saatler} simdi={simdi.toISOString()} uzmanId={uzmanId} ogrenci={uzman.kind === "student"}>
+      <Takvim
+        saatler={saatler}
+        simdi={simdi.toISOString()}
+        uzmanId={uzmanId}
+        ogrenci={uzman.kind === "student"}
+        ciddiDurumlar={uzman.kind === "student" ? ciddiDurumlar(RAHATSIZLIKLAR) : []}
+      >
         {not && <p className="text-sm text-slate-600">{not}</p>}
       </Takvim>
       <BulutGunes />

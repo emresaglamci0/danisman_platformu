@@ -13,12 +13,14 @@ export function Takvim({
   simdi,
   uzmanId,
   ogrenci,
+  ciddiDurumlar,
   children,
 }: {
   saatler: string[];
   simdi: string;
   uzmanId: string | null;
   ogrenci: boolean;
+  ciddiDurumlar: string[];
   children?: ReactNode;
 }) {
   const [hafta, setHafta] = useState(0);
@@ -95,7 +97,7 @@ export function Takvim({
           </button>
         </div>
       </div>
-      {uzmanId ? <BasvuruFormu uzmanId={uzmanId} secili={secili} ogrenci={ogrenci} /> : children}
+      {uzmanId ? <BasvuruFormu uzmanId={uzmanId} secili={secili} ogrenci={ogrenci} ciddiDurumlar={ciddiDurumlar} /> : children}
     </div>
   );
 }

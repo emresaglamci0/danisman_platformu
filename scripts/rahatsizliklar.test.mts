@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ALANLAR } from "../src/lib/sabitler.ts";
-import { oneCikanKartlar, uzmanBaglantisi } from "../src/app/psikolojik-rahatsizliklar/kurallar.ts";
+import { ciddiDurumlar, ogrenciBasvurabilir, oneCikanKartlar, uzmanBaglantisi } from "../src/app/psikolojik-rahatsizliklar/kurallar.ts";
 import { HISLER, RAHATSIZLIKLAR } from "../src/app/psikolojik-rahatsizliklar/veri.ts";
 
 const bul = (ad: string) => {
@@ -89,4 +89,27 @@ test("oneCikanKartlar: boş seçim null, seçim birleşim kümesi", () => {
   const h = [{ ad: "A", kartlar: ["X", "Y"] }, { ad: "B", kartlar: ["Y", "Z"] }];
   assert.equal(oneCikanKartlar([], h), null);
   assert.deepEqual([...oneCikanKartlar(["A", "B"], h)!].sort(), ["X", "Y", "Z"]);
+});
+
+test("ciddi durum listesi agir kartlardan gelir", () => {
+  assert.deepEqual(ciddiDurumlar(RAHATSIZLIKLAR), [
+    "Anoreksiya",
+    "Bipolar Bozukluk",
+    "Bulimiya",
+    "Kumar Bozukluğu",
+    "Madde Kullanımı Bozukluğu",
+    "Narkolepsi",
+    "Oyun ve İnternet Bağımlılığı",
+    "Şizofreni",
+  ]);
+});
+
+test("öğrenciye yalnızca hayır yanıtıyla başvurulur", () => {
+  assert.equal(ogrenciBasvurabilir(true, "hayir"), true);
+  assert.equal(ogrenciBasvurabilir(true, "evet"), false);
+  assert.equal(ogrenciBasvurabilir(true, null), false);
+});
+
+test("bağımsız uzman başvurusu sorudan etkilenmez", () => {
+  assert.equal(ogrenciBasvurabilir(false, null), true);
 });

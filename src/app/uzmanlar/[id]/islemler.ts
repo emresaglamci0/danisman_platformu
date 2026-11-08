@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import type { FormDurumu } from "@/lib/hatalar";
+import { ogrenciBasvurabilir } from "@/app/psikolojik-rahatsizliklar/kurallar";
 import { ALANLAR, listedeMi } from "@/lib/sabitler";
+import { uzmanGetir } from "@/lib/uzmanlar";
 
 export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
@@ -17,6 +19,13 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
 
   if (Number.isNaN(baslangic.getTime())) return { hata: "Lütfen takvimden bir saat seçin." };
   if (konu && !listedeMi(ALANLAR, konu)) return { hata: "Geçersiz konu seçimi." };
+
+  // Yanit yalnizca burada okunur; kaydedilmez, loglanmaz.
+  const uzman = await uzmanGetir(uzmanId);
+  if (!uzman) return { hata: "Başvuru gönderilemedi. Lütfen tekrar deneyin." };
+  if (!ogrenciBasvurabilir(uzman.kind === "student", form.get("ciddiDurum"))) {
+    return { hata: "Bu görüşme öğrenci uzmanlar için uygun değil. Lütfen Uzmanlar sayfasından bir uzman seçin." };
+  }
 
   const supabase = await supabaseSunucu();
   const { error } = await supabase.from("applications").insert({
