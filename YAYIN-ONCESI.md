@@ -21,7 +21,10 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 
 - [ ] KVKK aydınlatma ve açık rıza metinlerini **ve** yasal sayfaları (Kullanım Koşulları, Gizlilik, Çerez, Hakkımızda, İletişim, SSS, Öğrenci Uzmanlar) avukata onaylatın, sonra `.env` içinde `KVKK_METINLERI_ONAYLI=true` yapın. Bu tek ayar hepsindeki "Taslaktır" notunu kaldırır.
 - [ ] Sitedeki bütün **[AVUKAT/KURUM ONAYI GEREKİR]** etiketlerini tek tek ele alın: metni onaylanan haliyle düzeltip etiketi kaldırın. Etiketler ayarla gizlenmez; aramak için kodda `OnayGerekir` kelimesini arayın.
-- [ ] Staj modelini (süpervizyon, üniversite/kurum onayı, resmî staj sayılması) netleştirin ve `/ogrenci-uzmanlar` sayfasını güncelleyin.
+- [ ] Staj modelini (süpervizyon, üniversite/kurum onayı, resmî staj sayılması) netleştirin ve `/ogrenci-uzmanlar/hakkinda` sayfasını güncelleyin.
+- [ ] **PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencilerinin** staj kapsamında görüşme yapabilmesini avukat/kurum ile doğrulayın.
+- [ ] **Ciddi durum sorusunu KVKK metnine ekleyin.** Öğrenci uzman başvurusunda sorulur, yanıt kaydedilmez. Metin değişirse `KVKK_SURUMU` değişmeli.
+- [ ] **Ciddi durum listesini klinik açıdan onaylayın.** Liste `/psikolojik-rahatsizliklar` verisindeki `agir: true` kartlardır (şu an 8 durum).
 - [ ] `src/lib/sabitler.ts` içindeki **örnek** iletişim e-postasını (`iletisim@example.com`) gerçek adresle değiştirin.
 - [ ] Hesap silme kurallarını avukata onaylatın: açık şikayet varken silmenin engellenmesi, uzman ayrılınca sohbetin ve uzman mesajlarının 6 ay saklanması, açık rıza kayıtlarının (`consents`) hesapla birlikte silinmesi (ispat için saklanmalı mı?) ve yönetici kayıtlarının kalması.
 - [ ] Metinlerdeki `[Veri sorumlusu]`, `[iletişim adresi]`, `[Saklama süreleri]` yer tutucularını doldurun.

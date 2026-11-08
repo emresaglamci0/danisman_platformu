@@ -54,7 +54,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
         </div>
         {uzman.kind === "student" && (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Bu kişi son sınıf öğrencisidir, lisanslı bir uzman değildir. Görüşmeler{" "}
+            Bu kişi PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisidir, lisanslı bir uzman değildir. Görüşmeler{" "}
             <strong>ücretsiz, staj kapsamında</strong> yapılır. <OnayGerekir />{" "}
             <Link href="/ogrenci-uzmanlar/hakkinda" className="underline">
               Ayrıntılar

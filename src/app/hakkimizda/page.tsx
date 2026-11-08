@@ -22,8 +22,8 @@ export default function HakkimizdaSayfasi() {
       <Bolum baslik="Amacımız">
         <p>
           Destek almak isteyen kişilerin, belgeleri kontrol edilmiş psikolog ve psikolojik
-          danışmanlara ya da ücretsiz görüşme yapan son sınıf öğrencilere kolayca ve gizliliklerini
-          koruyarak ulaşmasını sağlamak.
+          danışmanlara ya da ücretsiz görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans
+          öğrencilerine kolayca ve gizliliklerini koruyarak ulaşmasını sağlamak. <OnayGerekir />
         </p>
       </Bolum>
 

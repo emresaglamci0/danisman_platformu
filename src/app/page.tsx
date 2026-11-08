@@ -37,7 +37,7 @@ export default async function AnaSayfa() {
           </h1>
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 lg:mx-0">
             Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
-            görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
+            görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencilerini tek yerde bulun. <OnayGerekir />
           </p>
           <div className="grid gap-3 text-left sm:grid-cols-2">
             <Link href="/uzmanlar" className="rounded-xl bg-teal-100 p-4 hover:shadow-md">

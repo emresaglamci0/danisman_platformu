@@ -22,7 +22,8 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     soru: "Öğrenci uzman kimdir?",
     yanit: (
       <>
-        Son sınıf Psikoloji veya PDR öğrencisidir; lisanslı bir uzman değildir. Ayrıntılar için{" "}
+        PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisidir; lisanslı bir uzman değildir. <OnayGerekir />{" "}
+        Ayrıntılar için{" "}
         <Link href="/ogrenci-uzmanlar/hakkinda" className={baglanti}>
           Öğrenci Uzmanlar Hakkında
         </Link>{" "}

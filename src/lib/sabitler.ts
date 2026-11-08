@@ -35,7 +35,7 @@ export const TANITIM_EN_FAZLA = 600; // veritabanindaki bio siniriyla ayni
 export const ILETISIM_EPOSTASI = "iletisim@example.com";
 
 // Yasal metin sayfalarinin (kullanim kosullari, gizlilik, cerez vb.) son guncelleme tarihi
-export const YASAL_METIN_TARIHI = "07.11.2026";
+export const YASAL_METIN_TARIHI = "08.11.2026";
 
 export const ROLLER = {
   client: "Danışan",

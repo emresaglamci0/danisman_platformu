@@ -11,10 +11,10 @@ export default function OgrenciUzmanlarSayfasi() {
     <YasalSayfa baslik="Öğrenci Uzmanlar Hakkında" guncelleme={YASAL_METIN_TARIHI}>
       <Bolum baslik="Öğrenci uzman kimdir?">
         <p>
-          Öğrenci uzmanlar, Psikoloji veya Rehberlik ve Psikolojik Danışmanlık (PDR) bölümlerinin
-          <strong> son sınıf öğrencileridir</strong>. Lisanslı bir psikolog veya psikolojik
+          Öğrenci uzmanlar, Rehberlik ve Psikolojik Danışmanlık (PDR) bölümünün
+          <strong> 4. sınıf öğrencileri</strong> veya <strong>Klinik Psikoloji yüksek lisans öğrencileridir</strong>. Lisanslı bir psikolog veya psikolojik
           danışman <strong>değildirler</strong>. Profillerinde &quot;Stajyer · Ücretsiz&quot;
-          etiketi görünür.
+          etiketi görünür. <OnayGerekir />
         </p>
       </Bolum>
 
