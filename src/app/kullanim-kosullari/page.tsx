@@ -54,7 +54,7 @@ export default function KullanimKosullariSayfasi() {
           <li>
             Öğrenci uzmanlar lisanslı uzman değildir ve görüşmeleri <strong>ücretsiz</strong> yapar.
             Ayrıntılar için{" "}
-            <Link href="/ogrenci-uzmanlar" className="text-teal-800 underline">
+            <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
               Öğrenci Uzmanlar Hakkında
             </Link>{" "}
             sayfasına bakın.

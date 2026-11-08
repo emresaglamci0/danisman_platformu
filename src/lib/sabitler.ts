@@ -140,6 +140,12 @@ export function listedeMi<T extends Record<string, unknown>>(
   return typeof deger === "string" && Object.hasOwn(liste, deger);
 }
 
+// Liste sayfasinda gecerli konu filtresi: ogrenci sayfasinda kapali alanlar filtre olamaz.
+export function listeAlani(tur: "independent" | "student", alan: unknown): Alan | undefined {
+  if (!listedeMi(ALANLAR, alan)) return undefined;
+  return tur === "student" && !ogrenciyeAcik(alan) ? undefined : alan;
+}
+
 export function paraYaz(kurus: number) {
   return (kurus / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 2 });
 }

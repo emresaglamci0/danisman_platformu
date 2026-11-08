@@ -40,11 +40,15 @@ async function fotograflariEkle(uzmanlar: HamUzman[]): Promise<Uzman[]> {
 
 // Herkese acik bilgiler "uzman_vitrini" gorunumunden okunur (0009). Gorunum yalnizca onayli
 // uzmanlari ve yalnizca gerekli sutunlari icerir; asil tabloyu yalnizca uzmanin kendisi ve admin gorur.
-export async function onayliUzmanlar(filtre: { tur?: Uzman["kind"]; alan?: Alan; ara?: string } = {}): Promise<Uzman[]> {
+export async function onayliUzmanlar(
+  filtre: { tur?: Uzman["kind"]; alan?: Alan; ara?: string; unvan?: Unvan; bolum?: Bolum } = {},
+): Promise<Uzman[]> {
   if (!supabaseAyarlari()) return [];
   const supabase = await supabaseSunucu();
   let sorgu = supabase.from("uzman_vitrini").select(ALANLAR_SORGU).order("display_name");
   if (filtre.tur) sorgu = sorgu.eq("kind", filtre.tur);
+  if (filtre.unvan) sorgu = sorgu.eq("title", filtre.unvan);
+  if (filtre.bolum) sorgu = sorgu.eq("department", filtre.bolum);
   if (filtre.alan) sorgu = sorgu.contains("specialties", [filtre.alan]);
   // Joker karakterler atilir; kullanici metni yalnizca "icinde gecen" arama olarak calisir.
   // shortcut: ilike Turkce I/i farkini bilmez ("ipek" -> "İpek" bulunmayabilir), sorun olursa arama sutunu eklenmeli.

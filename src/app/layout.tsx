@@ -17,7 +17,7 @@ const ALT_MENU = [
     baslik: "Platform",
     baglantilar: [
       { adres: "/hakkimizda", ad: "Hakkımızda" },
-      { adres: "/ogrenci-uzmanlar", ad: "Öğrenci Uzmanlar Hakkında" },
+      { adres: "/ogrenci-uzmanlar/hakkinda", ad: "Öğrenci Uzmanlar Hakkında" },
       { adres: "/sss", ad: "Sık Sorulan Sorular" },
       { adres: "/iletisim", ad: "İletişim" },
     ],

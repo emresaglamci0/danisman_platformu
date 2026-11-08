@@ -93,7 +93,7 @@ export function KayitFormu() {
             <span>
               PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisiyim. Görüşmeleri <strong>ücretsiz</strong> yapacağımı ve hiçbir ad
               altında ödeme istemeyeceğimi kabul ediyorum.{" "}
-              <Link href="/ogrenci-uzmanlar" target="_blank" className="text-teal-800 underline">
+              <Link href="/ogrenci-uzmanlar/hakkinda" target="_blank" className="text-teal-800 underline">
                 Öğrenci Uzmanlar Hakkında
               </Link>
             </span>

@@ -34,8 +34,11 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
   return (
     <div className="grid gap-8 md:grid-cols-[1fr_320px]">
       <article className="space-y-4">
-        <Link href="/uzmanlar" className="inline-block text-sm text-teal-800 hover:underline">
-          ← Tüm uzmanlar
+        <Link
+          href={uzman.kind === "student" ? "/ogrenci-uzmanlar" : "/uzmanlar"}
+          className="inline-block text-sm text-teal-800 hover:underline"
+        >
+          {uzman.kind === "student" ? "← Tüm öğrenci uzmanlar" : "← Tüm uzmanlar"}
         </Link>
         <div className="flex items-center gap-4">
           <UzmanFotografi link={uzman.fotoLink} ad={uzman.display_name} boyut={96} />
@@ -51,7 +54,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
             Bu kişi son sınıf öğrencisidir, lisanslı bir uzman değildir. Görüşmeler{" "}
             <strong>ücretsiz, staj kapsamında</strong> yapılır. <OnayGerekir />{" "}
-            <Link href="/ogrenci-uzmanlar" className="underline">
+            <Link href="/ogrenci-uzmanlar/hakkinda" className="underline">
               Ayrıntılar
             </Link>
           </p>

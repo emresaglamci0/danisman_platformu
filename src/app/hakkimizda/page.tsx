@@ -48,7 +48,7 @@ export default function HakkimizdaSayfasi() {
           <li>Mesajları şifreli saklamak ve varsayılan olarak yalnızca iki tarafa göstermek</li>
           <li>
             Öğrenci uzmanlarla görüşmeleri ücretsiz tutmak (
-            <Link href="/ogrenci-uzmanlar" className="text-teal-800 underline">
+            <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
               ayrıntılar
             </Link>
             )

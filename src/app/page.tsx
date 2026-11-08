@@ -39,13 +39,25 @@ export default async function AnaSayfa() {
             Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
             görüşme yapan son sınıf Psikoloji/PDR öğrencilerini tek yerde bulun. <OnayGerekir />
           </p>
-          <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
-            <Link
-              href="/uzmanlar"
-              className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
-            >
-              Uzmanları gör
+          <div className="grid gap-3 text-left sm:grid-cols-2">
+            <Link href="/uzmanlar" className="rounded-xl bg-teal-100 p-4 hover:shadow-md">
+              <span className="block text-lg font-semibold">Uzmanlar</span>
+              <span className="mt-1 block text-sm text-slate-700">Psikolog ve psikolojik danışmanlarla ücretli seans</span>
+              <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
+                Uzmanları gör
+              </span>
             </Link>
+            <Link href="/ogrenci-uzmanlar" className="rounded-xl bg-amber-100 p-4 hover:shadow-md">
+              <span className="block text-lg font-semibold">Öğrenci Uzmanlar</span>
+              <span className="mt-1 block text-sm text-slate-700">
+                Staj kapsamında ücretsiz görüşme <OnayGerekir />
+              </span>
+              <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
+                Ücretsiz görüş
+              </span>
+            </Link>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
             <OlcekAlani />
           </div>
         </div>

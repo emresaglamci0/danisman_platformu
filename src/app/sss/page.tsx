@@ -23,7 +23,7 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     yanit: (
       <>
         Son sınıf Psikoloji veya PDR öğrencisidir; lisanslı bir uzman değildir. Ayrıntılar için{" "}
-        <Link href="/ogrenci-uzmanlar" className={baglanti}>
+        <Link href="/ogrenci-uzmanlar/hakkinda" className={baglanti}>
           Öğrenci Uzmanlar Hakkında
         </Link>{" "}
         sayfasına bakın.
