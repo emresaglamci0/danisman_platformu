@@ -67,8 +67,38 @@ export const ALANLAR = {
   ozguven: "Özgüven",
   yas: "Yas ve kayıp",
   genel: "Genel danışmanlık",
+  cift: "Çift ve evlilik",
+  cocuk_ergen: "Çocuk ve ergen",
+  ebeveynlik: "Ebeveynlik",
+  tukenmislik: "Tükenmişlik ve iş stresi",
+  duygudurum: "Depresyon ve duygudurum",
+  travma: "Travma",
+  yeme: "Yeme ve beden algısı",
+  bagimlilik: "Bağımlılık",
+  uyku: "Uyku sorunları",
+  cinsel: "Cinsel sorunlar",
+  norogelisim: "Nörogelişim",
+  psikotik: "Psikotik bozukluklar",
 } as const;
 export type Alan = keyof typeof ALANLAR;
+
+// Öğrenci uzmanlar bu iki alanda hizmet vermez
+export const OGRENCIYE_KAPALI_ALANLAR: readonly Alan[] = ["psikotik", "bagimlilik"];
+
+export function ogrenciyeAcik(alan: Alan) {
+  return !OGRENCIYE_KAPALI_ALANLAR.includes(alan);
+}
+
+// Bilinmeyen, tekrar eden ve (öğrenci için) kapalı alanları çıkarır
+export function alanlariSuz(alanlar: unknown[], ogrenci: boolean): Alan[] {
+  const sonuc = new Set<Alan>();
+  for (const a of alanlar) {
+    if (!listedeMi(ALANLAR, a)) continue;
+    if (ogrenci && !ogrenciyeAcik(a)) continue;
+    sonuc.add(a);
+  }
+  return [...sonuc];
+}
 
 export const UYGUN_ZAMANLAR = {
   hafta_ici_gunduz: "Hafta içi gündüz",
