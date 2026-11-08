@@ -122,3 +122,39 @@ export function MeditasyonSeridi() {
     </svg>
   );
 }
+
+// Grup seanslari sayfasi seridi: tepede yan yana oturan bes kisi, ustlerinde suzulen kalp.
+// Kisiler iki farkli hizda nefes alir. Animasyonlar globals.css icindedir (.grup-seridi).
+const GRUP_KISILERI = [
+  { x: 130, y: 112, govde: "fill-amber-300" },
+  { x: 225, y: 100, govde: "fill-teal-700" },
+  { x: 320, y: 95, govde: "fill-amber-700" },
+  { x: 415, y: 100, govde: "fill-teal-700" },
+  { x: 510, y: 112, govde: "fill-amber-300" },
+];
+
+export function GrupSeridi() {
+  return (
+    <svg
+      viewBox="0 0 640 200"
+      aria-hidden="true"
+      className="grup-seridi block w-full stroke-slate-900"
+      strokeWidth={4}
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    >
+      <path d="M0 170 C160 140,480 140,640 170 V200 H0Z" className="fill-teal-100 stroke-none" />
+      {GRUP_KISILERI.map((k, i) => (
+        <g key={k.x} className={i % 2 ? "grup-nefes-yavas" : "grup-nefes"}>
+          <path d={`M${k.x - 30} 166 C${k.x - 30} ${k.y + 22},${k.x + 30} ${k.y + 22},${k.x + 30} 166Z`} className={k.govde} />
+          <circle cx={k.x} cy={k.y} r="20" className="fill-amber-200" />
+          <path d={`M${k.x - 8} ${k.y + 6} Q${k.x} ${k.y + 11} ${k.x + 8} ${k.y + 6}`} className="fill-none" strokeWidth={3} />
+        </g>
+      ))}
+      <path
+        className="grup-kalp fill-amber-300"
+        d="M320 40 C314 30 300 34 306 46 L320 60 L334 46 C340 34 326 30 320 40Z"
+      />
+    </svg>
+  );
+}

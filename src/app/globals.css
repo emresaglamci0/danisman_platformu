@@ -252,6 +252,23 @@ body {
   }
 }
 
+/* Grup seanslari sayfasi: grup seridi. Ayni saniyede 18 kare duzeni. */
+.grup-seridi {
+  --kare: calc(1s / 18);
+}
+
+.grup-nefes {
+  animation: meditasyon-nefes calc(var(--kare) * 36) steps(36) infinite alternate;
+}
+
+.grup-nefes-yavas {
+  animation: meditasyon-nefes calc(var(--kare) * 54) steps(54) infinite alternate;
+}
+
+.grup-kalp {
+  animation: kelebek-ucus calc(var(--kare) * 72) steps(18) infinite;
+}
+
 /* Acilir kutu: kayma kare kare degil, akici (kullanici karari). Yalnizca fareli ekranlarda kapanir. Telefonda (hover yok) icerik hep aciktir.
    Icerik gizlenmez, yalnizca yuksekligi sifirlanir; ekran okuyucu her zaman okur. */
 .acilir-ok {

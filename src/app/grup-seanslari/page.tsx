@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GrupSeridi } from "@/components/OnGorusmeCizimleri";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { acikGruplar, GRUP_EN_AZ, GRUP_EN_FAZLA } from "@/lib/gruplar";
 import { ALANLAR, paraYaz } from "@/lib/sabitler";
@@ -39,6 +40,8 @@ export default async function GrupSeanslariSayfasi() {
           </li>
         ))}
       </ul>
+
+      <GrupSeridi />
     </div>
   );
 }
