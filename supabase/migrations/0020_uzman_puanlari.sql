@@ -49,18 +49,18 @@ create index if not exists conversation_flags_seans_yapilmadi
 -- ---------- Sayilan seans ----------
 -- Sayilan seans: onayli, bitmis, bire bir, ucretli (ogrenci randevusu degil) ve
 -- hakkinda "seans yapilmadi" kaydi (acik veya kapali) olmayan seans.
--- Bu kosullar bekleyen_degerlendirme icinde de ayni sekilde yazilidir; birlikte degistirin.
-create or replace function public.puan_sayilan_seans(p_danisan uuid, p_uzman uuid)
-returns int
+-- Kural yalnizca burada yazilidir; puan_sayilan_seans ve bekleyen_degerlendirme bunu kullanir.
+create or replace function public.sayilan_seanslar(p_danisan uuid)
+returns table (expert_id uuid, ends_at timestamptz)
 language sql
 stable
 security definer
 set search_path = ''
 as $$
-  select count(*)::int
+  select o.expert_id, o.ends_at
   from public.session_offers o
   where o.client_id = p_danisan
-    and o.expert_id = p_uzman
+    and o.expert_id is not null
     and o.status = 'confirmed'
     and o.ends_at < now()
     and o.group_session_id is null
@@ -69,6 +69,16 @@ as $$
       select 1 from public.conversation_flags f
       where f.session_offer_id = o.id and f.category = 'seans_yapilmadi'
     );
+$$;
+
+create or replace function public.puan_sayilan_seans(p_danisan uuid, p_uzman uuid)
+returns int
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*)::int from public.sayilan_seanslar(p_danisan) s where s.expert_id = p_uzman;
 $$;
 
 -- ---------- Puan verme / degistirme ----------
@@ -125,19 +135,9 @@ security definer
 set search_path = ''
 as $$
   select e.id, e.display_name
-  from public.session_offers o
-  join public.expert_profiles e on e.id = o.expert_id
-  where o.client_id = p_danisan
-    -- puan_sayilan_seans ile ayni kosullar
-    and o.status = 'confirmed'
-    and o.ends_at < now()
-    and o.group_session_id is null
-    and o.price_kurus is not null
-    and not exists (
-      select 1 from public.conversation_flags f
-      where f.session_offer_id = o.id and f.category = 'seans_yapilmadi'
-    )
-    and e.kind = 'independent'
+  from public.sayilan_seanslar(p_danisan) s
+  join public.expert_profiles e on e.id = s.expert_id
+  where e.kind = 'independent'
     and public.uzman_onayli_mi(e.id)
     and not exists (
       select 1 from public.expert_ratings r
@@ -149,7 +149,7 @@ as $$
     )
   group by e.id, e.display_name
   having count(*) >= 2
-  order by max(o.ends_at) desc
+  order by max(s.ends_at) desc
   limit 1;
 $$;
 
@@ -218,6 +218,7 @@ revoke all on public.uzman_vitrini from public, anon, authenticated;
 grant select on public.uzman_vitrini to anon, authenticated;
 
 -- ---------- Izinler ----------
+revoke execute on function public.sayilan_seanslar(uuid) from public, anon, authenticated;
 revoke execute on function public.puan_sayilan_seans(uuid, uuid) from public, anon, authenticated;
 revoke execute on function public.uzman_puanla(uuid, uuid, int) from public, anon, authenticated;
 revoke execute on function public.danisan_puan_durumu(uuid, uuid) from public, anon, authenticated;
@@ -225,6 +226,7 @@ revoke execute on function public.bekleyen_degerlendirme(uuid) from public, anon
 revoke execute on function public.degerlendirme_ertele(uuid, uuid) from public, anon, authenticated;
 revoke execute on function public.puan_geri_al() from public, anon, authenticated;
 
+grant execute on function public.sayilan_seanslar(uuid) to service_role;
 grant execute on function public.puan_sayilan_seans(uuid, uuid) to service_role;
 grant execute on function public.uzman_puanla(uuid, uuid, int) to service_role;
 grant execute on function public.danisan_puan_durumu(uuid, uuid) to service_role;
