@@ -6,6 +6,7 @@ import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
 import { AcilDurumBandi, AcilDurumSeridi } from "@/components/AcilDurumBandi";
 import { UstMenu } from "@/components/UstMenu";
+import { DegerlendirmeAlani } from "@/components/DegerlendirmeAlani";
 
 // Yazi dosyasi derleme sirasinda indirilir ve bizim sitemizden sunulur; ziyaretci Google'a baglanmaz.
 // Turkce harflerin (ğ, ş, İ) bir kismi "latin-ext" icindedir.
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:py-14">{children}</main>
+        <DegerlendirmeAlani kullanici={kullanici} />
 
         <AcilDurumBandi />
 

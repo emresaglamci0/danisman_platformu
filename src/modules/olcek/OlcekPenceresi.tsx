@@ -19,9 +19,12 @@ const IKINCIL = "rounded-lg border border-slate-300 px-4 py-2 text-sm font-mediu
 export function OlcekPenceresi({
   uzmanlar,
   kartlar,
+  davetiBastir = false,
 }: {
   uzmanlar: UzmanOzeti[];
   kartlar: Record<string, ReactNode>;
+  // Bekleyen uzman degerlendirmesi varken davet kendiliginden acilmaz ve "goruldu" yazilmaz.
+  davetiBastir?: boolean;
 }) {
   const pencere = useRef<HTMLDialogElement>(null);
   const odakHedefi = useRef<HTMLElement | null>(null);
@@ -54,6 +57,7 @@ export function OlcekPenceresi({
   }, [adim]);
 
   useEffect(() => {
+    if (davetiBastir) return;
     let goruldu = false;
     try {
       goruldu = localStorage.getItem(ANAHTAR) !== null;
@@ -83,7 +87,7 @@ export function OlcekPenceresi({
       clearTimeout(zamanlayici);
       window.removeEventListener("scroll", kaydir);
     };
-  }, []);
+  }, [davetiBastir]);
 
   function yanitla(puan: Yanit) {
     if (typeof adim !== "number") return;

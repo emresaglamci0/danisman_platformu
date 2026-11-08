@@ -1,5 +1,6 @@
 import { UzmanKarti } from "@/components/UzmanKarti";
 import { mevcutKullanici } from "@/lib/oturum";
+import { bekleyenDegerlendirme } from "@/lib/puanlar";
 import { onayliUzmanlar } from "@/lib/uzmanlar";
 import { olcekModuluAktif } from "./ayar";
 import { OlcekPenceresi } from "./OlcekPenceresi";
@@ -15,5 +16,7 @@ export async function OlcekAlani() {
   const liste = await onayliUzmanlar();
   const uzmanlar = liste.map(({ id, kind, display_name, specialties }) => ({ id, kind, display_name, specialties }));
   const kartlar = Object.fromEntries(liste.map((x) => [x.id, <UzmanKarti key={x.id} uzman={x} prefetch={false} />]));
-  return <OlcekPenceresi uzmanlar={uzmanlar} kartlar={kartlar} />;
+  // Bekleyen uzman degerlendirmesi penceresi varken olcek daveti kendiliginden acilmaz.
+  const bekleyen = kullanici ? await bekleyenDegerlendirme(kullanici.id) : null;
+  return <OlcekPenceresi uzmanlar={uzmanlar} kartlar={kartlar} davetiBastir={bekleyen !== null} />;
 }
