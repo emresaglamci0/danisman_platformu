@@ -1,0 +1,71 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { ALANLAR } from "../src/lib/sabitler.ts";
+import { HISLER, RAHATSIZLIKLAR } from "../src/app/psikolojik-rahatsizliklar/veri.ts";
+
+const bul = (ad: string) => {
+  const r = RAHATSIZLIKLAR.find((x) => x.ad === ad);
+  assert.ok(r, `kart yok: ${ad}`);
+  return r;
+};
+
+test("26 rahatsızlık, adlar benzersiz ve Türkçe alfabetik", () => {
+  assert.equal(RAHATSIZLIKLAR.length, 26);
+  const adlar = RAHATSIZLIKLAR.map((r) => r.ad);
+  assert.equal(new Set(adlar).size, 26);
+  assert.deepEqual(adlar, [...adlar].sort((a, b) => a.localeCompare(b, "tr")));
+});
+
+test("ağır liste tam olarak spec'teki 7 kart", () => {
+  assert.deepEqual(
+    RAHATSIZLIKLAR.filter((r) => r.agir).map((r) => r.ad).sort((a, b) => a.localeCompare(b, "tr")),
+    ["Anoreksiya", "Bipolar Bozukluk", "Bulimiya", "Kumar Bozukluğu", "Madde Kullanımı Bozukluğu", "Narkolepsi", "Şizofreni"],
+  );
+});
+
+test("her kartın alanı geçerli, 3-5 belirti ve en az bir https kaynağı var", () => {
+  for (const r of RAHATSIZLIKLAR) {
+    assert.ok(r.alan in ALANLAR, `${r.ad}: alan geçersiz`);
+    assert.ok(r.belirtiler.length >= 3 && r.belirtiler.length <= 5, `${r.ad}: belirti sayısı`);
+    assert.ok(r.kaynaklar.length >= 1, `${r.ad}: kaynak yok`);
+    for (const k of r.kaynaklar) assert.match(k.url, /^https:\/\//, `${r.ad}: ${k.url}`);
+    for (const alan of [r.aciklama, r.nedenler, r.tedavi]) assert.ok(alan.trim().length > 0, `${r.ad}: boş metin`);
+  }
+});
+
+test("kart-alan eşleşmesi spec tablosuyla aynı", () => {
+  const tablo: Record<string, string[]> = {
+    kaygi: ["Anksiyete", "Hastalık Kaygısı", "Obsesif Kompulsif Bozukluk", "Özgül Fobi", "Panik Bozukluk", "Sosyal Kaygı Bozukluğu", "Agorafobi"],
+    duygudurum: ["Depresyon", "Bipolar Bozukluk", "Kalıcı Depresif Bozukluk", "Doğum Sonrası Depresyon"],
+    travma: ["Travma Sonrası Stres Bozukluğu", "Uyum Bozukluğu"],
+    yeme: ["Anoreksiya", "Bulimiya", "Tıkınırcasına Yeme Bozukluğu", "Beden Disformik Bozukluğu"],
+    bagimlilik: ["Madde Kullanımı Bozukluğu", "Kumar Bozukluğu"],
+    uyku: ["İnsomni", "Narkolepsi"],
+    cinsel: ["Cinsel Bozukluklar"],
+    norogelisim: ["DEHB (Dikkat Eksikliği ve Hiperaktivite Bozukluğu)", "Otizm Spektrum Bozukluğu", "Disleksi"],
+    psikotik: ["Şizofreni"],
+  };
+  let satir = 0;
+  for (const [alan, kartlar] of Object.entries(tablo)) {
+    for (const ad of kartlar) {
+      assert.equal(bul(ad).alan, alan, ad);
+      satir++;
+    }
+  }
+  assert.equal(satir, 26);
+});
+
+test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur", () => {
+  assert.ok(HISLER.length >= 12 && HISLER.length <= 16, "his sayısı 12-16");
+  assert.equal(new Set(HISLER.map((h) => h.ad)).size, HISLER.length);
+  const adlar = new Set(RAHATSIZLIKLAR.map((r) => r.ad));
+  const bagli = new Set<string>();
+  for (const h of HISLER) {
+    assert.ok(h.kartlar.length > 0, `${h.ad}: kart yok`);
+    for (const k of h.kartlar) {
+      assert.ok(adlar.has(k), `${h.ad}: bilinmeyen kart ${k}`);
+      bagli.add(k);
+    }
+  }
+  for (const ad of adlar) assert.ok(bagli.has(ad), `hiçbir hisle bulunmuyor: ${ad}`);
+});
