@@ -18,15 +18,24 @@ export type Uzman = {
   city: string | null;
   district: string | null;
   session_minutes: number | null;
+  puan_ortalama: number | null;
+  puan_sayisi: number;
   fotoLink: string | null;
 };
 
 const ALANLAR_SORGU =
-  "id, kind, display_name, title, department, specialties, bio, photo_path, offers_free_intro, offers_online, offers_in_person, city, district, session_minutes";
+  "id, kind, display_name, title, department, specialties, bio, photo_path, offers_free_intro, offers_online, offers_in_person, city, district, session_minutes, puan_ortalama, puan_sayisi";
 
-async function fotograflariEkle(uzmanlar: Omit<Uzman, "fotoLink">[]): Promise<Uzman[]> {
+// PostgREST numeric degeri metin dondurebilir; puan_ortalama sayiya cevrilir.
+type HamUzman = Omit<Uzman, "fotoLink" | "puan_ortalama"> & { puan_ortalama: number | string | null };
+
+async function fotograflariEkle(uzmanlar: HamUzman[]): Promise<Uzman[]> {
   const linkler = await fotografLinkleri(uzmanlar.map((u) => u.photo_path));
-  return uzmanlar.map((u) => ({ ...u, fotoLink: u.photo_path ? (linkler[u.photo_path] ?? null) : null }));
+  return uzmanlar.map((u) => ({
+    ...u,
+    puan_ortalama: u.puan_ortalama === null ? null : Number(u.puan_ortalama),
+    fotoLink: u.photo_path ? (linkler[u.photo_path] ?? null) : null,
+  }));
 }
 
 // Herkese acik bilgiler "uzman_vitrini" gorunumunden okunur (0009). Gorunum yalnizca onayli
