@@ -32,7 +32,7 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 
 ## İçerik
 
-- [ ] `src/app/layout.tsx` içindeki "Demo: gerçek bilgilerinizi girmeyin" uyarısını ve alt bilgideki öğrenci projesi notunu kaldırın.
+- [ ] `src/app/layout.tsx` ve `src/app/global-error.tsx` içindeki "Demo: gerçek bilgilerinizi girmeyin" uyarısını ve alt bilgideki öğrenci projesi notunu kaldırın.
 - [ ] **Demo ödemeyi değiştirin veya kapatın.** `src/modules/odeme/` şu an demodur: para çekilmez. Yayında ya Türkiye'de lisanslı, alt üye işyeri / pazaryeri desteği olan bir ödeme kuruluşu bağlanmalı (kart bilgisi sunucumuza gelmemeli, CSP'ye yalnızca o adres eklenmeli) ya da `ODEME_MODULU_AKTIF=false` yapılmalı. Gerçek ödemede kayıtların yasal saklama süresi ayrıca belirlenmeli; şu an seans kayıtları sohbetle birlikte silinir.
 - [ ] İptal, iade ve 48 saatlik bekletme kurallarını ve yöneticinin iade kararını avukata onaylatın.
 - [ ] Bağımsız uzman mesajlarındaki otomatik IBAN ve telefon kontrolünü avukata onaylatın. Yanlış alarm oranına bakın; `src/lib/seans-kurallari.ts` içindeki kalıplar yalnızca düz yazılmış numarayı yakalar.
