@@ -107,6 +107,7 @@ export function OlcekPenceresi({
   function bolum(baslik: string, kind: "independent" | "student", liste: UzmanOzeti[], enUstAlan: string) {
     // Bu alanda hic uzman yoksa "Tumunu gor" bos liste acmasin diye alansiz baglanir.
     const alanVar = uzmanlar.some((u) => u.kind === kind && u.specialties.includes(enUstAlan as Alan));
+    const listeYolu = kind === "independent" ? "/uzmanlar" : "/ogrenci-uzmanlar";
     return (
       <section className="mt-5">
         <h3 className="font-semibold text-slate-900">{baslik}</h3>
@@ -117,7 +118,7 @@ export function OlcekPenceresi({
           </p>
         ) : (
           <p className="mt-1 text-sm text-slate-600">
-            Son sınıf Psikoloji/PDR öğrencileri. Görüşmeleri ücretsizdir ve staj kapsamındadır. <OnayGerekir />
+            PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencileri. Görüşmeleri ücretsizdir ve staj kapsamındadır. <OnayGerekir />
           </p>
         )}
         {liste.length > 0 ? (
@@ -128,7 +129,7 @@ export function OlcekPenceresi({
               ))}
             </ul>
             <Link
-              href={alanVar ? `/uzmanlar?alan=${enUstAlan}&tur=${kind}` : `/uzmanlar?tur=${kind}`}
+              href={alanVar ? `${listeYolu}?alan=${enUstAlan}` : listeYolu}
               prefetch={false}
               className="mt-3 inline-block text-sm font-medium text-teal-800 underline"
             >
@@ -136,7 +137,7 @@ export function OlcekPenceresi({
             </Link>
           </>
         ) : (
-          <Link href={`/uzmanlar?tur=${kind}`} prefetch={false} className="mt-3 inline-block text-sm font-medium text-teal-800 underline">
+          <Link href={listeYolu} prefetch={false} className="mt-3 inline-block text-sm font-medium text-teal-800 underline">
             Tüm uzmanları gör
           </Link>
         )}

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { uzmanBaglantisi } from "./kurallar";
+import { uzmanBaglantilari } from "./kurallar";
 import type { Rahatsizlik } from "./veri";
 
 export function RahatsizlikKarti({ r, soluk }: { r: Rahatsizlik; soluk: boolean }) {
   const [acik, setAcik] = useState(false);
+  const baglantilar = uzmanBaglantilari(r);
 
   return (
     <li
@@ -77,12 +78,22 @@ export function RahatsizlikKarti({ r, soluk }: { r: Rahatsizlik; soluk: boolean 
               </div>
             </details>
 
-            <Link
-              href={uzmanBaglantisi(r)}
-              className="inline-block rounded-lg bg-teal-700 px-4 py-2 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-            >
-              Bu alanda çalışan uzmanları gör
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={baglantilar.uzman}
+                className="inline-block rounded-lg bg-teal-700 px-4 py-2 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+              >
+                Bu alanda çalışan uzmanları gör
+              </Link>
+              {baglantilar.ogrenci && (
+                <Link
+                  href={baglantilar.ogrenci}
+                  className="inline-block rounded-lg border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                >
+                  Öğrenci uzmanlarla ücretsiz görüş
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>

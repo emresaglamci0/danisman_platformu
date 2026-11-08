@@ -2,8 +2,11 @@ import type { Alan } from "@/lib/sabitler";
 import type { His } from "./veri";
 
 // Agir kartlar yalnizca bagimsiz uzmanlara baglanir (ogrenci uzmanlara kapali).
-export function uzmanBaglantisi(r: { alan: Alan; agir: boolean }): string {
-  return `/uzmanlar?alan=${r.alan}${r.agir ? "&tur=independent" : ""}`;
+export function uzmanBaglantilari(r: { alan: Alan; agir: boolean }): { uzman: string; ogrenci: string | null } {
+  return {
+    uzman: `/uzmanlar?alan=${r.alan}`,
+    ogrenci: r.agir ? null : `/ogrenci-uzmanlar?alan=${r.alan}`,
+  };
 }
 
 // Ogrenci uzman basvurusunda sorulan liste: ciddi kartlarin adlari.

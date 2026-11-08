@@ -86,9 +86,9 @@ export default async function OnGorusmeSayfasi() {
             uygulanan bir seans değildir.
           </p>
           <p>
-            Stajyer öğrencilerle yapılan görüşmeler zaten ücretsizdir.{" "}
-            <Link href="/uzmanlar?tur=student" className="text-teal-800 underline">
-              Stajyer öğrencileri görün
+            Öğrenci uzmanlarla yapılan görüşmeler zaten ücretsizdir.{" "}
+            <Link href="/ogrenci-uzmanlar" className="text-teal-800 underline">
+              Öğrenci uzmanları görün
             </Link>
             .
           </p>

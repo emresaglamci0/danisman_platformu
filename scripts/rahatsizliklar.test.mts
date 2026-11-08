@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ALANLAR } from "../src/lib/sabitler.ts";
-import { ciddiDurumlar, ogrenciBasvurabilir, oneCikanKartlar, uzmanBaglantisi } from "../src/app/psikolojik-rahatsizliklar/kurallar.ts";
+import { ALANLAR, ogrenciyeAcik } from "../src/lib/sabitler.ts";
+import { ciddiDurumlar, ogrenciBasvurabilir, oneCikanKartlar, uzmanBaglantilari } from "../src/app/psikolojik-rahatsizliklar/kurallar.ts";
 import { HISLER, RAHATSIZLIKLAR } from "../src/app/psikolojik-rahatsizliklar/veri.ts";
 
 const bul = (ad: string) => {
@@ -77,12 +77,24 @@ test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur",
 });
 
 test("ağır kart yalnızca bağımsız uzmanlara bağlanır", () => {
-  assert.equal(uzmanBaglantisi({ alan: "psikotik", agir: true }), "/uzmanlar?alan=psikotik&tur=independent");
-  assert.equal(uzmanBaglantisi({ alan: "kaygi", agir: false }), "/uzmanlar?alan=kaygi");
+  assert.deepEqual(uzmanBaglantilari({ alan: "psikotik", agir: true }), { uzman: "/uzmanlar?alan=psikotik", ogrenci: null });
+});
+
+test("hafif kart iki listeye de bağlanır", () => {
+  assert.deepEqual(uzmanBaglantilari({ alan: "kaygi", agir: false }), {
+    uzman: "/uzmanlar?alan=kaygi",
+    ogrenci: "/ogrenci-uzmanlar?alan=kaygi",
+  });
+});
+
+test("öğrenci bağlantısı kapalı alana gitmez", () => {
+  for (const r of RAHATSIZLIKLAR) {
+    if (uzmanBaglantilari(r).ogrenci) assert.ok(ogrenciyeAcik(r.alan), `kapalı alana bağlı: ${r.ad}`);
+  }
 });
 
 test("tüm ağır kartların bağlantısında tur=independent var", () => {
-  for (const r of RAHATSIZLIKLAR.filter((r) => r.agir)) assert.match(uzmanBaglantisi(r), /tur=independent/);
+  for (const r of RAHATSIZLIKLAR.filter((r) => r.agir)) assert.equal(uzmanBaglantilari(r).ogrenci, null);
 });
 
 test("oneCikanKartlar: boş seçim null, seçim birleşim kümesi", () => {
