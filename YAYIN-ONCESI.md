@@ -26,6 +26,7 @@ Geliştirme ve test sürecinde bu maddeler bilerek ertelendi.
 - [ ] Metinlerdeki `[Veri sorumlusu]`, `[iletişim adresi]`, `[Saklama süreleri]` yer tutucularını doldurun.
 - [ ] Yurt dışına aktarım için standart sözleşmeyi imzalayıp KVKK Kurumu'na bildirin; VERBİS kaydını kontrol edin.
 - [ ] Sohbet ekranındaki acil durum numaralarını (112, 183, 114) resmi kaynaklardan yeniden doğrulayın.
+- [ ] **Rahatsızlık metinlerini onaylayın.** /psikolojik-rahatsizliklar sayfasındaki açıklama, belirti, yaygınlık ve kaynakları proje sahibi okuyup onaylamalı.
 
 ## İçerik
 

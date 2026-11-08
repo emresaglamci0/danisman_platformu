@@ -37,7 +37,7 @@ const UZMANLAR: TestUzmani[] = [
     ad: "Ayla Örnek",
     rol: "expert",
     unvan: "klinik_psikolog",
-    alanlar: ["kaygi", "ozguven"],
+    alanlar: ["kaygi", "ozguven", "duygudurum", "travma"],
     tanitim: "Uydurma test profili. Kaygı ve özgüven konularında bilişsel davranışçı yaklaşımla çalışır.",
     onGorusme: true,
   },
@@ -46,7 +46,7 @@ const UZMANLAR: TestUzmani[] = [
     ad: "Kerem Deneme",
     rol: "expert",
     unvan: "psikolojik_danisman",
-    alanlar: ["kariyer", "genel"],
+    alanlar: ["kariyer", "genel", "psikotik"],
     tanitim: "Uydurma test profili. Üniversite öğrencileri ve genç yetişkinlerle kariyer danışmanlığı yapar.",
   },
   {
@@ -71,7 +71,7 @@ const UZMANLAR: TestUzmani[] = [
     ad: "Ece Prova",
     rol: "student_expert",
     bolum: "psikoloji",
-    alanlar: ["genel", "ozguven"],
+    alanlar: ["genel", "ozguven", "yeme"],
     tanitim: "Uydurma test profili. Psikoloji son sınıf öğrencisi. Görüşmeler ücretsiz, staj kapsamında.",
   },
   {

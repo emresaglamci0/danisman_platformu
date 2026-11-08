@@ -31,7 +31,7 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
   const uzmanlar = await onayliUzmanlar({ tur: secili, alan: seciliAlan, ara: aranan });
 
   // Bir filtre degisirken digerleri korunur
-  const adres = (degisen: { tur?: string; alan?: string }) => {
+  const adres = (degisen: { tur?: string; alan?: string; ara?: string }) => {
     const parametreler = Object.entries({ tur: secili, alan: seciliAlan, ara: aranan, ...degisen }).filter(
       (parametre): parametre is [string, string] => !!parametre[1],
     );
@@ -94,11 +94,23 @@ export default async function UzmanlarSayfasi({ searchParams }: PageProps<"/uzma
       <div className="hidden md:block">{filtreler}</div>
 
       {uzmanlar.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
-          {secili || seciliAlan || aranan
-            ? "Bu seçimlere uyan uzman bulunamadı."
-            : "Şu an listelenecek onaylı uzman yok."}
-        </p>
+        <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+          {seciliAlan ? (
+            <>
+              <p>Bu alanda henüz uzman yok.</p>
+              <Link
+                href={adres({ alan: undefined, ara: undefined })}
+                className="mt-2 inline-block font-medium text-teal-700 underline"
+              >
+                {secili === "independent" ? "Tüm bağımsız uzmanları gör" : "Tüm uzmanları gör"}
+              </Link>
+            </>
+          ) : (
+            <p>
+              {secili || aranan ? "Bu seçimlere uyan uzman bulunamadı." : "Şu an listelenecek onaylı uzman yok."}
+            </p>
+          )}
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {uzmanlar.map((uzman) => (

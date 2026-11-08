@@ -78,6 +78,7 @@ Aşağıdaki kurallar kalıcıdır ve her çalışmada uyulmalıdır.
 - Admin yetkileri iki adımlı doğrulamaya (TOTP, `aal2`) bağlıdır (0006). `my_role()` kod girilmemiş admin oturumu için `null` döner. Uygulamada admin kontrolü için `adminKullanici()` / `adminSayfasiniKoru()` kullanılmalı (`src/app/admin/yetki.ts`).
 - Yayın öncesi yapılacaklar `YAYIN-ONCESI.md` dosyasında tutulur.
 - Güvenlik başlıkları: İçerik Güvenlik Politikası (CSP, her istekte yeni nonce) `src/proxy.ts` içinde, diğer başlıklar (HSTS, Permissions-Policy vb.) `next.config.ts` içinde. Yeni bir dış kaynak eklenirken (ör. ödeme kuruluşunun ödeme sayfası/iframe'i) CSP'ye sadece o adres eklenmeli. Permissions-Policy'deki `payment=()` gerekirse açılmalı. `'unsafe-inline'` betikler için asla eklenmemeli.
+- Psikolojik rahatsızlıklar sayfası ve yeni çalışma alanları (kullanıcı kararı, 2026-11-08; 0019): 12 yeni alan eklendi. "Psikotik bozukluklar" ve "Bağımlılık" öğrenci uzmanlara kapalıdır (`OGRENCIYE_KAPALI_ALANLAR`, `src/lib/sabitler.ts`; kayıt/panel formları, sunucu kontrolü ve 0019 trigger'ı). Sayfadaki ağır rahatsızlık kartları yalnızca `/uzmanlar?alan=...&tur=independent` adresine bağlanır. Ziyaretçinin seçtiği his düğmeleri tarayıcıdan çıkmaz (URL, depolama, sunucu, log yok). `src/app/psikolojik-rahatsizliklar/veri.ts` içindeki metinler proje sahibi onaylayana kadar taslaktır (`YAYIN-ONCESI.md`).
 
 ## 7. Açıklama tarzı
 - Proje sahibi kodlamaya yeni başladı.
