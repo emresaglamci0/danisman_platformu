@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test scripts/*.test.mts",
-    "test-verisi":"node --env-file=.env.local scripts/test-verisi.mts"
+    "test-verisi":"node --env-file=.env.local scripts/test-verisi.mts",
+    "eski-hesaplari-sil": "node --env-file=.env.local scripts/eski-psikoloji-hesaplarini-sil.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
