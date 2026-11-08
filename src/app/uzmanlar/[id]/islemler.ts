@@ -7,6 +7,7 @@ import type { FormDurumu } from "@/lib/hatalar";
 import { ogrenciBasvurabilir } from "@/app/psikolojik-rahatsizliklar/kurallar";
 import { ALANLAR, listedeMi } from "@/lib/sabitler";
 import { uzmanGetir } from "@/lib/uzmanlar";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<FormDurumu> {
   const kullanici = await mevcutKullanici();
@@ -22,7 +23,9 @@ export async function basvuruYap(_onceki: FormDurumu, form: FormData): Promise<F
 
   // Yanit yalnizca burada okunur; kaydedilmez, loglanmaz.
   const uzman = await uzmanGetir(uzmanId);
-  if (!uzman) return { hata: "Başvuru gönderilemedi. Lütfen tekrar deneyin." };
+  if (!uzman || (uzman.kind === "student" && !ogrenciModuluAktif())) {
+    return { hata: "Başvuru gönderilemedi. Lütfen tekrar deneyin." };
+  }
   if (!ogrenciBasvurabilir(uzman.kind === "student", form.get("ciddiDurum"))) {
     return { hata: "Bu görüşme öğrenci uzmanlar için uygun değil. Lütfen Uzmanlar sayfasından bir uzman seçin." };
   }

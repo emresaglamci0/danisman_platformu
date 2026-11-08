@@ -5,6 +5,7 @@ import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
 import { supabaseSunucu } from "@/lib/supabase/sunucu";
 import { turkceHata, type FormDurumu } from "@/lib/hatalar";
 import { BOLUMLER, KVKK_SURUMU, UNVANLAR, listedeMi } from "@/lib/sabitler";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 const SECILEBILIR_ROLLER = ["client", "expert", "student_expert"] as const;
 
@@ -19,7 +20,10 @@ export async function kayitOl(_onceki: FormDurumu, form: FormData): Promise<Form
   const bolum = form.get("bolum");
 
   // Formdaki her bilgi sunucuda da kontrol edilir; tarayiciya guvenilmez.
-  if (!SECILEBILIR_ROLLER.includes(rol as (typeof SECILEBILIR_ROLLER)[number])) {
+  if (
+    !SECILEBILIR_ROLLER.includes(rol as (typeof SECILEBILIR_ROLLER)[number]) ||
+    (rol === "student_expert" && !ogrenciModuluAktif())
+  ) {
     return { hata: "Lütfen bir hesap türü seçin." };
   }
   if (adSoyad.length < 2 || adSoyad.length > 80) {

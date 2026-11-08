@@ -9,6 +9,7 @@ import {
 } from "@/components/OnGorusmeCizimleri";
 import { UzmanKarti } from "@/components/UzmanKarti";
 import { onGorusmeYapanUzmanlar } from "@/lib/uzmanlar";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 export const metadata = { title: "Ücretsiz Ön Görüşme | Danışman Buluşma" };
 
@@ -85,13 +86,15 @@ export default async function OnGorusmeSayfasi() {
             kez yollayabildiği görüntülü görüşme bağlantısıyla yaparsınız. Ön görüşme bir tanışma sohbetidir; tanı konulan veya tedavi
             uygulanan bir seans değildir.
           </p>
-          <p>
-            Öğrenci uzmanlarla yapılan görüşmeler zaten ücretsizdir.{" "}
-            <Link href="/ogrenci-uzmanlar" className="text-teal-800 underline">
-              Öğrenci uzmanları görün
-            </Link>
-            .
-          </p>
+          {ogrenciModuluAktif() && (
+            <p>
+              Öğrenci uzmanlarla yapılan görüşmeler zaten ücretsizdir.{" "}
+              <Link href="/ogrenci-uzmanlar" className="text-teal-800 underline">
+                Öğrenci uzmanları görün
+              </Link>
+              .
+            </p>
+          )}
         </AcilirKutu>
       </section>
 

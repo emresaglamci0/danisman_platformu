@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { OlcekAlani } from "@/modules/olcek";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { BasvuruGorseli, UzmanlarGorseli, YanitGorseli } from "@/components/AdimGorselleri";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { OnlineGorusme } from "@/components/OnlineGorusme";
@@ -27,6 +28,7 @@ const ADIMLAR = [
 
 export default async function AnaSayfa() {
   const onGorusmeUzmanlari = (await onGorusmeYapanUzmanlar()).slice(0, 3);
+  const ogrenciAcik = ogrenciModuluAktif();
 
   return (
     <div className="space-y-16 sm:space-y-20">
@@ -36,28 +38,44 @@ export default async function AnaSayfa() {
             Doğru uzmanla tanışmanın kolay yolu
           </h1>
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 lg:mx-0">
-            Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
-            görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencilerini tek yerde bulun. <OnayGerekir />
+            {ogrenciAcik ? (
+              <>
+                Belgeleri onaylanmış psikolog ve psikolojik danışmanlar ile ücretsiz, staj kapsamında
+                görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencilerini tek yerde bulun. <OnayGerekir />
+              </>
+            ) : (
+              "Belgeleri onaylanmış psikolog ve psikolojik danışmanları tek yerde bulun."
+            )}
           </p>
-          <div className="grid gap-3 text-left sm:grid-cols-2">
-            <Link href="/uzmanlar" className="rounded-xl bg-teal-100 p-4 hover:shadow-md">
-              <span className="block text-lg font-semibold">Uzmanlar</span>
-              <span className="mt-1 block text-sm text-slate-700">Psikolog ve psikolojik danışmanlarla ücretli seans</span>
-              <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
-                Uzmanları gör
-              </span>
-            </Link>
-            <Link href="/ogrenci-uzmanlar" className="rounded-xl bg-amber-100 p-4 hover:shadow-md">
-              <span className="block text-lg font-semibold">Öğrenci Uzmanlar</span>
-              <span className="mt-1 block text-sm text-slate-700">
-                Staj kapsamında ücretsiz görüşme <OnayGerekir />
-              </span>
-              <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
-                Ücretsiz görüş
-              </span>
-            </Link>
-          </div>
+          {ogrenciAcik && (
+            <div className="grid gap-3 text-left sm:grid-cols-2">
+              <Link href="/uzmanlar" className="rounded-xl bg-teal-100 p-4 hover:shadow-md">
+                <span className="block text-lg font-semibold">Uzmanlar</span>
+                <span className="mt-1 block text-sm text-slate-700">Psikolog ve psikolojik danışmanlarla ücretli seans</span>
+                <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
+                  Uzmanları gör
+                </span>
+              </Link>
+              <Link href="/ogrenci-uzmanlar" className="rounded-xl bg-amber-100 p-4 hover:shadow-md">
+                <span className="block text-lg font-semibold">Öğrenci Uzmanlar</span>
+                <span className="mt-1 block text-sm text-slate-700">
+                  Staj kapsamında ücretsiz görüşme <OnayGerekir />
+                </span>
+                <span className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
+                  Ücretsiz görüş
+                </span>
+              </Link>
+            </div>
+          )}
           <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
+            {!ogrenciAcik && (
+              <Link
+                href="/uzmanlar"
+                className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white hover:bg-teal-800"
+              >
+                Uzmanları gör
+              </Link>
+            )}
             <OlcekAlani />
           </div>
         </div>

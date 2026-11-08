@@ -5,9 +5,9 @@ import { useState } from "react";
 import { uzmanBaglantilari } from "./kurallar";
 import type { Rahatsizlik } from "./veri";
 
-export function RahatsizlikKarti({ r, soluk }: { r: Rahatsizlik; soluk: boolean }) {
+export function RahatsizlikKarti({ r, soluk, ogrenciAcik }: { r: Rahatsizlik; soluk: boolean; ogrenciAcik: boolean }) {
   const [acik, setAcik] = useState(false);
-  const baglantilar = uzmanBaglantilari(r);
+  const baglantilar = uzmanBaglantilari(r, ogrenciAcik);
 
   return (
     <li

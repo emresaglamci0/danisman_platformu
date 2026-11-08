@@ -2,35 +2,44 @@ import Link from "next/link";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { YasalSayfa } from "@/components/YasalSayfa";
 import { ILETISIM_EPOSTASI, YASAL_METIN_TARIHI } from "@/lib/sabitler";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 export const metadata = { title: "Sık Sorulan Sorular | Danışman Buluşma" };
 
 const baglanti = "text-teal-800 underline";
 
 // <details> etiketi JavaScript olmadan acilip kapanir.
-const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
+const sorular = (ogrenciAcik: boolean): { soru: string; yanit: React.ReactNode }[] => [
   {
     soru: "Görüşmeler ücretli mi?",
     yanit: (
       <>
-        Öğrenci uzmanlarla yapılan görüşmeler <strong>ücretsizdir</strong>. Bağımsız uzmanlarla
-        ücretli görüşme ve site üzerinden ödeme henüz kullanıma açılmamıştır. <OnayGerekir />
+        {ogrenciAcik && (
+          <>
+            Öğrenci uzmanlarla yapılan görüşmeler <strong>ücretsizdir</strong>.{" "}
+          </>
+        )}
+        Bağımsız uzmanlarla ücretli görüşme ve site üzerinden ödeme henüz kullanıma açılmamıştır. <OnayGerekir />
       </>
     ),
   },
-  {
-    soru: "Öğrenci uzman kimdir?",
-    yanit: (
-      <>
-        PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisidir; lisanslı bir uzman değildir. <OnayGerekir />{" "}
-        Ayrıntılar için{" "}
-        <Link href="/ogrenci-uzmanlar/hakkinda" className={baglanti}>
-          Öğrenci Uzmanlar Hakkında
-        </Link>{" "}
-        sayfasına bakın.
-      </>
-    ),
-  },
+  ...(ogrenciAcik
+    ? [
+        {
+          soru: "Öğrenci uzman kimdir?",
+          yanit: (
+            <>
+              PDR 4. sınıf veya Klinik Psikoloji yüksek lisans öğrencisidir; lisanslı bir uzman değildir. <OnayGerekir />{" "}
+              Ayrıntılar için{" "}
+              <Link href="/ogrenci-uzmanlar/hakkinda" className={baglanti}>
+                Öğrenci Uzmanlar Hakkında
+              </Link>{" "}
+              sayfasına bakın.
+            </>
+          ),
+        },
+      ]
+    : []),
   {
     soru: "Uzmanların belgeleri kontrol ediliyor mu?",
     yanit: "Evet. Profil yayınlanmadan önce site yöneticisi belgeleri tek tek inceler. Karardan sonra belge dosyaları silinir.",
@@ -66,8 +75,9 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
     soru: "Bu platform tanı koyar veya ilaç önerir mi?",
     yanit: (
       <>
-        Hayır. Platform yalnızca danışanlarla uzmanları buluşturur. Öğrenci uzmanlar tanı koyamaz
-        ve ilaç öneremez. <OnayGerekir />
+        Hayır. Platform yalnızca danışanlarla uzmanları buluşturur.{" "}
+        {ogrenciAcik && "Öğrenci uzmanlar tanı koyamaz ve ilaç öneremez. "}
+        <OnayGerekir />
       </>
     ),
   },
@@ -90,8 +100,7 @@ const SORULAR: { soru: string; yanit: React.ReactNode }[] = [
   },
   {
     soru: "Uzmanlar nasıl sıralanıyor?",
-    yanit:
-      "Bağımsız uzmanlar, danışanların verdiği yıldız puanına göre sıralanır. Az değerlendirme alan uzmanın puanı ortalamaya yakın tutulur; böylece tek bir puan sıralamayı belirlemez. Henüz puanı olmayan uzmanlar ve öğrenci uzmanlar rastgele sıralanır. Uzmanın kaç çalışma alanının sizinkiyle eşleştiği sıralamayı etkilemez.",
+    yanit: `Bağımsız uzmanlar, danışanların verdiği yıldız puanına göre sıralanır. Az değerlendirme alan uzmanın puanı ortalamaya yakın tutulur; böylece tek bir puan sıralamayı belirlemez. Henüz puanı olmayan uzmanlar${ogrenciAcik ? " ve öğrenci uzmanlar" : ""} rastgele sıralanır. Uzmanın kaç çalışma alanının sizinkiyle eşleştiği sıralamayı etkilemez.`,
   },
   {
     soru: "Acil bir durumdayım, ne yapmalıyım?",
@@ -111,7 +120,7 @@ export default function SssSayfasi() {
   return (
     <YasalSayfa baslik="Sık Sorulan Sorular" guncelleme={YASAL_METIN_TARIHI}>
       <div className="divide-y divide-slate-200">
-        {SORULAR.map(({ soru, yanit }) => (
+        {sorular(ogrenciModuluAktif()).map(({ soru, yanit }) => (
           <details key={soru} className="group py-3 first:pt-0 last:pb-0">
             <summary className="cursor-pointer list-none font-medium text-slate-900">
               <span className="mr-2 inline-block text-teal-800 transition-transform group-open:rotate-90">›</span>

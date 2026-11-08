@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { Bolum, listeSinifi, YasalSayfa } from "@/components/YasalSayfa";
 import { YASAL_METIN_TARIHI } from "@/lib/sabitler";
@@ -7,6 +9,8 @@ export const metadata = { title: "Öğrenci Uzmanlar Hakkında | Danışman Bulu
 
 // Staj, supervizyon ve kurum onayi henuz dogrulanmadi. Bunlar netlesmeden kesin bilgi gibi yazilmamali.
 export default function OgrenciUzmanlarSayfasi() {
+  if (!ogrenciModuluAktif()) notFound();
+
   return (
     <YasalSayfa baslik="Öğrenci Uzmanlar Hakkında" guncelleme={YASAL_METIN_TARIHI}>
       <Bolum baslik="Öğrenci uzman kimdir?">

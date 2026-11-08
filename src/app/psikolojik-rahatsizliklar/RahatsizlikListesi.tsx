@@ -7,7 +7,7 @@ import { RahatsizlikKarti } from "./RahatsizlikKarti";
 import { HISLER, RAHATSIZLIKLAR } from "./veri";
 
 // Secilen hisler yalnizca bu bilesenin bellegindedir; URL, depolama veya sunucuya yazilmaz.
-export function RahatsizlikListesi() {
+export function RahatsizlikListesi({ ogrenciAcik }: { ogrenciAcik: boolean }) {
   const [secili, setSecili] = useState<string[]>([]);
   const oneCikan = oneCikanKartlar(secili, HISLER);
 
@@ -61,7 +61,7 @@ export function RahatsizlikListesi() {
       <h2 className="sr-only">Rahatsızlıklar</h2>
       <ul className="grid items-start gap-3 sm:grid-cols-2">
         {RAHATSIZLIKLAR.map((r) => (
-          <RahatsizlikKarti key={r.ad} r={r} soluk={oneCikan !== null && !oneCikan.has(r.ad)} />
+          <RahatsizlikKarti key={r.ad} r={r} soluk={oneCikan !== null && !oneCikan.has(r.ad)} ogrenciAcik={ogrenciAcik} />
         ))}
       </ul>
     </div>

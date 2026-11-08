@@ -18,7 +18,7 @@ function Sayac({ adet }: { adet: number }) {
   );
 }
 
-export function UstMenu({ rol }: { rol: Rol | null }) {
+export function UstMenu({ rol, ogrenciAcik }: { rol: Rol | null; ogrenciAcik: boolean }) {
   const yol = usePathname();
   const [acik, setAcik] = useState(false);
   const [sayilar, setSayilar] = useState({ mesaj: 0, panel: 0 });
@@ -66,13 +66,11 @@ export function UstMenu({ rol }: { rol: Rol | null }) {
         <Link href="/uzmanlar" onClick={kapat} className={baglanti}>
           Uzmanlar
         </Link>
-        <Link
-          href="/ogrenci-uzmanlar"
-          onClick={kapat}
-          className="w-fit rounded-full bg-amber-100 px-2 py-0.5 text-sm font-medium text-slate-900 hover:text-teal-800"
-        >
-          Öğrenci Uzmanlar · Ücretsiz
-        </Link>
+        {ogrenciAcik && (
+          <Link href="/ogrenci-uzmanlar" onClick={kapat} className={baglanti}>
+            Öğrenci Uzmanlar
+          </Link>
+        )}
         <Link href="/on-gorusme" onClick={kapat} className={baglanti}>
           Ücretsiz Ön Görüşme
         </Link>

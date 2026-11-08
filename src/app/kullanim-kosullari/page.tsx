@@ -2,10 +2,13 @@ import Link from "next/link";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { Bolum, listeSinifi, YasalSayfa } from "@/components/YasalSayfa";
 import { ILETISIM_EPOSTASI, YASAL_METIN_TARIHI } from "@/lib/sabitler";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 export const metadata = { title: "Kullanım Koşulları | Danışman Buluşma" };
 
 export default function KullanimKosullariSayfasi() {
+  const ogrenciAcik = ogrenciModuluAktif();
+
   return (
     <YasalSayfa baslik="Kullanım Koşulları" guncelleme={YASAL_METIN_TARIHI}>
       <Bolum baslik="1. Taraflar ve kapsam">
@@ -18,7 +21,7 @@ export default function KullanimKosullariSayfasi() {
 
       <Bolum baslik="2. Platformun rolü">
         <p>
-          Platform, danışanlar ile psikolog, psikolojik danışman ve öğrenci uzmanları buluşturan bir
+          Platform, danışanlar ile {ogrenciAcik ? "psikolog, psikolojik danışman ve öğrenci uzmanları" : "psikolog ve psikolojik danışmanları"} buluşturan bir
           aracıdır. Platformun kendisi psikolojik danışmanlık, tanı veya tedavi hizmeti vermez.
           Görüşmenin içeriğinden görüşmeyi yapan uzman sorumludur. <OnayGerekir />
         </p>
@@ -43,7 +46,7 @@ export default function KullanimKosullariSayfasi() {
         </ul>
       </Bolum>
 
-      <Bolum baslik="5. Uzmanlar ve öğrenci uzmanlar">
+      <Bolum baslik={ogrenciAcik ? "5. Uzmanlar ve öğrenci uzmanlar" : "5. Uzmanlar"}>
         <ul className={listeSinifi}>
           <li>
             Uzmanların yüklediği belgeler, profil yayınlanmadan önce site yöneticisi tarafından
@@ -51,24 +54,28 @@ export default function KullanimKosullariSayfasi() {
             <OnayGerekir />
           </li>
           <li>Sahte veya başkasına ait belge yükleyen hesaplar kapatılır.</li>
-          <li>
-            Öğrenci uzmanlar lisanslı uzman değildir ve görüşmeleri <strong>ücretsiz</strong> yapar.
-            Ayrıntılar için{" "}
-            <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
-              Öğrenci Uzmanlar Hakkında
-            </Link>{" "}
-            sayfasına bakın.
-          </li>
+          {ogrenciAcik && (
+            <li>
+              Öğrenci uzmanlar lisanslı uzman değildir ve görüşmeleri <strong>ücretsiz</strong> yapar.
+              Ayrıntılar için{" "}
+              <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
+                Öğrenci Uzmanlar Hakkında
+              </Link>{" "}
+              sayfasına bakın.
+            </li>
+          )}
         </ul>
       </Bolum>
 
       <Bolum baslik="6. Ücretler">
         <ul className={listeSinifi}>
-          <li>
-            Öğrenci uzmanlarla yapılan görüşmeler ücretsizdir. Öğrenci uzmanlar hiçbir ad altında
-            (ücret, bağış, hediye vb.) ödeme isteyemez. Böyle bir istek olursa sohbet ekranındaki
-            şikâyet düğmesiyle bildirin.
-          </li>
+          {ogrenciAcik && (
+            <li>
+              Öğrenci uzmanlarla yapılan görüşmeler ücretsizdir. Öğrenci uzmanlar hiçbir ad altında
+              (ücret, bağış, hediye vb.) ödeme isteyemez. Böyle bir istek olursa sohbet ekranındaki
+              şikâyet düğmesiyle bildirin.
+            </li>
+          )}
           <li>
             Bağımsız uzmanlar her seans için tarih, saat ve ücret içeren bir plan yollar. Site içindeki ödeme
             şu anda <strong>demodur</strong>: para çekilmez, kart bilgisi istenmez. Gerçek ödeme açıldığında
@@ -87,8 +94,7 @@ export default function KullanimKosullariSayfasi() {
           </li>
           <li>
             Puan verebilmek için danışan olmanız ve aynı bağımsız uzmanla en az 2 tamamlanmış, ücretli seans
-            yapmış olmanız gerekir. Puan 1 ile 5 yıldız arasındadır, yazılı yorum alınmaz. Öğrenci uzmanlar
-            puanlanmaz. Puanı sonradan değiştirebilirsiniz. Puanınız adsız gösterilir ve hesabınızı silseniz de
+            yapmış olmanız gerekir. Puan 1 ile 5 yıldız arasındadır, yazılı yorum alınmaz. {ogrenciAcik && "Öğrenci uzmanlar puanlanmaz. "}Puanı sonradan değiştirebilirsiniz. Puanınız adsız gösterilir ve hesabınızı silseniz de
             adsız olarak kalır. Gerçeğe aykırı veya karşılıklı çıkara dayalı puan
             vermek yasaktır. <OnayGerekir />
           </li>
@@ -105,7 +111,7 @@ export default function KullanimKosullariSayfasi() {
           <li>Taciz, hakaret, tehdit veya ayrımcı ifadeler</li>
           <li>Reklam, spam veya başka sitelere yönlendirme</li>
           <li>Siteyi bozmaya, başkalarının hesaplarına veya verilerine erişmeye çalışmak</li>
-          <li>Öğrenci uzmanların ücret istemesi veya kabul etmesi</li>
+          {ogrenciAcik && <li>Öğrenci uzmanların ücret istemesi veya kabul etmesi</li>}
         </ul>
       </Bolum>
 

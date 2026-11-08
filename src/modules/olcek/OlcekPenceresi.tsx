@@ -20,11 +20,13 @@ export function OlcekPenceresi({
   uzmanlar,
   kartlar,
   davetiBastir = false,
+  ogrenciAcik,
 }: {
   uzmanlar: UzmanOzeti[];
   kartlar: Record<string, ReactNode>;
   // Bekleyen uzman degerlendirmesi varken davet kendiliginden acilmaz ve "goruldu" yazilmaz.
   davetiBastir?: boolean;
+  ogrenciAcik: boolean;
 }) {
   const pencere = useRef<HTMLDialogElement>(null);
   const odakHedefi = useRef<HTMLElement | null>(null);
@@ -253,7 +255,7 @@ export function OlcekPenceresi({
               İşte sana uygun uzmanlar
             </h2>
             {bolum("Bağımsız uzmanlar", "independent", secim.bagimsiz, sonuc.enUstAlan)}
-            {secim.ogrenci !== null && bolum("Öğrenci uzmanlar", "student", secim.ogrenci, sonuc.enUstAlan)}
+            {ogrenciAcik && secim.ogrenci !== null && bolum("Öğrenci uzmanlar", "student", secim.ogrenci, sonuc.enUstAlan)}
             <p className="mt-5 text-xs text-slate-600">Bu bir tanı değildir; yalnızca başlangıç için bir öneridir.</p>
           </div>
         )}

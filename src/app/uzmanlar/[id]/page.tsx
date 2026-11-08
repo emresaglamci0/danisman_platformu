@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ciddiDurumlar } from "@/app/psikolojik-rahatsizliklar/kurallar";
 import { RAHATSIZLIKLAR } from "@/app/psikolojik-rahatsizliklar/veri";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { mevcutKullanici, type Kullanici } from "@/lib/oturum";
 import { acikGruplar } from "@/lib/gruplar";
 import { danisanPuanDurumu } from "@/lib/puanlar";
@@ -24,7 +25,7 @@ export default async function UzmanSayfasi({ params }: PageProps<"/uzmanlar/[id]
   if (!UUID.test(id)) notFound();
 
   const uzman = await uzmanGetir(id);
-  if (!uzman) notFound();
+  if (!uzman || (uzman.kind === "student" && !ogrenciModuluAktif())) notFound();
 
   const kullanici = await mevcutKullanici();
   const gruplar = uzman.kind === "independent" ? await acikGruplar(uzman.id) : [];

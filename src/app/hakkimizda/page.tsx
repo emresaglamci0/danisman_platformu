@@ -2,10 +2,13 @@ import Link from "next/link";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { Bolum, listeSinifi, YasalSayfa } from "@/components/YasalSayfa";
 import { YASAL_METIN_TARIHI } from "@/lib/sabitler";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 
 export const metadata = { title: "Hakkımızda | Danışman Buluşma" };
 
 export default function HakkimizdaSayfasi() {
+  const ogrenciAcik = ogrenciModuluAktif();
+
   return (
     <YasalSayfa baslik="Hakkımızda" guncelleme={YASAL_METIN_TARIHI}>
       <Bolum baslik="Biz kimiz?">
@@ -22,8 +25,9 @@ export default function HakkimizdaSayfasi() {
       <Bolum baslik="Amacımız">
         <p>
           Destek almak isteyen kişilerin, belgeleri kontrol edilmiş psikolog ve psikolojik
-          danışmanlara ya da ücretsiz görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans
-          öğrencilerine kolayca ve gizliliklerini koruyarak ulaşmasını sağlamak. <OnayGerekir />
+          danışmanlara{" "}
+          {ogrenciAcik && "ya da ücretsiz görüşme yapan PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencilerine "}
+          kolayca ve gizliliklerini koruyarak ulaşmasını sağlamak. {ogrenciAcik && <OnayGerekir />}
         </p>
       </Bolum>
 
@@ -33,7 +37,9 @@ export default function HakkimizdaSayfasi() {
             Psikolog ve psikolojik danışmanlardan barkodlu e-Devlet YÖK mezun belgesi veya diploma
             istenir.
           </li>
-          <li>Öğrenci uzmanlardan e-Devlet onaylı öğrenci belgesi istenir ve belgenin geçerlilik tarihi takip edilir.</li>
+          {ogrenciAcik && (
+            <li>Öğrenci uzmanlardan e-Devlet onaylı öğrenci belgesi istenir ve belgenin geçerlilik tarihi takip edilir.</li>
+          )}
           <li>Belgeleri site yöneticisi tek tek inceler. Karardan sonra belge dosyaları silinir.</li>
         </ul>
         <p>
@@ -46,13 +52,15 @@ export default function HakkimizdaSayfasi() {
         <ul className={listeSinifi}>
           <li>Yalnızca gerekli bilgiyi istemek</li>
           <li>Mesajları şifreli saklamak ve varsayılan olarak yalnızca iki tarafa göstermek</li>
-          <li>
-            Öğrenci uzmanlarla görüşmeleri ücretsiz tutmak (
-            <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
-              ayrıntılar
-            </Link>
-            )
-          </li>
+          {ogrenciAcik && (
+            <li>
+              Öğrenci uzmanlarla görüşmeleri ücretsiz tutmak (
+              <Link href="/ogrenci-uzmanlar/hakkinda" className="text-teal-800 underline">
+                ayrıntılar
+              </Link>
+              )
+            </li>
+          )}
         </ul>
       </Bolum>
 

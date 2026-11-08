@@ -16,7 +16,7 @@ const ROL_SECENEKLERI = [
   },
 ];
 
-export function KayitFormu() {
+export function KayitFormu({ ogrenciAcik }: { ogrenciAcik: boolean }) {
   const [durum, gonder, bekliyor] = useActionState(kayitOl, {});
   const [rol, setRol] = useState("client");
 
@@ -28,7 +28,7 @@ export function KayitFormu() {
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium">Hesap türü</legend>
-        {ROL_SECENEKLERI.map((secenek) => (
+        {ROL_SECENEKLERI.filter((s) => ogrenciAcik || s.deger !== "student_expert").map((secenek) => (
           <label
             key={secenek.deger}
             className="flex cursor-pointer gap-3 rounded-lg border border-slate-300 bg-white p-3 has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50"

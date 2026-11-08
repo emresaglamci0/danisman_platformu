@@ -1,3 +1,4 @@
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { RahatsizlikListesi } from "./RahatsizlikListesi";
 
 export const metadata = { title: "Psikolojik Rahatsızlıklar | Danışman Buluşma" };
@@ -14,7 +15,7 @@ export default function PsikolojikRahatsizliklarSayfasi() {
         </p>
       </div>
 
-      <RahatsizlikListesi />
+      <RahatsizlikListesi ogrenciAcik={ogrenciModuluAktif()} />
     </div>
   );
 }

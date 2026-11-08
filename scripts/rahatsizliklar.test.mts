@@ -77,11 +77,11 @@ test("her his var olan kartlara bağlanır ve her kart en az bir hisle bulunur",
 });
 
 test("ağır kart yalnızca bağımsız uzmanlara bağlanır", () => {
-  assert.deepEqual(uzmanBaglantilari({ alan: "psikotik", agir: true }), { uzman: "/uzmanlar?alan=psikotik", ogrenci: null });
+  assert.deepEqual(uzmanBaglantilari({ alan: "psikotik", agir: true }, true), { uzman: "/uzmanlar?alan=psikotik", ogrenci: null });
 });
 
 test("hafif kart iki listeye de bağlanır", () => {
-  assert.deepEqual(uzmanBaglantilari({ alan: "kaygi", agir: false }), {
+  assert.deepEqual(uzmanBaglantilari({ alan: "kaygi", agir: false }, true), {
     uzman: "/uzmanlar?alan=kaygi",
     ogrenci: "/ogrenci-uzmanlar?alan=kaygi",
   });
@@ -89,12 +89,12 @@ test("hafif kart iki listeye de bağlanır", () => {
 
 test("öğrenci bağlantısı kapalı alana gitmez", () => {
   for (const r of RAHATSIZLIKLAR) {
-    if (uzmanBaglantilari(r).ogrenci) assert.ok(ogrenciyeAcik(r.alan), `kapalı alana bağlı: ${r.ad}`);
+    if (uzmanBaglantilari(r, true).ogrenci) assert.ok(ogrenciyeAcik(r.alan), `kapalı alana bağlı: ${r.ad}`);
   }
 });
 
 test("tüm ağır kartların bağlantısında tur=independent var", () => {
-  for (const r of RAHATSIZLIKLAR.filter((r) => r.agir)) assert.equal(uzmanBaglantilari(r).ogrenci, null);
+  for (const r of RAHATSIZLIKLAR.filter((r) => r.agir)) assert.equal(uzmanBaglantilari(r, true).ogrenci, null);
 });
 
 test("oneCikanKartlar: boş seçim null, seçim birleşim kümesi", () => {
@@ -124,4 +124,11 @@ test("öğrenciye yalnızca hayır yanıtıyla başvurulur", () => {
 
 test("bağımsız uzman başvurusu sorudan etkilenmez", () => {
   assert.equal(ogrenciBasvurabilir(false, null), true);
+});
+
+test("öğrenci bölümü kapalıyken hafif kartta öğrenci bağlantısı olmaz", () => {
+  assert.deepEqual(uzmanBaglantilari({ alan: "kaygi", agir: false }, false), {
+    uzman: "/uzmanlar?alan=kaygi",
+    ogrenci: null,
+  });
 });

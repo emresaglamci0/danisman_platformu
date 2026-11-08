@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { OnayGerekir } from "@/components/OnayGerekir";
 import { UzmanListesi } from "@/components/UzmanListesi";
 
 export const metadata = { title: "Öğrenci Uzmanlar | Danışman Buluşma" };
 
 export default async function OgrenciUzmanlarSayfasi({ searchParams }: PageProps<"/ogrenci-uzmanlar">) {
+  if (!ogrenciModuluAktif()) notFound();
+
   return (
     <UzmanListesi
       tur="student"

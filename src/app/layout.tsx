@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 import { mevcutKullanici } from "@/lib/oturum";
 import { supabaseAyarlari } from "@/lib/supabase/ayarlar";
+import { ogrenciModuluAktif } from "@/modules/ogrenci/ayar";
 import { AcilDurumBandi, AcilDurumSeridi } from "@/components/AcilDurumBandi";
 import { UstMenu } from "@/components/UstMenu";
 import { DegerlendirmeAlani } from "@/components/DegerlendirmeAlani";
@@ -40,6 +41,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const kullanici = await mevcutKullanici();
+  const ogrenciAcik = ogrenciModuluAktif();
 
   return (
     <html lang="tr" className={`${baslikYazisi.variable} h-full antialiased`}>
@@ -54,7 +56,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </div>
         <AcilDurumSeridi />
         <header className="border-b border-slate-200 bg-white">
-          <UstMenu rol={kullanici?.rol ?? null} />
+          <UstMenu rol={kullanici?.rol ?? null} ogrenciAcik={ogrenciAcik} />
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:py-14">{children}</main>
@@ -69,7 +71,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <nav key={grup.baslik} aria-label={grup.baslik}>
                 <p className="mb-2 font-semibold text-slate-700">{grup.baslik}</p>
                 <ul className="space-y-1.5">
-                  {grup.baglantilar.map((b) => (
+                  {grup.baglantilar.filter((b) => ogrenciAcik || !b.adres.startsWith("/ogrenci-uzmanlar")).map((b) => (
                     <li key={b.adres}>
                       <Link href={b.adres} className="hover:text-slate-800">
                         {b.ad}
