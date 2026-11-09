@@ -1,32 +1,76 @@
 # Danışman Buluşma
 
-Psikolog/psikolojik danışmanlarla danışanları buluşturan web sitesi (öğrenci projesi).
-Sitedeki tüm uzmanlar ve kullanıcılar **uydurma test verisidir**.
+Psikolog ve psikolojik danışmanlarla danışanları buluşturan Türkçe web platformu.
+Yapay zekâ ajanlarıyla (Claude Code) geliştirilmiş bir portfolyo projesidir; fikir bir hocamın önerisinden doğdu.
 
-> **Demo:** Bu bir portfolyo projesidir. Sitede gerçek kişi bilgisi girmeyin.
+> **Demo:** Gerçek bir hizmet değildir. Tüm uzmanlar ve kullanıcılar uydurma test verisidir, ödeme demodur (para çekilmez, kart bilgisi istenmez), yasal metinler taslaktır. Sitede gerçek kişi bilgisi girmeyin.
 
 ![Ana sayfa](docs/ekran-goruntuleri/ana-sayfa.png)
+
+## Kısaca
+
+- 27 sayfa, 21 veritabanı değişiklik dosyası (migration), RLS (satır düzeyinde güvenlik) açık 19 tablo
+- Mesajlar konuşma başına ayrı anahtarla, AES-256-GCM ile veritabanında şifreli saklanır
+- Yönetici için zorunlu iki adımlı doğrulama, değiştirilemez işlem kayıtları, her istekte yeni nonce'lu CSP
+- 69 otomatik test ve 5 SQL denetim dosyası
+- Ölçek, öğrenci uzman ve ödeme bölümleri ayarla açılıp kapanan ayrı modüller
+
+## Ajanlarla nasıl geliştirildi?
+
+Tüm commit'ler Claude Code ile ortak yazıldı. Benim işim ne yapılacağını belirlemek, ajanı kurallarla sınırlamak ve çıktıyı doğrulamaktı.
+
+| Adım | Kanıt |
+|---|---|
+| Kalıcı proje kuralları | [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md) |
+| Koddan önce tasarım | [5 tasarım dokümanı](docs/superpowers/specs/) |
+| Adım adım uygulama planı | [6 plan](docs/superpowers/plans/) |
+| Ajanla güvenlik denetimi | "Güvenlik denetimi Bulgu" commit'leri, ertelenenler [YAYIN-ONCESI.md](YAYIN-ONCESI.md) içinde |
+| Doğrulama | `npm test`, `npx eslint`, `npx tsc --noEmit`, `npm run build` ve `supabase/denetim/` |
 
 ## Neler var?
 
 **Danışan**
-- Uzmanları konuya, türe ve isme göre arama; ücretsiz ön görüşme yapan uzmanları görme
-- Başvuru yapma ve kabul edilince uzmanla şifreli saklanan mesajlaşma
-- Uzmanın paylaştığı görüntülü görüşme bağlantısına katılma
+- Uzmanları konuya ve isme göre arama; ücretsiz ön görüşme yapan uzmanları görme
+- Uzmanın takviminden uygun saate başvurma, ödeme planını onaylama, seans iptali
+- Grup seanslarına katılma (3-12 kişi, danışanlar birbirinin adını görmez)
+- Başvuru kabul edilince uzmanla şifreli saklanan mesajlaşma ve uzmanın paylaştığı görüşme bağlantısına katılma
+- En az 2 tamamlanmış seanstan sonra bağımsız uzmana 1-5 yıldız verme
 - Okunmamış mesaj ve yanıtlanan başvuru sayaçları
 - Sohbeti şikayet etme, şifre sıfırlama, hesabını silme
-- Psikolojik rahatsızlıklar hakkında temel bilgi sayfası
+- Psikolojik rahatsızlıklar bilgi sayfası ve isteğe bağlı uzman bulma ölçeği (yanıtlar tarayıcıdan çıkmaz)
 
-**Uzman ve öğrenci uzman**
-- Kayıt, belge yükleme, yönetici onayından sonra listede görünme
-- Tanıtım yazısı, çalışma alanı ve fotoğraf düzenleme; isteğe bağlı ücretsiz ön görüşme (bağımsız uzmanlar)
-- Başvuruları yanıtlama, danışanla mesajlaşma, görüşme bağlantısı paylaşma
+**Bağımsız uzman** (Psikolog veya Psikolojik Danışman)
+- Kayıt, belge yükleme, yönetici onayından sonra `/uzmanlar` listesinde görünme
+- Tanıtım yazısı, çalışma alanı, fotoğraf, görüşme şekli, seans süresi ve haftalık uygun saatleri düzenleme
+- Başvuruları yanıtlama, ödeme planı gönderme, grup seansı açma, isteğe bağlı ücretsiz ön görüşme
+
+**Öğrenci uzman** (isteğe bağlı bölüm, varsayılan kapalı)
+- Yalnızca PDR 4. sınıf ve Klinik Psikoloji yüksek lisans öğrencileri, ayrı `/ogrenci-uzmanlar` listesinde
+- Görüşmeleri ücretsizdir; ödeme, puanlama ve grup seansı yoktur
 
 **Yönetici** (iki adımlı doğrulama zorunlu)
 - Belge onayı veya reddi, tanıtım yazılarının sonradan kontrolü, uygunsuz fotoğrafı kaldırma
 - Yalnızca işaretli sohbetleri, sebep yazarak ve 30 dakikalığına açma; her erişim silinemeyen bir kayda yazılır
+- "Seans yapılmadı" bildirimlerinde iade veya aktarım kararı
 
 **Teknoloji:** Next.js 16, TypeScript, Tailwind, Supabase (kimlik doğrulama, Postgres ve satır düzeyinde güvenlik, özel dosya depolama, Vault).
+
+```mermaid
+flowchart LR
+  T[Tarayıcı] --> N[Next.js sunucusu<br/>proxy.ts: CSP ve oturum]
+  N -->|kullanıcı oturumu + RLS| P[(Supabase Postgres)]
+  N -->|yalnızca sunucu| V[Vault: mesaj ana anahtarı]
+  N -->|yalnızca sunucu| D[Özel dosya depoları]
+```
+
+## Bilinen sınırlar
+
+- Gerçek kullanıcılara açık değildir. Yayın için gereken güvenlik, hukuk ve içerik işleri [YAYIN-ONCESI.md](YAYIN-ONCESI.md) dosyasındadır.
+- Mesajlar uçtan uca şifreli değildir: sunucu anahtara erişebilir, koruma veritabanında saklanan veri içindir.
+- Tarayıcıda uçtan uca test ve otomatik CI henüz yoktur.
+- Ürünün içinde yapay zekâ özelliği yoktur; yapay zekâ geliştirme sürecinde kullanıldı.
+
+Açık kaynak lisansı verilmemiştir. Kod inceleme amacıyla paylaşılmıştır; izin alınmadan kullanılamaz.
 
 <p>
   <img src="docs/ekran-goruntuleri/uzmanlar.png" alt="Uzman arama" width="49%">
@@ -166,7 +210,22 @@ where user_id = (select id from auth.users where email = 'sizin-epostaniz@ornek.
 
 Demo hesaplarının şifresini herkese açık bir yere yazmayın. Paylaşacağınız kişiye ayrıca iletin.
 
-## Ölçek modülünü açıp kapatma
+## Modülleri açıp kapatma
 
-`.env.local` dosyasındaki `OLCEK_MODULU_AKTIF=true` satırı ana sayfada uzman bulma ölçeğini açar (davet penceresi + "Sana uygun uzmanı bul" düğmesi). Yanıtlar tarayıcıdan çıkmaz.
-`false` iken modül tamamen gizlidir ve site normal çalışır.
+`.env.local` dosyasında ayarlanır. Değiştirdikten sonra `npm run dev` komutunu yeniden başlatın.
+
+| Ayar | `true` iken | `false` iken |
+|---|---|---|
+| `OLCEK_MODULU_AKTIF` | Ana sayfada uzman bulma ölçeği açılır (davet penceresi + "Sana uygun uzmanı bul" düğmesi). Yanıtlar tarayıcıdan çıkmaz. | Modül tamamen gizlidir, site normal çalışır. |
+| `OGRENCI_MODULU_AKTIF` | Öğrenci uzman menüsü, listesi, bilgi sayfaları, profilleri ve kaydı açılır. | Bu bölüm kapanır, veri silinmez; mevcut öğrenci hesapları ve sohbetleri çalışır. |
+| `ODEME_MODULU_AKTIF` | Demo ödeme açılır (para çekilmez). | Plan ve onay çalışmaya devam eder, ödeme adımı görünmez. |
+| `KVKK_METINLERI_ONAYLI` | "Taslaktır" notları kalkar. Yalnızca metinler avukat onayından geçtikten sonra açılmalıdır. | Yasal metinlerde "Taslaktır" notu görünür. |
+
+## Kontroller
+
+```powershell
+npm test
+npx eslint
+npx tsc --noEmit
+npm run build
+```
