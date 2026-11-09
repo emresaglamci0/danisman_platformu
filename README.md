@@ -57,10 +57,10 @@ Tüm commit'ler Claude Code ile ortak yazıldı. Benim işim ne yapılacağını
 
 ```mermaid
 flowchart LR
-  T[Tarayıcı] --> N[Next.js sunucusu<br/>proxy.ts: CSP ve oturum]
-  N -->|kullanıcı oturumu + RLS| P[(Supabase Postgres)]
-  N -->|yalnızca sunucu| V[Vault: mesaj ana anahtarı]
-  N -->|yalnızca sunucu| D[Özel dosya depoları]
+  T["Tarayıcı"] --> N["Next.js sunucusu<br/>proxy.ts: CSP ve oturum"]
+  N -->|"kullanıcı oturumu + RLS"| P[("Supabase Postgres")]
+  N -->|"yalnızca sunucu"| V["Vault: mesaj ana anahtarı"]
+  N -->|"yalnızca sunucu"| D["Özel dosya depoları"]
 ```
 
 ## Bilinen sınırlar
@@ -124,7 +124,7 @@ Tüm test hesaplarının şifresi, `.env.local` dosyasına yazdığınız `SEED_
 |---|---|
 | test.danisan@example.com | Danışan |
 | test.uzman1@example.com … test.uzman4@example.com | Uzman (onaylı) |
-| test.ogrenci1@example.com, test.ogrenci2@example.com | Öğrenci uzman (onaylı) |
+| test.ogrenci1@example.com, test.ogrenci2@example.com | Öğrenci uzman (onaylı; listede görünmesi için `OGRENCI_MODULU_AKTIF=true` gerekir) |
 
 ### Sık karşılaşılan sorunlar
 
