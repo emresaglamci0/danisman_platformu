@@ -1,7 +1,7 @@
 # Danışman Buluşma
 
 Psikolog ve psikolojik danışmanlarla danışanları buluşturan Türkçe web platformu.
-Yapay zekâ ajanlarıyla (Claude Code) geliştirilmiş bir portfolyo projesidir; fikir bir hocamın önerisinden doğdu.
+Yapay zekâ ajanlarıyla (Claude Code) geliştirilmiş bir portfolyo projesidir.
 
 > **Demo:** Gerçek bir hizmet değildir. Tüm uzmanlar ve kullanıcılar uydurma test verisidir, ödeme demodur (para çekilmez, kart bilgisi istenmez), yasal metinler taslaktır. Sitede gerçek kişi bilgisi girmeyin.
 
